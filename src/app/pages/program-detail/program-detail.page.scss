@@ -1,0 +1,313 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--primary-dark, #4338ca);
+  text-decoration: underline;
+}
+
+.loading {
+  color: var(--text-muted, #6b7280);
+}
+
+.error {
+  padding: 0.875rem 1rem;
+  background: var(--error-bg, #fef2f2);
+  color: var(--error, #dc2626);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fecaca;
+}
+
+.detail-header {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.detail-header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text, #111827);
+}
+
+.bank-name {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.detail-section {
+  margin-bottom: 1.75rem;
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-muted, #6b7280);
+  }
+}
+
+.detail-list {
+  display: grid;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+  padding: 1.25rem;
+  background: var(--bg, #f9fafb);
+  border-radius: var(--radius, 10px);
+  border: 1px solid var(--border, #e5e7eb);
+
+  div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  dt {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted, #6b7280);
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text, #111827);
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: var(--primary-light, rgba(79, 70, 229, 0.1));
+  color: var(--primary);
+  border-radius: 8px;
+}
+
+.status {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted, #6b7280);
+}
+
+/* Калькулятор */
+.calculator-section {
+  padding: 1.5rem;
+  background: var(--bg, #f9fafb);
+  border-radius: var(--radius-lg, 14px);
+  border: 1px solid var(--border, #e5e7eb);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+.calc-form {
+  margin-bottom: 1rem;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.calc-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text, #111827);
+  }
+
+  input[type='number'] {
+    padding: 0.6rem 0.875rem;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-focus, rgba(79, 70, 229, 0.2));
+  }
+}
+
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.hint-less {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.calc-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-label,
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.radio-label input,
+.checkbox-label input {
+  accent-color: var(--primary);
+}
+
+.payment-type {
+  display: flex;
+  gap: 1rem;
+}
+
+.calc-form .btn-primary {
+  padding: 0.65rem 1.35rem;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.calc-form .btn-primary:hover {
+  background: var(--primary-dark, #4338ca);
+}
+
+.calc-error {
+  padding: 0.875rem 1rem;
+  background: var(--error-bg, #fef2f2);
+  color: var(--error, #dc2626);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fecaca;
+}
+
+.calc-result {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border, #e5e7eb);
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text, #111827);
+  }
+}
+
+.schedule-title {
+  margin-top: 1.25rem !important;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 0 0 1rem;
+  padding: 1.25rem;
+  background: var(--bg-card, #fff);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e7eb);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+
+  dt {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b7280);
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 0.25rem 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text, #111827);
+  }
+}
+
+.schedule-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  background: var(--bg-card, #fff);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th,
+  td {
+    padding: 0.55rem 0.875rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+  }
+
+  th {
+    background: var(--bg, #f9fafb);
+    font-weight: 600;
+    color: var(--text-muted, #6b7280);
+    font-size: 0.8rem;
+    text-transform: none;
+  }
+
+  tr:hover td {
+    background: #fafafa;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}

@@ -1,0 +1,70 @@
+<div class="page">
+  <h1>Программы ипотеки</h1>
+  <p class="subtitle">Список программ с пагинацией</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Всего: {{ totalCount() }}</p>
+
+    <div class="program-cards">
+      @for (p of programs(); track p.id) {
+        <article class="program-card">
+          <div class="card-main">
+            <div class="card-header">
+              <h2 class="program-name">{{ p.name }}</h2>
+              <span class="bank-name">{{ p.bank_name }}</span>
+            </div>
+            <ul class="card-info">
+              <li><strong>Ставка:</strong> {{ p.interest_rate }}%</li>
+              <li><strong>Макс. сумма:</strong> {{ formatMoney(p.max_loan_amount) }} тг</li>
+              <li><strong>Первоначальный взнос:</strong> от {{ p.min_down_payment_percent }}%</li>
+              <li><strong>Срок:</strong> до {{ p.max_term_years }} лет</li>
+              <li><strong>Тип жилья:</strong> {{ housingTypeLabel(p.housing_type) }}</li>
+              @if (p.special_tags.length) {
+                <li class="tags">
+                  @for (tag of p.special_tags; track tag) {
+                    <span class="tag">{{ tag }}</span>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="card-actions">
+            <a [routerLink]="['/programs', p.id]" class="btn btn-primary">Подробнее</a>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (programs().length === 0 && !loading()) {
+      <p class="empty">Программы не найдены.</p>
+    }
+
+    <div class="pagination">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!hasPrev()"
+        (click)="prevPage()"
+      >
+        Назад
+      </button>
+      <span class="page-info">
+        Страница {{ currentPage() }} из {{ totalPages() }}
+      </span>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!hasNext()"
+        (click)="nextPage()"
+      >
+        Вперёд
+      </button>
+    </div>
+  }
+</div>

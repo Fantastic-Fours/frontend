@@ -1,0 +1,157 @@
+<div class="page">
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+    <a routerLink="/programs" class="back-link">← К списку программ</a>
+  } @else if (program(); as p) {
+    <a routerLink="/programs" class="back-link">← К списку программ</a>
+
+    <header class="detail-header">
+      <h1>{{ p.name }}</h1>
+      <p class="bank-name">{{ p.bank_name }}</p>
+    </header>
+
+    <section class="detail-section">
+      <h2>Основные условия</h2>
+      <dl class="detail-list">
+        <div>
+          <dt>Процентная ставка</dt>
+          <dd>{{ p.interest_rate }}%</dd>
+        </div>
+        <div>
+          <dt>Максимальная сумма кредита</dt>
+          <dd>{{ formatMoney(p.max_loan_amount) }} ₸</dd>
+        </div>
+        <div>
+          <dt>Минимальный первоначальный взнос</dt>
+          <dd>от {{ p.min_down_payment_percent }}%</dd>
+        </div>
+        <div>
+          <dt>Максимальный срок</dt>
+          <dd>{{ p.max_term_years }} лет</dd>
+        </div>
+        <div>
+          <dt>Тип жилья</dt>
+          <dd>{{ housingTypeLabel(p.housing_type) }}</dd>
+        </div>
+        <div>
+          <dt>Подтверждение дохода</dt>
+          <dd>{{ p.requires_income_confirmation ? 'Требуется' : 'Не требуется' }}</dd>
+        </div>
+        <div>
+          <dt>ГЭСВ</dt>
+          <dd>{{ p.gesv }}%</dd>
+        </div>
+      </dl>
+    </section>
+
+    @if (p.special_tags.length) {
+      <section class="detail-section">
+        <h2>Особые условия / теги</h2>
+        <div class="tags">
+          @for (tag of p.special_tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Калькулятор -->
+    <section class="detail-section calculator-section">
+      <h2>Калькулятор</h2>
+      <form [formGroup]="calcForm" (ngSubmit)="calculate()" class="calc-form">
+        <div class="calc-grid">
+          <div class="field">
+            <label for="calc-price">Стоимость жилья</label>
+            <input id="calc-price" type="number" formControlName="price" min="1" placeholder="₸" />
+          </div>
+          <div class="field">
+            <label for="calc-down">Первоначальный взнос</label>
+            <input id="calc-down" type="number" formControlName="down_payment" min="0" placeholder="₸" />
+          </div>
+          <div class="field">
+            <label for="calc-term">Срок займа</label>
+            <input id="calc-term" type="number" formControlName="term_years" min="1" max="30" placeholder="лет" />
+            <span class="field-hint">лет</span>
+          </div>
+        </div>
+        @if (getDownPaymentCouldBeLess() > 0) {
+          <p class="hint-less">
+            Можно внести первоначальный взнос на {{ formatMoney(getDownPaymentCouldBeLess()) }} ₸ меньше
+          </p>
+        }
+        <div class="calc-options">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="without_income_confirmation" />
+            без подтверждения дохода
+          </label>
+          <div class="payment-type">
+            <label class="radio-label">
+              <input type="radio" formControlName="payment_type" value="differentiated" />
+              Дифференцированный
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="payment_type" value="annuity" />
+              Аннуитетный
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">РАССЧИТАТЬ</button>
+      </form>
+
+      @if (calcError()) {
+        <div class="calc-error" role="alert">{{ calcError() }}</div>
+      }
+
+      @if (calcResult(); as res) {
+        <div class="calc-result">
+          <h3>Результат</h3>
+          <dl class="result-grid">
+            <div>
+              <dt>Ежемесячный платёж</dt>
+              <dd>{{ formatMoney(res.monthlyPayment) }} ₸</dd>
+            </div>
+            <div>
+              <dt>Общая сумма выплат</dt>
+              <dd>{{ formatMoney(res.totalPayment) }} ₸</dd>
+            </div>
+            <div>
+              <dt>Общая переплата</dt>
+              <dd>{{ formatMoney(res.totalOverpayment) }} ₸</dd>
+            </div>
+          </dl>
+          <h3 class="schedule-title">График платежей</h3>
+          <div class="schedule-wrap">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>Период</th>
+                  <th>Общ. сумма выплаты, ₸</th>
+                  <th>Проценты, ₸</th>
+                  <th>Кредит, ₸</th>
+                  <th>Осталось выплатить, ₸</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of getScheduleRows(); track row.period) {
+                  <tr>
+                    <td>{{ row.period }}</td>
+                    <td>{{ formatMoney(row.totalPayment) }}</td>
+                    <td>{{ formatMoney(row.interest) }}</td>
+                    <td>{{ formatMoney(row.principal) }}</td>
+                    <td>{{ formatMoney(row.remaining) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    </section>
+
+    <p class="status">
+      {{ p.is_active ? 'Программа активна' : 'Программа неактивна' }}
+    </p>
+  }
+</div>

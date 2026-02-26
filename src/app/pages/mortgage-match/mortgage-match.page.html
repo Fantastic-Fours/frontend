@@ -1,0 +1,151 @@
+<div class="page">
+  <div class="section form-section">
+    <h1>Подбор ипотеки</h1>
+    <p class="subtitle">Заполните параметры для подбора программ</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      @if (error) {
+        <div class="error" role="alert">{{ error }}</div>
+      }
+
+      <div class="grid">
+        <div class="field">
+          <label for="price">Стоимость (тг)</label>
+          <input id="price" type="number" formControlName="price" min="1" />
+          @if (form.get('price')?.invalid && form.get('price')?.touched) {
+            <span class="field-error">Введите корректную сумму</span>
+          }
+        </div>
+        <div class="field">
+          <label for="down_payment">Первоначальный взнос (тг)</label>
+          <input id="down_payment" type="number" formControlName="down_payment" min="0" />
+          @if (form.get('down_payment')?.invalid && form.get('down_payment')?.touched) {
+            <span class="field-error">Введите корректную сумму</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="income">Доход (тг/мес)</label>
+          <input id="income" type="number" formControlName="income" min="0" />
+          @if (form.get('income')?.invalid && form.get('income')?.touched) {
+            <span class="field-error">Обязательное поле</span>
+          }
+        </div>
+        <div class="field">
+          <label for="expenses">Расходы (тг/мес)</label>
+          <input id="expenses" type="number" formControlName="expenses" min="0" />
+          @if (form.get('expenses')?.invalid && form.get('expenses')?.touched) {
+            <span class="field-error">Обязательное поле</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="term_years">Срок (лет)</label>
+          <input id="term_years" type="number" formControlName="term_years" min="1" max="30" />
+          @if (form.get('term_years')?.invalid && form.get('term_years')?.touched) {
+            <span class="field-error">От 1 до 30</span>
+          }
+        </div>
+        <div class="field">
+          <label for="housing_type">Тип жилья</label>
+          <select id="housing_type" formControlName="housing_type">
+            @for (opt of housingTypes; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="field full">
+        <label for="tagsStr">Теги (через запятую)</label>
+        <input
+          id="tagsStr"
+          type="text"
+          formControlName="tagsStr"
+          placeholder="семейная, господдержка"
+        />
+      </div>
+
+      <div class="optional-section">
+        <h3 class="optional-title">Дополнительно</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="sort_by">Сортировка</label>
+            <select id="sort_by" formControlName="sort_by">
+              @for (opt of sortByOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="children_under_18">Детей до 18 лет</label>
+            <input id="children_under_18" type="number" formControlName="children_under_18" min="0" />
+          </div>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="has_housing">Есть жильё</label>
+            <select id="has_housing" formControlName="has_housing">
+              @for (opt of hasHousingOptions; track opt.value) {
+                <option [ngValue]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field checkbox-field">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="require_income_confirmation" />
+              Подтверждение дохода
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Подбор…' : 'Подобрать программы' }}
+      </button>
+    </form>
+  </div>
+
+  @if (submitted && !loading) {
+    <div class="section results-section">
+      <h2>Результаты ({{ totalCount }})</h2>
+      @if (programs.length === 0) {
+        <p class="empty">По заданным параметрам программы не найдены.</p>
+      } @else {
+        <div class="programs">
+          @for (p of programs; track p.program_id) {
+            <article class="program-card">
+              <div class="program-header">
+                <h3>{{ p.program_name }}</h3>
+                <span class="bank">{{ p.bank_name }}</span>
+              </div>
+              <div class="program-score">Совпадение: {{ p.score | number : '1.1-1' }}%</div>
+              <dl class="program-details">
+                <div>
+                  <dt>Ставка</dt>
+                  <dd>{{ p.interest_rate }}%</dd>
+                </div>
+                <div>
+                  <dt>Платёж/мес</dt>
+                  <dd>{{ formatMoney(p.monthly_payment) }} тг</dd>
+                </div>
+                <div>
+                  <dt>Сумма кредита</dt>
+                  <dd>{{ formatMoney(p.loan_amount) }} тг</dd>
+                </div>
+                <div>
+                  <dt>Переплата</dt>
+                  <dd>{{ formatMoney(p.total_overpayment) }} тг</dd>
+                </div>
+              </dl>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
