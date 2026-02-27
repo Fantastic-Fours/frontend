@@ -1,0 +1,32 @@
+<div class="page">
+  <a routerLink="/news" class="back-link">← К списку новостей</a>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else if (item(); as news) {
+    <article class="news-article">
+      <time class="news-date">{{ formatDate(news.published_at) }}</time>
+      <h1 class="news-title">{{ news.title }}</h1>
+      @if (news.image_url) {
+        <div class="news-image">
+          <img [src]="news.image_url" [alt]="news.title" />
+        </div>
+      }
+      @if (news.summary) {
+        <p class="news-summary">{{ news.summary }}</p>
+      }
+      @if (news.body) {
+        <div class="news-body">{{ news.body }}</div>
+      }
+      @if (news.source_url) {
+        <a [href]="news.source_url" target="_blank" rel="noopener noreferrer" class="source-link">
+          Источник
+        </a>
+      }
+    </article>
+  }
+</div>

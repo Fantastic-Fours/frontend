@@ -7,6 +7,8 @@ import type {
   AuthTokenResponse,
   AuthRefreshRequest,
   AuthRefreshResponse,
+  AuthRegisterRequest,
+  AuthRegisterResponse,
 } from '../interfaces/auth.types';
 import { AuthTokenService } from './auth-token.service';
 
@@ -45,6 +47,17 @@ export class AuthApiService {
         refresh,
       } satisfies AuthRefreshRequest)
       .pipe(tap((res) => this.tokenService.setAccessToken(res.access)));
+  }
+
+  /**
+   * POST /api/auth/register/
+   * Create a new user. Does not log in; use getToken after success.
+   */
+  register(payload: AuthRegisterRequest): Observable<AuthRegisterResponse> {
+    return this.http.post<AuthRegisterResponse>(
+      `${this.base}${API_PATHS.auth.register}`,
+      payload
+    );
   }
 
   logout(): void {

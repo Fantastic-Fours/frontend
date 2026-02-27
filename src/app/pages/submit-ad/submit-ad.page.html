@@ -1,0 +1,85 @@
+<div class="page">
+  <h1>Подать объявление</h1>
+  <p class="subtitle">Добавьте объявление о продаже квартиры. Требуется вход в аккаунт.</p>
+
+  @if (!form) {
+    <p class="loading">Проверка авторизации…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      @if (error) {
+        <div class="error" role="alert">{{ error }}</div>
+      }
+
+      <div class="field">
+        <label for="title">Заголовок *</label>
+        <input id="title" type="text" formControlName="title" placeholder="Например: 2-комн. квартира, 65 м²" />
+        @if (form.get('title')?.invalid && form.get('title')?.touched) {
+          <span class="field-error">Минимум 5 символов</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="description">Описание</label>
+        <textarea id="description" formControlName="description" rows="4" placeholder="Подробное описание квартиры"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="price">Цена (₸) *</label>
+          <input id="price" type="number" formControlName="price" placeholder="0" min="1" />
+          @if (form.get('price')?.invalid && form.get('price')?.touched) {
+            <span class="field-error">Укажите цену</span>
+          }
+        </div>
+        <div class="field">
+          <label for="city">Город *</label>
+          <input id="city" type="text" formControlName="city" placeholder="Алматы" />
+          @if (form.get('city')?.invalid && form.get('city')?.touched) {
+            <span class="field-error">Обязательное поле</span>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="address">Адрес</label>
+        <input id="address" type="text" formControlName="address" placeholder="Улица, дом" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="area_sqm">Площадь (м²)</label>
+          <input id="area_sqm" type="number" formControlName="area_sqm" placeholder="65" min="1" step="0.01" />
+        </div>
+        <div class="field">
+          <label for="rooms">Комнат</label>
+          <input id="rooms" type="number" formControlName="rooms" placeholder="2" min="0" />
+        </div>
+        <div class="field">
+          <label for="floor">Этаж / этажей</label>
+          <div class="inline-fields">
+            <input id="floor" type="number" formControlName="floor" placeholder="5" min="0" />
+            <span>/</span>
+            <input type="number" formControlName="total_floors" placeholder="9" min="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="housing_type">Тип жилья *</label>
+        <select id="housing_type" formControlName="housing_type">
+          <option value="primary">Первичка (новостройка)</option>
+          <option value="secondary">Вторичка</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="imagesStr">Ссылки на фото (через запятую)</label>
+        <input id="imagesStr" type="text" formControlName="imagesStr" placeholder="https://..., https://..." />
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Публикация…' : 'Опубликовать объявление' }}
+      </button>
+    </form>
+  }
+</div>

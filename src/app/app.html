@@ -4,7 +4,17 @@
     <div class="nav-links">
       <a routerLink="/match" routerLinkActive="active">Подбор</a>
       <a routerLink="/programs" routerLinkActive="active">Программы</a>
-      <a routerLink="/login" routerLinkActive="active">Вход</a>
+      <a routerLink="/news" routerLinkActive="active">Новости</a>
+      <a routerLink="/estate/primary" routerLinkActive="active">Первичка</a>
+      <a routerLink="/estate/secondary" routerLinkActive="active">Вторичка</a>
+      <a routerLink="/estate/submit" routerLinkActive="active">Подать объявление</a>
+      @if (!isAuthenticated()) {
+        <a routerLink="/register" routerLinkActive="active">Регистрация</a>
+        <a routerLink="/login" routerLinkActive="active">Вход</a>
+      } @else {
+        <a routerLink="/profile" routerLinkActive="active">Профиль</a>
+        <button type="button" class="nav-logout" (click)="logout()">Выйти</button>
+      }
     </div>
   </nav>
   <main class="main">

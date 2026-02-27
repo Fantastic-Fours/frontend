@@ -1,0 +1,66 @@
+<div class="page">
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else if (apartment(); as apt) {
+    <a [routerLink]="[backLink()]" class="back-link">← К списку</a>
+
+    <article class="apartment-detail">
+      <h1 class="apartment-title">{{ apt.title }}</h1>
+      <p class="apartment-price">{{ formatMoney(apt.price) }}</p>
+      <p class="apartment-meta">
+        {{ apt.city }}{{ apt['address'] ? ', ' + apt['address'] : '' }}
+        · {{ housingTypeLabel(apt.housing_type ?? '') }}
+      </p>
+
+      @if (getImages(apt).length > 0) {
+        <div class="apartment-gallery">
+          @for (src of getImages(apt); track src) {
+            <div class="gallery-item">
+              <img [src]="src" alt="" />
+            </div>
+          }
+        </div>
+      }
+
+      <div class="apartment-specs">
+        @if (apt['area_sqm'] != null) {
+          <div class="spec"><span class="spec-label">Площадь</span> {{ apt['area_sqm'] }} м²</div>
+        }
+        @if (apt['rooms'] != null) {
+          <div class="spec"><span class="spec-label">Комнат</span> {{ apt['rooms'] }}</div>
+        }
+        @if (apt['floor'] != null) {
+          <div class="spec"><span class="spec-label">Этаж</span> {{ apt['floor'] }}{{ apt['total_floors'] ? ' из ' + apt['total_floors'] : '' }}</div>
+        }
+      </div>
+
+      @if (apt['description']) {
+        <div class="apartment-description">
+          <h2>Описание</h2>
+          <p>{{ apt['description'] }}</p>
+        </div>
+      }
+
+      @if (getProgramsList(apt).length > 0) {
+        <div class="apartment-programs">
+          <h2>Подходящие ипотечные программы</h2>
+          <ul>
+            @for (prog of getProgramsList(apt); track prog.id) {
+              <li>
+                <a [routerLink]="['/programs', prog.id]">{{ prog.name }}</a> — {{ prog.bank_name }}, {{ prog.interest_rate }}%
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (apt['created_by_username']) {
+        <p class="apartment-author">Объявление от {{ apt['created_by_username'] }}</p>
+      }
+    </article>
+  }
+</div>

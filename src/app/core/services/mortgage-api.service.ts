@@ -14,6 +14,7 @@ import type {
   ApartmentsListResponse,
   Apartment,
 } from '../interfaces/apartment.types';
+import type { MortgageNewsItem, MortgageNewsListResponse } from '../interfaces/news.types';
 
 @Injectable({ providedIn: 'root' })
 export class MortgageApiService {
@@ -53,6 +54,30 @@ export class MortgageApiService {
   getProgram(id: number): Observable<ProgramListItem> {
     return this.http.get<ProgramListItem>(
       `${this.base}${API_PATHS.mortgage.programDetail(id)}`
+    );
+  }
+
+  /**
+   * GET /api/mortgage/news/
+   * List mortgage news (paginated).
+   */
+  getNews(page?: number, pageSize?: number): Observable<MortgageNewsListResponse> {
+    let httpParams = new HttpParams();
+    if (page != null) httpParams = httpParams.set('page', String(page));
+    if (pageSize != null) httpParams = httpParams.set('page_size', String(pageSize));
+    return this.http.get<MortgageNewsListResponse>(
+      `${this.base}${API_PATHS.mortgage.news}`,
+      { params: httpParams }
+    );
+  }
+
+  /**
+   * GET /api/mortgage/news/<id>/
+   * Single news item.
+   */
+  getNewsItem(id: number): Observable<MortgageNewsItem> {
+    return this.http.get<MortgageNewsItem>(
+      `${this.base}${API_PATHS.mortgage.newsDetail(id)}`
     );
   }
 

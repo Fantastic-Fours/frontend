@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
 
 @Component({
@@ -18,7 +18,8 @@ export class LoginPage {
   constructor(
     private fb: FormBuilder,
     private authApi: AuthApiService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.form = this.fb.nonNullable.group({
       username: ['', Validators.required],
@@ -37,7 +38,8 @@ export class LoginPage {
     this.authApi.getToken({ username, password }).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/']);
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
+        this.router.navigateByUrl(returnUrl);
       },
       error: (err) => {
         this.loading = false;

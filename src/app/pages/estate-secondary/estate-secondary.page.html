@@ -1,0 +1,43 @@
+<div class="page">
+  <h1>Вторичная недвижимость</h1>
+  <p class="subtitle">Квартиры на вторичном рынке</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Найдено: {{ totalCount() }}</p>
+
+    <div class="estate-grid">
+      @for (apt of apartments(); track apt.id) {
+        <a [routerLink]="['/estate/apartment', apt.id]" class="estate-card">
+          <div class="estate-card-image">
+            @if (firstImage(apt); as src) {
+              <img [src]="src" [alt]="apt.title" />
+            } @else {
+              <div class="estate-card-placeholder">Нет фото</div>
+            }
+          </div>
+          <div class="estate-card-body">
+            <h2 class="estate-card-title">{{ apt.title }}</h2>
+            <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
+            <p class="estate-card-meta">{{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' м²' : '' }}{{ apt['rooms'] ? ' · ' + apt['rooms'] + ' комн.' : '' }}</p>
+          </div>
+        </a>
+      }
+    </div>
+
+    @if (apartments().length === 0 && !loading()) {
+      <p class="empty">Объявлений пока нет.</p>
+    }
+
+    <div class="pagination">
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
+      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+    </div>
+  }
+</div>

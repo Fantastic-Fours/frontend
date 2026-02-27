@@ -19,3 +19,16 @@ export interface AuthRefreshRequest {
 export interface AuthRefreshResponse {
   access: string;
 }
+
+/** Request body for POST /api/auth/register/ */
+export interface AuthRegisterRequest {
+  username: string;
+  password: string;
+  password_confirm: string;
+}
+
+/** Response from POST /api/auth/register/ */
+export interface AuthRegisterResponse {
+  id: number;
+  username: string;
+}

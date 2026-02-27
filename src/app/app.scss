@@ -63,6 +63,30 @@
   background: var(--primary-light, rgba(79, 70, 229, 0.1));
 }
 
+.nav-logout {
+  border: none;
+  margin-left: 0.25rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: #fee2e2;
+  color: #b91c1c;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.1s ease;
+}
+
+.nav-logout:hover {
+  background: #fecaca;
+  color: #991b1b;
+  box-shadow: 0 6px 14px rgba(248, 113, 113, 0.4);
+  transform: translateY(-1px);
+}
+
 .main {
   flex: 1;
   padding: 0;

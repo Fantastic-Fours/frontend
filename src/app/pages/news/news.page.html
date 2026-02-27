@@ -1,0 +1,58 @@
+<div class="page">
+  <h1>Новости об ипотеке</h1>
+  <p class="subtitle">Актуальные новости и изменения в ипотечных программах</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Всего: {{ totalCount() }}</p>
+
+    <div class="news-cards">
+      @for (item of news(); track item.id) {
+        <article class="news-card">
+          @if (item.image_url) {
+            <div class="news-card-image">
+              <img [src]="item.image_url" [alt]="item.title" />
+            </div>
+          }
+          <div class="news-card-body">
+            <time class="news-date">{{ formatDate(item.published_at) }}</time>
+            <h2 class="news-title">{{ item.title }}</h2>
+            @if (item.summary) {
+              <p class="news-summary">{{ item.summary }}</p>
+            }
+            <a [routerLink]="['/news', item.id]" class="btn btn-primary">Читать</a>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (news().length === 0 && !loading()) {
+      <p class="empty">Новостей пока нет.</p>
+    }
+
+    <div class="pagination">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!hasPrev()"
+        (click)="prevPage()"
+      >
+        Назад
+      </button>
+      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!hasNext()"
+        (click)="nextPage()"
+      >
+        Вперёд
+      </button>
+    </div>
+  }
+</div>

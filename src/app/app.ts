@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthTokenService } from './core/services/auth-token.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  constructor(private readonly authTokens: AuthTokenService) {}
+
+  isAuthenticated(): boolean {
+    return this.authTokens.hasTokens();
+  }
+
+  logout(): void {
+    this.authTokens.clear();
+  }
+}

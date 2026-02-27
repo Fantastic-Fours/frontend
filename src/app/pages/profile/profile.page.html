@@ -1,0 +1,36 @@
+<div class="page">
+  <div class="card">
+    @if (!isAuthenticated()) {
+      <h1>Вы не авторизованы</h1>
+      <p class="subtitle">Чтобы получить токен доступа к API, выполните вход.</p>
+      <button type="button" class="btn btn-primary" (click)="goToLogin()">Перейти к входу</button>
+    } @else {
+      <h1>Профиль</h1>
+      <p class="subtitle">Вы вошли в систему как:</p>
+
+      <div class="profile-block">
+        <div class="profile-row">
+          <span class="label">Имя пользователя</span>
+          <span class="value">{{ displayName }}</span>
+        </div>
+
+        @if (payload(); as data) {
+          <div class="profile-row">
+            <span class="label">ID пользователя</span>
+            <span class="value">{{ data.user_id ?? '—' }}</span>
+          </div>
+          <div class="profile-row">
+            <span class="label">Тип токена</span>
+            <span class="value">{{ data['token_type'] ?? 'access' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" routerLink="/match">К подбору программ</button>
+        <button type="button" class="btn btn-danger" (click)="logout()">Выйти</button>
+      </div>
+    }
+  </div>
+</div>
+
