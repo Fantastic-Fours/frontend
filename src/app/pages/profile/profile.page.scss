@@ -4,18 +4,16 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: radial-gradient(circle at top left, #eef2ff, #f9fafb 55%);
 }
 
 .card {
   width: 100%;
   max-width: 520px;
-  background: #ffffff;
-  border-radius: 1.25rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   padding: 1.75rem 1.75rem 1.5rem;
-  box-shadow:
-    0 18px 40px rgba(15, 23, 42, 0.12),
-    0 0 0 1px rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 h1 {
@@ -33,10 +31,10 @@ h1 {
 }
 
 .profile-block {
-  border-radius: 0.75rem;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.03), rgba(59, 130, 246, 0.02));
+  border-radius: var(--radius);
+  background: var(--primary-light);
   padding: 1rem 1.1rem;
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border: 1px solid rgba(14, 165, 233, 0.2);
   margin-bottom: 1.5rem;
 }
 
@@ -59,6 +57,66 @@ h1 {
 .value {
   font-weight: 600;
   color: #111827;
+}
+
+.profile-form {
+  margin-top: 0.75rem;
+}
+
+.profile-form .field {
+  margin-bottom: 0.75rem;
+}
+
+.profile-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.profile-links {
+  margin: 1.5rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.links-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+
+.profile-link {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.profile-link:hover {
+  text-decoration: underline;
 }
 
 .actions {
@@ -84,14 +142,13 @@ h1 {
 }
 
 .btn-primary {
-  background: #4f46e5;
+  background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
   color: white;
-  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
 }
 
 .btn-primary:hover {
-  background: #4338ca;
-  box-shadow: 0 14px 26px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
   transform: translateY(-1px);
 }
 

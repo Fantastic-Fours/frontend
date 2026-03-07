@@ -120,8 +120,13 @@
           @for (p of programs; track p.program_id) {
             <article class="program-card">
               <div class="program-header">
-                <h3>{{ p.program_name }}</h3>
-                <span class="bank">{{ p.bank_name }}</span>
+                @if (getBankLogo(p.bank_name); as logo) {
+                  <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
+                }
+                <div class="program-header-text">
+                  <h3>{{ p.program_name }}</h3>
+                  <span class="bank">{{ p.bank_name }}</span>
+                </div>
               </div>
               <div class="program-score">Совпадение: {{ p.score | number : '1.1-1' }}%</div>
               <dl class="program-details">

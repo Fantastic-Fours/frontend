@@ -1,0 +1,55 @@
+<div class="page">
+  <a routerLink="/profile" class="back-link">← Профиль</a>
+  <h1>Избранные квартиры</h1>
+  <p class="subtitle">Квартиры, которые вы сохранили</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Всего: {{ totalCount() }}</p>
+    <div class="estate-grid">
+      @for (item of items(); track item.id) {
+        <article class="estate-card-wrap">
+          <a [routerLink]="['/estate/apartment', item.apartment.id]" class="estate-card">
+            <div class="estate-card-image">
+              @if (firstImage(item.apartment); as src) {
+                <img [src]="src" [alt]="item.apartment.title" />
+              } @else {
+                <div class="estate-card-placeholder">Нет фото</div>
+              }
+            </div>
+            <div class="estate-card-body">
+              <h2 class="estate-card-title">{{ item.apartment.title }}</h2>
+              <p class="estate-card-price">{{ formatMoney(item.apartment.price) }}</p>
+              <p class="estate-card-meta">
+                {{ item.apartment.city }}{{ item.apartment.area_sqm ? ' · ' + item.apartment.area_sqm + ' м²' : '' }}{{ item.apartment.rooms ? ' · ' + item.apartment.rooms + ' комн.' : '' }}
+              </p>
+            </div>
+          </a>
+          <button
+            type="button"
+            class="btn-remove"
+            [disabled]="removingId() === item.id"
+            (click)="remove(item); $event.preventDefault()"
+          >
+            {{ removingId() === item.id ? '…' : 'Удалить из избранного' }}
+          </button>
+        </article>
+      }
+    </div>
+    @if (items().length === 0 && !loading()) {
+      <p class="empty">Нет избранных квартир. Добавляйте их со страницы объявления.</p>
+    }
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
+        <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
+        <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+      </div>
+    }
+  }
+</div>

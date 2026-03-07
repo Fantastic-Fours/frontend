@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthApiService } from './core/services/auth-api.service';
 import { AuthTokenService } from './core/services/auth-token.service';
 
 @Component({
@@ -9,13 +10,35 @@ import { AuthTokenService } from './core/services/auth-token.service';
   styleUrl: './app.scss',
 })
 export class App {
-  constructor(private readonly authTokens: AuthTokenService) {}
+  private readonly router = inject(Router);
+  private readonly authTokens = inject(AuthTokenService);
+  private readonly authApi = inject(AuthApiService);
+
+  openMenu: 'mortgage' | 'estate' | null = null;
 
   isAuthenticated(): boolean {
     return this.authTokens.hasTokens();
   }
 
+  openDropdown(menu: 'mortgage' | 'estate'): void {
+    this.openMenu = menu;
+  }
+
+  closeDropdown(_menu?: 'mortgage' | 'estate'): void {
+    this.openMenu = null;
+  }
+
+  isActiveMortgage(): boolean {
+    const url = this.router.url;
+    return url.startsWith('/match') || url.startsWith('/programs');
+  }
+
+  isActiveEstate(): boolean {
+    const url = this.router.url;
+    return url.startsWith('/estate/primary') || url.startsWith('/estate/secondary') || url.startsWith('/estate/submit');
+  }
+
   logout(): void {
-    this.authTokens.clear();
+    this.authApi.logout();
   }
 }

@@ -15,4 +15,14 @@ export const API_PATHS = {
     news: '/mortgage/news/',
     newsDetail: (id: number) => `/mortgage/news/${id}/`,
   },
+  users: {
+    me: '/users/me/',
+    savedApartments: '/users/me/saved-apartments/',
+    savedApartmentDetail: (id: number) => `/users/me/saved-apartments/${id}/`,
+    calculationHistory: '/users/me/calculation-history/',
+    myListings: '/users/me/my-listings/',
+  },
+  aiConsultant: {
+    chat: '/ai-consultant/chat/',
+  },
 } as const;

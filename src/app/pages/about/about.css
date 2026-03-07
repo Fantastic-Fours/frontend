@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Блок "Tour Kazakhstan" */
+.search-page {
+  width: 100%;
+  margin-top: 240px;
+  position: absolute;
+  top: 0;
+}
+.search-page-inner {
+  display: flex;
+  justify-content: center;
+}
+.quote {
+  color: white;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 60px;
+  font-weight: 600;
+}
+.images {
+  margin-top: -68px;
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  filter: brightness(40%);
+}
+
+/* Блок преимуществ */
+.why-us {
+  width: 80%;
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+}
+.title_why_us {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title_why_us h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.subtitle {
+  font-size: 16px;
+  color: #777;
+  margin-bottom: 30px;
+}
+.features {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.feature {
+  flex: 1;
+  padding: 20px 40px;
+  background-color: white;
+  border-radius: 8px;
+  text-align: center;
+}
+.icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #6b682d;
+}
+.feature_text {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Блок "About Agency" */
+.about_agency {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  margin-top: 50px;
+}
+.visa-section {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.images-container {
+  display: flex;
+  justify-content: center;
+  width: 55%;
+  margin-bottom: 40px;
+  margin-left: 40px;
+}
+
+.image {
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+}
+
+.image-left {
+  width: 40%;
+  aspect-ratio: 1 / 1.5;
+  border-radius: 100px;
+}
+
+.image-center {
+  width: 30%;
+  margin-left: -10%;
+  place-self: flex-end;
+  aspect-ratio: 1 / 1.8;
+  box-shadow: 0 9px 1px 8px white;
+  border-radius: 150px;
+}
+
+.image-right {
+  width: 25%;
+  aspect-ratio: 1 / 1.4;
+  margin-left: -10%;
+  place-self: flex-start;
+  box-shadow: 3px 4px 2px 10px white;
+  border-radius: 120px;
+}
+.image-left, .image-center, .image-right {
+  opacity: 0;
+  animation: fadeIn 1.5s ease-in-out forwards;
+}
+
+.image-left { animation-delay: 0.3s; }
+.image-center { animation-delay: 0.6s; }
+.image-right { animation-delay: 0.9s; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.text-container {
+  width: 45%;
+  max-width: 500px;
+}
+.bold-text {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Кнопка открытия модалки */
+.open-modal-btn {
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.open-modal-btn:hover {
+  background-color: #1565c0;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .visa-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .images-container {
+    width: 95%;
+    order: 2;
+    margin: 0;
+  }
+  .text-container {
+    width: 80%;
+    max-width: 600px;
+  }
+  .feature {
+    background-color: #f9f9f9;
+  }
+  .features {
+    flex-direction: column;
+  }
+}
+@media (max-width: 640px) {
+  .modal img {
+    width: 300px;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 10px;
+  }
+}
+@media (max-width: 400px) {
+  .modal img {
+    width: 220px;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 10px;
+  }
+  .quote {
+    font-size: 40px;
+    font-weight: 400;
+  }
+}

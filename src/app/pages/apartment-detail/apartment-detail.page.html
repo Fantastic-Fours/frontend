@@ -50,7 +50,10 @@
           <h2>Подходящие ипотечные программы</h2>
           <ul>
             @for (prog of getProgramsList(apt); track prog.id) {
-              <li>
+              <li class="program-item">
+                @if (getBankLogo(prog.bank_name); as logo) {
+                  <img [src]="logo" [alt]="prog.bank_name" class="bank-logo-small" />
+                }
                 <a [routerLink]="['/programs', prog.id]">{{ prog.name }}</a> — {{ prog.bank_name }}, {{ prog.interest_rate }}%
               </li>
             }
@@ -60,6 +63,20 @@
 
       @if (apt['created_by_username']) {
         <p class="apartment-author">Объявление от {{ apt['created_by_username'] }}</p>
+      }
+
+      @if (isAuthenticated()) {
+        <div class="favorite-actions">
+          @if (savedId()) {
+            <button type="button" class="btn btn-outline" [disabled]="saving()" (click)="removeFromSaved()">
+              {{ saving() ? '…' : 'Удалить из избранного' }}
+            </button>
+          } @else {
+            <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="addToSaved()">
+              {{ saving() ? '…' : 'Добавить в избранное' }}
+            </button>
+          }
+        </div>
       }
     </article>
   }

@@ -2,9 +2,14 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'match' },
+  { path: 'about', loadComponent: () => import('./pages/about/about').then((m) => m.About) },
   { path: 'login', loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage) },
   { path: 'register', loadComponent: () => import('./pages/register/register.page').then((m) => m.RegisterPage) },
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage) },
+  { path: 'profile/saved-apartments', loadComponent: () => import('./pages/saved-apartments/saved-apartments.page').then((m) => m.SavedApartmentsPage) },
+  { path: 'profile/calculation-history', loadComponent: () => import('./pages/calculation-history/calculation-history.page').then((m) => m.CalculationHistoryPage) },
+  { path: 'profile/my-listings', loadComponent: () => import('./pages/my-listings/my-listings.page').then((m) => m.MyListingsPage) },
+  { path: 'ai-consultant', loadComponent: () => import('./pages/ai-consultant/ai-consultant.page').then((m) => m.AIConsultantPage) },
   { path: 'match', loadComponent: () => import('./pages/mortgage-match/mortgage-match.page').then((m) => m.MortgageMatchPage) },
   { path: 'programs', loadComponent: () => import('./pages/programs-list/programs-list.page').then((m) => m.ProgramsListPage) },
   { path: 'programs/:id', loadComponent: () => import('./pages/program-detail/program-detail.page').then((m) => m.ProgramDetailPage) },

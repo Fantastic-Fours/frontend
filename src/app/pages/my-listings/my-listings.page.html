@@ -1,0 +1,39 @@
+<div class="page">
+  <a routerLink="/profile" class="back-link">← Профиль</a>
+  <h1>Мои объявления</h1>
+  <p class="subtitle">Квартиры, которые вы разместили</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Всего: {{ apartments().length }}</p>
+    @if (apartments().length === 0) {
+      <p class="empty">У вас пока нет объявлений. <a routerLink="/estate/submit">Подать объявление</a></p>
+    } @else {
+      <div class="estate-grid">
+        @for (apt of apartments(); track apt.id) {
+          <a [routerLink]="['/estate/apartment', apt.id]" class="estate-card">
+            <div class="estate-card-image">
+              @if (firstImage(apt); as src) {
+                <img [src]="src" [alt]="apt.title" />
+              } @else {
+                <div class="estate-card-placeholder">Нет фото</div>
+              }
+            </div>
+            <div class="estate-card-body">
+              <h2 class="estate-card-title">{{ apt.title }}</h2>
+              <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
+              <p class="estate-card-meta">
+                {{ apt.city }}{{ apt.area_sqm ? ' · ' + apt.area_sqm + ' м²' : '' }}{{ apt.rooms ? ' · ' + apt.rooms + ' комн.' : '' }}
+              </p>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  }
+</div>

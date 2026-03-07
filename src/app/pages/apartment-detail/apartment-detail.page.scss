@@ -126,6 +126,20 @@
     margin-bottom: 0.35rem;
   }
 
+  .program-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .bank-logo-small {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
   a {
     color: var(--primary);
     text-decoration: none;
@@ -141,4 +155,46 @@
   margin: 1rem 0 0;
   font-size: 0.875rem;
   color: var(--text-muted, #6b7280);
+}
+
+.favorite-actions {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.favorite-actions .btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.favorite-actions .btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+}
+
+.favorite-actions .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+  transform: translateY(-1px);
+}
+
+.favorite-actions .btn-outline {
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.favorite-actions .btn-outline:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.favorite-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -1,8 +1,8 @@
 :host {
-  --primary: #4f46e5;
-  --primary-dark: #4338ca;
-  --text: #111827;
-  --text-muted: #6b7280;
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --text: #0f172a;
+  --text-muted: #64748b;
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
@@ -12,83 +12,139 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg, #f9fafb);
 }
 
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.875rem 1.5rem;
-  background: var(--bg-card, #fff);
-  border-bottom: 1px solid var(--border, #e5e7eb);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 4px 20px rgba(15, 23, 42, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-.logo {
-  font-weight: 700;
-  font-size: 1.35rem;
-  color: var(--primary);
+.logo-link {
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: -0.02em;
-  transition: color 0.2s;
+  transition: transform var(--transition, 0.2s ease);
 }
 
-.logo:hover {
-  color: var(--primary-dark);
+.logo-link:hover {
+  transform: scale(1.03);
+}
+
+.logo-img {
+  height: 44px;
+  width: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
 }
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 0.25rem;
 }
 
-.nav-links a {
-  color: var(--text-secondary, #4b5563);
+.nav-link {
+  color: var(--text-secondary, #475569);
   text-decoration: none;
   font-size: 0.9375rem;
   font-weight: 500;
   padding: 0.5rem 0.875rem;
-  border-radius: 8px;
-  transition: color 0.2s, background 0.2s;
+  border-radius: 10px;
+  transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
   color: var(--primary);
-  background: var(--primary-light, rgba(79, 70, 229, 0.08));
+  background: var(--primary-light, rgba(14, 165, 233, 0.08));
 }
 
-.nav-links a.active {
+.nav-link.active {
   color: var(--primary);
-  background: var(--primary-light, rgba(79, 70, 229, 0.1));
+  background: var(--primary-light, rgba(14, 165, 233, 0.12));
+  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.2);
 }
 
 .nav-logout {
-  border: none;
-  margin-left: 0.25rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  background: #fee2e2;
-  color: #b91c1c;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.05s ease,
-    box-shadow 0.1s ease;
+  color: #dc2626;
 }
 
 .nav-logout:hover {
-  background: #fecaca;
-  color: #991b1b;
-  box-shadow: 0 6px 14px rgba(248, 113, 113, 0.4);
-  transform: translateY(-1px);
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  min-width: 180px;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md, 0 12px 24px rgba(15, 23, 42, 0.1));
+  border: 1px solid var(--border, #e2e8f0);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+  z-index: 100;
+}
+
+.dropdown-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.5rem 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dropdown-item:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.dropdown-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .main {
   flex: 1;
   padding: 0;
-  background: linear-gradient(180deg, #ffffff 0%, var(--bg, #f9fafb) 120px);
 }

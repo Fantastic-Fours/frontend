@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
 import {
   calcAnnuity,
@@ -133,6 +134,10 @@ export class ProgramDetailPage implements OnInit {
 
   housingTypeLabel(type: string): string {
     return type === 'primary' ? 'Первичное жильё' : type === 'secondary' ? 'Вторичное жильё' : type;
+  }
+
+  getBankLogo(bankName: string): string | null {
+    return getBankLogoPath(bankName);
   }
 
   getScheduleRows(): ScheduleRow[] {

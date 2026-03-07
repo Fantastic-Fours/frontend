@@ -16,8 +16,13 @@
         <article class="program-card">
           <div class="card-main">
             <div class="card-header">
-              <h2 class="program-name">{{ p.name }}</h2>
-              <span class="bank-name">{{ p.bank_name }}</span>
+              @if (getBankLogo(p.bank_name); as logo) {
+                <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
+              }
+              <div class="card-header-text">
+                <h2 class="program-name">{{ p.name }}</h2>
+                <span class="bank-name">{{ p.bank_name }}</span>
+              </div>
             </div>
             <ul class="card-info">
               <li><strong>Ставка:</strong> {{ p.interest_rate }}%</li>

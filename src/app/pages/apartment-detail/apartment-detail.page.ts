@@ -1,6 +1,9 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { UserApiService } from '../../core/services/user-api.service';
+import { AuthTokenService } from '../../core/services/auth-token.service';
+import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { Apartment } from '../../core/interfaces/apartment.types';
 
 @Component({
@@ -13,10 +16,17 @@ import type { Apartment } from '../../core/interfaces/apartment.types';
 export class ApartmentDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly mortgageApi = inject(MortgageApiService);
+  private readonly userApi = inject(UserApiService);
+  private readonly authTokens = inject(AuthTokenService);
 
   apartment = signal<Apartment | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
+  /** SavedApartment id if this apartment is in user's saved list. */
+  savedId = signal<number | null>(null);
+  saving = signal(false);
+
+  isAuthenticated = computed(() => this.authTokens.hasTokens());
 
   id = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -38,10 +48,50 @@ export class ApartmentDetailPage implements OnInit {
       next: (data) => {
         this.apartment.set(data);
         this.loading.set(false);
+        if (this.authTokens.hasTokens()) {
+          this.userApi.getSavedApartments(1, 100).subscribe({
+            next: (res) => {
+              const found = res.results?.find((item) => item.apartment?.id === data.id);
+              if (found) this.savedId.set(found.id);
+            },
+          });
+        }
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
+      },
+    });
+  }
+
+  addToSaved(): void {
+    const apt = this.apartment();
+    if (!apt?.id || this.saving()) return;
+    this.saving.set(true);
+    this.userApi.addSavedApartment({ apartment_id: apt.id }).subscribe({
+      next: (res) => {
+        this.savedId.set(res.id);
+        this.saving.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка добавления в избранное');
+        this.saving.set(false);
+      },
+    });
+  }
+
+  removeFromSaved(): void {
+    const id = this.savedId();
+    if (id == null || this.saving()) return;
+    this.saving.set(true);
+    this.userApi.removeSavedApartment(id).subscribe({
+      next: () => {
+        this.savedId.set(null);
+        this.saving.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка удаления из избранного');
+        this.saving.set(false);
       },
     });
   }
@@ -67,6 +117,10 @@ export class ApartmentDetailPage implements OnInit {
   getProgramsList(apt: Apartment): { id: number; name: string; bank_name: string; interest_rate: number }[] {
     const list = apt['allowed_programs'];
     return Array.isArray(list) ? list : [];
+  }
+
+  getBankLogo(bankName: string): string | null {
+    return getBankLogoPath(bankName);
   }
 
   backLink(): string {

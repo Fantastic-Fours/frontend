@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, PLATFORM_ID, inject } from '@angul
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
 
 const PAGE_SIZE = 10;
@@ -71,5 +72,9 @@ export class ProgramsListPage implements OnInit {
 
   housingTypeLabel(type: string): string {
     return type === 'primary' ? 'Первичка' : type === 'secondary' ? 'Вторичка' : type;
+  }
+
+  getBankLogo(bankName: string): string | null {
+    return getBankLogoPath(bankName);
   }
 }

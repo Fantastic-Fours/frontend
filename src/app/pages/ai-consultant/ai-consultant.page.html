@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="header">
+    <h1>AI-консультант</h1>
+    <p class="subtitle">Задайте вопрос по ипотеке. Укажите параметры для персонализированных рекомендаций.</p>
+  </div>
+
+  <div class="context-section">
+    <h2 class="context-title">Параметры (необязательно)</h2>
+    <div class="context-grid">
+      <div class="field">
+        <label for="ctx-income">Доход (тг/мес)</label>
+        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" placeholder="500000" />
+      </div>
+      <div class="field">
+        <label for="ctx-down">Первоначальный взнос</label>
+        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" placeholder="10000000" />
+      </div>
+      <div class="field">
+        <label for="ctx-term">Срок (лет)</label>
+        <input id="ctx-term" type="number" [(ngModel)]="contextTermYears" placeholder="20" />
+      </div>
+      <div class="field">
+        <label for="ctx-type">Тип жилья</label>
+        <input id="ctx-type" type="text" [(ngModel)]="contextHousingType" placeholder="primary / secondary" />
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  <div class="chat">
+    <div class="messages">
+      @if (messages().length === 0) {
+        <p class="placeholder">Напишите сообщение ниже и нажмите «Отправить».</p>
+      }
+      @for (msg of messages(); track $index) {
+        <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'">
+          <span class="message-role">{{ msg.role === 'user' ? 'Вы' : 'Консультант' }}</span>
+          <p class="message-text">{{ msg.text }}</p>
+          @if (msg.role === 'assistant' && msg.suggestedPrograms?.length) {
+            <p class="suggestions-label">Рекомендованные программы:</p>
+            <ul class="suggestions-list">
+              @for (name of msg.suggestedPrograms; track $index) {
+                <li>{{ name }}</li>
+              }
+            </ul>
+          }
+          @if (msg.role === 'assistant' && msg.suggestedApartmentIds?.length) {
+            <p class="suggestions-label">Рекомендованные квартиры:</p>
+            <ul class="suggestions-list">
+              @for (id of msg.suggestedApartmentIds; track $index) {
+                <li><a [routerLink]="['/estate/apartment', id]">Квартира #{{ id }}</a></li>
+              }
+            </ul>
+          }
+        </div>
+      }
+      @if (loading()) {
+        <div class="message message-assistant">
+          <span class="message-role">Консультант</span>
+          <p class="message-text typing">Отвечаю…</p>
+        </div>
+      }
+    </div>
+
+    <form class="input-row" (ngSubmit)="send()">
+      <input
+        type="text"
+        class="input-message"
+        [(ngModel)]="message"
+        name="message"
+        placeholder="Ваш вопрос..."
+        [disabled]="loading()"
+      />
+      <button type="submit" class="btn btn-primary" [disabled]="loading()">
+        {{ loading() ? '…' : 'Отправить' }}
+      </button>
+    </form>
+  </div>
+</div>

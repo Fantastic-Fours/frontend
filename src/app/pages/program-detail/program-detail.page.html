@@ -8,8 +8,13 @@
     <a routerLink="/programs" class="back-link">← К списку программ</a>
 
     <header class="detail-header">
-      <h1>{{ p.name }}</h1>
-      <p class="bank-name">{{ p.bank_name }}</p>
+      @if (getBankLogo(p.bank_name); as logo) {
+        <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
+      }
+      <div class="detail-header-text">
+        <h1>{{ p.name }}</h1>
+        <p class="bank-name">{{ p.bank_name }}</p>
+      </div>
     </header>
 
     <section class="detail-section">

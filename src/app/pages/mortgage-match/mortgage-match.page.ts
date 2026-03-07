@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { MortgageProgramItem, MortgageMatchRequest } from '../../core/interfaces/mortgage.types';
 import { DecimalPipe } from '@angular/common';
 
@@ -95,6 +96,10 @@ export class MortgageMatchPage {
         this.error = err?.error?.detail ?? err?.message ?? 'Ошибка подбора программ';
       },
     });
+  }
+
+  getBankLogo(bankName: string): string | null {
+    return getBankLogoPath(bankName);
   }
 
   formatMoney(value: string): string {
