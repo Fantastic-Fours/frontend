@@ -22,13 +22,34 @@ export interface AuthRefreshResponse {
 
 /** Request body for POST /api/auth/register/ */
 export interface AuthRegisterRequest {
-  username: string;
+  email: string;
   password: string;
   password_confirm: string;
 }
 
 /** Response from POST /api/auth/register/ */
 export interface AuthRegisterResponse {
-  id: number;
-  username: string;
+  detail: string;
+  email: string;
+}
+
+/** Request body for POST /api/auth/verify-code/ */
+export interface AuthVerifyCodeRequest {
+  email: string;
+  code: string;
+}
+
+/** Response from POST /api/auth/verify-code/ */
+export interface AuthVerifyCodeResponse {
+  detail: string;
+}
+
+/** Request body for POST /api/auth/resend-code/ */
+export interface AuthResendCodeRequest {
+  email: string;
+}
+
+/** Response from POST /api/auth/resend-code/ */
+export interface AuthResendCodeResponse {
+  detail: string;
 }

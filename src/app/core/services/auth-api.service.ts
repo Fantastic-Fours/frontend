@@ -9,6 +9,10 @@ import type {
   AuthRefreshResponse,
   AuthRegisterRequest,
   AuthRegisterResponse,
+  AuthVerifyCodeRequest,
+  AuthVerifyCodeResponse,
+  AuthResendCodeRequest,
+  AuthResendCodeResponse,
 } from '../interfaces/auth.types';
 import { AuthTokenService } from './auth-token.service';
 
@@ -56,6 +60,28 @@ export class AuthApiService {
   register(payload: AuthRegisterRequest): Observable<AuthRegisterResponse> {
     return this.http.post<AuthRegisterResponse>(
       `${this.base}${API_PATHS.auth.register}`,
+      payload
+    );
+  }
+
+  /**
+   * POST /api/auth/verify-code/
+   * Activate account by email verification code.
+   */
+  verifyCode(payload: AuthVerifyCodeRequest): Observable<AuthVerifyCodeResponse> {
+    return this.http.post<AuthVerifyCodeResponse>(
+      `${this.base}${API_PATHS.auth.verifyCode}`,
+      payload
+    );
+  }
+
+  /**
+   * POST /api/auth/resend-code/
+   * Resend verification code.
+   */
+  resendCode(payload: AuthResendCodeRequest): Observable<AuthResendCodeResponse> {
+    return this.http.post<AuthResendCodeResponse>(
+      `${this.base}${API_PATHS.auth.resendCode}`,
       payload
     );
   }

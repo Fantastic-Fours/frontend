@@ -9,13 +9,13 @@
       }
 
       <div class="field">
-        <label for="username">Логин</label>
+        <label for="username">Email</label>
         <input
           id="username"
-          type="text"
+          type="email"
           formControlName="username"
-          autocomplete="username"
-          placeholder="Введите логин"
+          autocomplete="email"
+          placeholder="Введите email"
         />
         @if (form.get('username')?.invalid && form.get('username')?.touched) {
           <span class="field-error">Обязательное поле</span>

@@ -5,7 +5,17 @@
   @if (!form) {
     <p class="loading">Проверка авторизации…</p>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    @if (profileLoading) {
+      <p class="loading">Проверка профиля…</p>
+    } @else if (!canSubmit) {
+      <div class="error" role="alert">
+        Чтобы подать объявление, укажите номер телефона в профиле.
+        <div style="margin-top: 0.5rem;">
+          <a routerLink="/profile">Перейти в профиль</a>
+        </div>
+      </div>
+    }
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form" [class.disabled]="!canSubmit">
       @if (error) {
         <div class="error" role="alert">{{ error }}</div>
       }
@@ -33,7 +43,11 @@
         </div>
         <div class="field">
           <label for="city">Город *</label>
-          <input id="city" type="text" formControlName="city" placeholder="Алматы" />
+          <select id="city" formControlName="city">
+            @for (c of cities; track c) {
+              <option [value]="c">{{ c }}</option>
+            }
+          </select>
           @if (form.get('city')?.invalid && form.get('city')?.touched) {
             <span class="field-error">Обязательное поле</span>
           }
@@ -73,11 +87,19 @@
       </div>
 
       <div class="field">
-        <label for="imagesStr">Ссылки на фото (через запятую)</label>
-        <input id="imagesStr" type="text" formControlName="imagesStr" placeholder="https://..., https://..." />
+        <label for="property_type">Тип недвижимости *</label>
+        <select id="property_type" formControlName="property_type">
+          <option value="apartment">Квартира</option>
+          <option value="house">Дом</option>
+        </select>
       </div>
 
-      <button type="submit" class="btn btn-primary" [disabled]="loading">
+      <div class="field">
+        <label for="images_files">Фотографии (можно несколько)</label>
+        <input id="images_files" type="file" multiple accept="image/*" (change)="onFilesSelected($event)" />
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading || !canSubmit">
         {{ loading ? 'Публикация…' : 'Опубликовать объявление' }}
       </button>
     </form>

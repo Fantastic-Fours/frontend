@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, inject, signal, computed } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { UserApiService } from '../../core/services/user-api.service';
@@ -13,11 +14,12 @@ import type { Apartment } from '../../core/interfaces/apartment.types';
   templateUrl: './apartment-detail.page.html',
   styleUrl: './apartment-detail.page.scss',
 })
-export class ApartmentDetailPage implements OnInit {
+export class ApartmentDetailPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly userApi = inject(UserApiService);
   private readonly authTokens = inject(AuthTokenService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   apartment = signal<Apartment | null>(null);
   loading = signal(true);
@@ -27,6 +29,9 @@ export class ApartmentDetailPage implements OnInit {
   saving = signal(false);
 
   isAuthenticated = computed(() => this.authTokens.hasTokens());
+  slideIndex = signal(0);
+  autoplay = signal(true);
+  private autoplayHandle: number | null = null;
 
   id = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -47,6 +52,8 @@ export class ApartmentDetailPage implements OnInit {
     this.mortgageApi.getApartment(id).subscribe({
       next: (data) => {
         this.apartment.set(data);
+        this.slideIndex.set(0);
+        this.setupAutoplay();
         this.loading.set(false);
         if (this.authTokens.hasTokens()) {
           this.userApi.getSavedApartments(1, 100).subscribe({
@@ -62,6 +69,10 @@ export class ApartmentDetailPage implements OnInit {
         this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.clearAutoplay();
   }
 
   addToSaved(): void {
@@ -111,6 +122,63 @@ export class ApartmentDetailPage implements OnInit {
     const imgs = apt['images'];
     if (Array.isArray(imgs)) return imgs.filter((u): u is string => typeof u === 'string');
     return [];
+  }
+
+  currentImage(): string | null {
+    const apt = this.apartment();
+    if (!apt) return null;
+    const imgs = this.getImages(apt);
+    if (imgs.length === 0) return null;
+    const idx = Math.min(Math.max(this.slideIndex(), 0), imgs.length - 1);
+    return imgs[idx] ?? null;
+  }
+
+  hasCarousel(): boolean {
+    const apt = this.apartment();
+    if (!apt) return false;
+    return this.getImages(apt).length > 1;
+  }
+
+  prevSlide(): void {
+    const apt = this.apartment();
+    if (!apt) return;
+    const imgs = this.getImages(apt);
+    if (imgs.length === 0) return;
+    const next = (this.slideIndex() - 1 + imgs.length) % imgs.length;
+    this.slideIndex.set(next);
+  }
+
+  nextSlide(): void {
+    const apt = this.apartment();
+    if (!apt) return;
+    const imgs = this.getImages(apt);
+    if (imgs.length === 0) return;
+    const next = (this.slideIndex() + 1) % imgs.length;
+    this.slideIndex.set(next);
+  }
+
+  goToSlide(i: number): void {
+    const apt = this.apartment();
+    if (!apt) return;
+    const imgs = this.getImages(apt);
+    if (i < 0 || i >= imgs.length) return;
+    this.slideIndex.set(i);
+  }
+
+  private setupAutoplay(): void {
+    this.clearAutoplay();
+    if (!isPlatformBrowser(this.platformId)) return;
+    const apt = this.apartment();
+    if (!apt) return;
+    if (!this.autoplay() || this.getImages(apt).length < 2) return;
+    this.autoplayHandle = window.setInterval(() => this.nextSlide(), 4000);
+  }
+
+  private clearAutoplay(): void {
+    if (this.autoplayHandle != null && isPlatformBrowser(this.platformId)) {
+      window.clearInterval(this.autoplayHandle);
+    }
+    this.autoplayHandle = null;
   }
 
   /** Allowed programs from API (array of { id, name, bank_name, interest_rate }). */

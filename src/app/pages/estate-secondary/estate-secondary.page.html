@@ -2,6 +2,121 @@
   <h1>Вторичная недвижимость</h1>
   <p class="subtitle">Квартиры на вторичном рынке</p>
 
+  <section class="filters" aria-label="Фильтры">
+    <div class="filters-row">
+      <div class="filter">
+        <label>Город</label>
+        <select
+          [value]="filters().city"
+          (change)="applyFilters({ city: ($any($event.target).value) })"
+        >
+          @for (c of cities; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter">
+        <label>Тип</label>
+        <select
+          [value]="filters().property_type ?? ''"
+          (change)="applyFilters({ property_type: ($any($event.target).value) || undefined })"
+        >
+          <option value="">Любой</option>
+          <option value="apartment">Квартира</option>
+          <option value="house">Дом</option>
+        </select>
+      </div>
+
+      <div class="filter">
+        <label>Комнат</label>
+        <select
+          [value]="filters().min_rooms ?? ''"
+          (change)="applyFilters({ rooms: undefined, min_rooms: toInt($any($event.target).value) })"
+        >
+          <option value="">Любое</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <div class="filter">
+        <label>Цена от</label>
+        <input
+          type="number"
+          [value]="filters().min_price ?? ''"
+          (change)="applyFilters({ min_price: toFloat($any($event.target).value) })"
+          placeholder="0"
+          min="0"
+        />
+      </div>
+      <div class="filter">
+        <label>Цена до</label>
+        <input
+          type="number"
+          [value]="filters().max_price ?? ''"
+          (change)="applyFilters({ max_price: toFloat($any($event.target).value) })"
+          placeholder="0"
+          min="0"
+        />
+      </div>
+      <div class="filter">
+        <label>Площадь от (м²)</label>
+        <input
+          type="number"
+          [value]="filters().min_area ?? ''"
+          (change)="applyFilters({ min_area: toFloat($any($event.target).value) })"
+          placeholder="0"
+          min="0"
+          step="0.01"
+        />
+      </div>
+      <div class="filter">
+        <label>Площадь до (м²)</label>
+        <input
+          type="number"
+          [value]="filters().max_area ?? ''"
+          (change)="applyFilters({ max_area: toFloat($any($event.target).value) })"
+          placeholder="0"
+          min="0"
+          step="0.01"
+        />
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <div class="filter">
+        <label>Этаж</label>
+        <input
+          type="number"
+          [value]="filters().floor ?? ''"
+          (change)="applyFilters({ floor: toInt($any($event.target).value) })"
+          placeholder="Любой"
+          min="0"
+        />
+      </div>
+      <div class="filter">
+        <label>Этажность</label>
+        <input
+          type="number"
+          [value]="filters().total_floors ?? ''"
+          (change)="applyFilters({ total_floors: toInt($any($event.target).value) })"
+          placeholder="Любая"
+          min="0"
+        />
+      </div>
+
+      <div class="filter actions">
+        <label class="sr-only">Действия</label>
+        <button type="button" class="btn btn-secondary" (click)="clearFilters()">Сбросить</button>
+      </div>
+    </div>
+  </section>
+
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }

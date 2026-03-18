@@ -17,10 +17,29 @@
       </p>
 
       @if (getImages(apt).length > 0) {
-        <div class="apartment-gallery">
-          @for (src of getImages(apt); track src) {
-            <div class="gallery-item">
-              <img [src]="src" alt="" />
+        <div class="carousel">
+          <div class="carousel-stage">
+            @if (currentImage(); as src) {
+              <img [src]="src" [alt]="apt.title ?? ''" class="carousel-image" />
+            }
+
+            @if (hasCarousel()) {
+              <button type="button" class="carousel-btn prev" (click)="prevSlide()" aria-label="Предыдущее фото">‹</button>
+              <button type="button" class="carousel-btn next" (click)="nextSlide()" aria-label="Следующее фото">›</button>
+            }
+          </div>
+
+          @if (hasCarousel()) {
+            <div class="carousel-dots" role="tablist" aria-label="Галерея">
+              @for (src of getImages(apt); track src; let i = $index) {
+                <button
+                  type="button"
+                  class="dot"
+                  [class.active]="i === slideIndex()"
+                  (click)="goToSlide(i)"
+                  [attr.aria-label]="'Фото ' + (i + 1)"
+                ></button>
+              }
             </div>
           }
         </div>

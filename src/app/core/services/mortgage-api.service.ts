@@ -8,6 +8,8 @@ import type {
   MortgageProgramsResponse,
   MortgageProgramItem,
   ProgramListItem,
+  MortgageNNPredictRequest,
+  MortgageNNPredictResponse,
 } from '../interfaces/mortgage.types';
 import type {
   ApartmentsListParams,
@@ -29,6 +31,17 @@ export class MortgageApiService {
   match(params: MortgageMatchRequest): Observable<MortgageMatchResponse> {
     return this.http.post<MortgageMatchResponse>(
       `${this.base}${API_PATHS.mortgage.match}`,
+      params
+    );
+  }
+
+  /**
+   * POST /api/mortgage/predict/
+   * Neural recommender: returns top-3 programs.
+   */
+  predict(params: MortgageNNPredictRequest): Observable<MortgageNNPredictResponse> {
+    return this.http.post<MortgageNNPredictResponse>(
+      `${this.base}${API_PATHS.mortgage.predict}`,
       params
     );
   }
@@ -92,6 +105,18 @@ export class MortgageApiService {
       if (params.housing_type != null) httpParams = httpParams.set('housing_type', params.housing_type);
       if (params.min_price != null) httpParams = httpParams.set('min_price', String(params.min_price));
       if (params.max_price != null) httpParams = httpParams.set('max_price', String(params.max_price));
+      if (params.rooms != null) httpParams = httpParams.set('rooms', String(params.rooms));
+      if (params.min_rooms != null) httpParams = httpParams.set('min_rooms', String(params.min_rooms));
+      if (params.max_rooms != null) httpParams = httpParams.set('max_rooms', String(params.max_rooms));
+      if (params.property_type != null) httpParams = httpParams.set('property_type', params.property_type);
+      if (params.min_area != null) httpParams = httpParams.set('min_area', String(params.min_area));
+      if (params.max_area != null) httpParams = httpParams.set('max_area', String(params.max_area));
+      if (params.floor != null) httpParams = httpParams.set('floor', String(params.floor));
+      if (params.min_floor != null) httpParams = httpParams.set('min_floor', String(params.min_floor));
+      if (params.max_floor != null) httpParams = httpParams.set('max_floor', String(params.max_floor));
+      if (params.total_floors != null) httpParams = httpParams.set('total_floors', String(params.total_floors));
+      if (params.min_total_floors != null) httpParams = httpParams.set('min_total_floors', String(params.min_total_floors));
+      if (params.max_total_floors != null) httpParams = httpParams.set('max_total_floors', String(params.max_total_floors));
       if (params.page != null) httpParams = httpParams.set('page', String(params.page));
       if (params.page_size != null) httpParams = httpParams.set('page_size', String(params.page_size));
     }
@@ -116,10 +141,23 @@ export class MortgageApiService {
    * Create apartment. JWT required.
    */
   createApartment(body: Partial<Apartment>): Observable<Apartment> {
-    return this.http.post<Apartment>(
-      `${this.base}${API_PATHS.mortgage.apartments}`,
-      body
-    );
+    const anyBody = body as any;
+    const imagesFiles: File[] | undefined = anyBody?.images_files;
+    if (Array.isArray(imagesFiles) && imagesFiles.length > 0) {
+      const fd = new FormData();
+      Object.entries(body).forEach(([k, v]) => {
+        if (v == null) return;
+        if (k === 'images_files') return;
+        if (Array.isArray(v)) {
+          v.forEach((item) => fd.append(k, String(item)));
+        } else {
+          fd.append(k, String(v));
+        }
+      });
+      imagesFiles.forEach((f) => fd.append('images_files', f));
+      return this.http.post<Apartment>(`${this.base}${API_PATHS.mortgage.apartments}`, fd);
+    }
+    return this.http.post<Apartment>(`${this.base}${API_PATHS.mortgage.apartments}`, body);
   }
 
   /**
@@ -127,10 +165,23 @@ export class MortgageApiService {
    * Update apartment. JWT required (owner).
    */
   updateApartment(id: number, body: Partial<Apartment>): Observable<Apartment> {
-    return this.http.patch<Apartment>(
-      `${this.base}${API_PATHS.mortgage.apartmentDetail(id)}`,
-      body
-    );
+    const anyBody = body as any;
+    const imagesFiles: File[] | undefined = anyBody?.images_files;
+    if (Array.isArray(imagesFiles)) {
+      const fd = new FormData();
+      Object.entries(body).forEach(([k, v]) => {
+        if (v == null) return;
+        if (k === 'images_files') return;
+        if (Array.isArray(v)) {
+          v.forEach((item) => fd.append(k, String(item)));
+        } else {
+          fd.append(k, String(v));
+        }
+      });
+      imagesFiles.forEach((f) => fd.append('images_files', f));
+      return this.http.patch<Apartment>(`${this.base}${API_PATHS.mortgage.apartmentDetail(id)}`, fd);
+    }
+    return this.http.patch<Apartment>(`${this.base}${API_PATHS.mortgage.apartmentDetail(id)}`, body);
   }
 
   /**

@@ -37,6 +37,20 @@ h1 {
   border: 1px solid #fecaca;
 }
 
+.error a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.error a:hover {
+  text-decoration: underline;
+}
+
+.form.disabled {
+  opacity: 0.85;
+}
+
 .field {
   display: flex;
   flex-direction: column;

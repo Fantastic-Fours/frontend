@@ -5,6 +5,7 @@ export const routes: Routes = [
   { path: 'about', loadComponent: () => import('./pages/about/about').then((m) => m.About) },
   { path: 'login', loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage) },
   { path: 'register', loadComponent: () => import('./pages/register/register.page').then((m) => m.RegisterPage) },
+  { path: 'verify-email', loadComponent: () => import('./pages/verify-email/verify-email.page').then((m) => m.VerifyEmailPage) },
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage) },
   { path: 'profile/saved-apartments', loadComponent: () => import('./pages/saved-apartments/saved-apartments.page').then((m) => m.SavedApartmentsPage) },
   { path: 'profile/calculation-history', loadComponent: () => import('./pages/calculation-history/calculation-history.page').then((m) => m.CalculationHistoryPage) },

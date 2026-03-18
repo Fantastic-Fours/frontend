@@ -2,7 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
-import type { MortgageProgramItem, MortgageMatchRequest } from '../../core/interfaces/mortgage.types';
+import type {
+  MortgageProgramItem,
+  MortgageMatchRequest,
+  MortgageNNPredictItem,
+  MortgageNNPredictRequest,
+} from '../../core/interfaces/mortgage.types';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -15,6 +20,7 @@ import { DecimalPipe } from '@angular/common';
 export class MortgageMatchPage {
   form: FormGroup;
   programs: MortgageProgramItem[] = [];
+  aiTop3: MortgageNNPredictItem[] = [];
   totalCount = 0;
   loading = false;
   error: string | null = null;
@@ -42,6 +48,7 @@ export class MortgageMatchPage {
     private mortgageApi: MortgageApiService
   ) {
     this.form = this.fb.nonNullable.group({
+      mode: ['rules' as const],
       price: [50000000, [Validators.required, Validators.min(1)]],
       down_payment: [10000000, [Validators.required, Validators.min(0)]],
       income: [500000, [Validators.required, Validators.min(0)]],
@@ -54,6 +61,10 @@ export class MortgageMatchPage {
       has_housing: [null as boolean | null],
       sort_by: ['score' as const],
     });
+  }
+
+  get mode(): 'rules' | 'ai' {
+    return (this.form.get('mode')?.value as 'rules' | 'ai') ?? 'rules';
   }
 
   get tagsStr(): string {
@@ -85,6 +96,36 @@ export class MortgageMatchPage {
       has_housing: raw.has_housing ?? undefined,
       sort_by: raw.sort_by,
     };
+    this.programs = [];
+    this.aiTop3 = [];
+
+    if (this.mode === 'ai') {
+      const aiParams: MortgageNNPredictRequest = {
+        price: params.price,
+        down_payment: params.down_payment,
+        income: params.income,
+        expenses: params.expenses,
+        term_years: params.term_years,
+        housing_type: params.housing_type,
+        tags: params.tags,
+        require_income_confirmation: params.require_income_confirmation,
+        children_under_18: params.children_under_18,
+        has_housing: raw.has_housing ?? null,
+      };
+      this.mortgageApi.predict(aiParams).subscribe({
+        next: (res) => {
+          this.aiTop3 = res.top3 ?? [];
+          this.totalCount = this.aiTop3.length;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = err?.error?.detail ?? err?.message ?? 'Ошибка AI рекомендаций';
+        },
+      });
+      return;
+    }
+
     this.mortgageApi.match(params).subscribe({
       next: (res) => {
         this.programs = res.programs;

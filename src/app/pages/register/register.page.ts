@@ -21,7 +21,7 @@ export class RegisterPage {
     private router: Router
   ) {
     this.form = this.fb.nonNullable.group({
-      username: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       password_confirm: ['', Validators.required],
     });
@@ -32,25 +32,25 @@ export class RegisterPage {
       this.form.markAllAsTouched();
       return;
     }
-    const { username, password, password_confirm } = this.form.getRawValue();
+    const { email, password, password_confirm } = this.form.getRawValue();
     if (password !== password_confirm) {
       this.error = 'Пароли не совпадают.';
       return;
     }
     this.error = null;
     this.loading = true;
-    this.authApi.register({ username, password, password_confirm }).subscribe({
-      next: () => {
+    this.authApi.register({ email, password, password_confirm }).subscribe({
+      next: (res) => {
         this.loading = false;
-        this.router.navigate(['/login']);
+        this.router.navigate(['/verify-email'], { queryParams: { email: res.email } });
       },
       error: (err) => {
         this.loading = false;
-        const msg = err?.error?.username?.[0]
+        const msg = err?.error?.email?.[0]
           ?? err?.error?.password?.[0]
           ?? err?.error?.password_confirm?.[0]
           ?? err?.error?.detail
-          ?? 'Ошибка регистрации. Попробуйте другой логин.';
+          ?? 'Ошибка регистрации. Попробуйте другой email.';
         this.error = typeof msg === 'string' ? msg : String(msg);
       },
     });

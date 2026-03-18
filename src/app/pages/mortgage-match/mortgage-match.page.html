@@ -74,6 +74,16 @@
         <h3 class="optional-title">Дополнительно</h3>
         <div class="grid">
           <div class="field">
+            <label for="mode">Режим</label>
+            <select id="mode" formControlName="mode">
+              <option value="rules">Правила (match)</option>
+              <option value="ai">AI рекомендации (Top-3)</option>
+            </select>
+          </div>
+          <div class="field"></div>
+        </div>
+        <div class="grid">
+          <div class="field">
             <label for="sort_by">Сортировка</label>
             <select id="sort_by" formControlName="sort_by">
               @for (opt of sortByOptions; track opt.value) {
@@ -105,7 +115,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Подбор…' : 'Подобрать программы' }}
+        {{ loading ? 'Подбор…' : (mode === 'ai' ? 'Рекомендовать (AI)' : 'Подобрать программы') }}
       </button>
     </form>
   </div>
@@ -113,7 +123,34 @@
   @if (submitted && !loading) {
     <div class="section results-section">
       <h2>Результаты ({{ totalCount }})</h2>
-      @if (programs.length === 0) {
+      @if (mode === 'ai') {
+        @if (aiTop3.length === 0) {
+          <p class="empty">Рекомендации не найдены.</p>
+        } @else {
+          <div class="programs">
+            @for (p of aiTop3; track p.program_id) {
+              <article class="program-card">
+                <div class="program-header">
+                  @if (getBankLogo(p.bank_name); as logo) {
+                    <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
+                  }
+                  <div class="program-header-text">
+                    <h3>{{ p.program_name }}</h3>
+                    <span class="bank">{{ p.bank_name }}</span>
+                  </div>
+                </div>
+                <div class="program-score">AI score: {{ p.score | number : '1.2-2' }}</div>
+                <dl class="program-details">
+                  <div>
+                    <dt>Ставка</dt>
+                    <dd>{{ p.interest_rate }}%</dd>
+                  </div>
+                </dl>
+              </article>
+            }
+          </div>
+        }
+      } @else if (programs.length === 0) {
         <p class="empty">По заданным параметрам программы не найдены.</p>
       } @else {
         <div class="programs">

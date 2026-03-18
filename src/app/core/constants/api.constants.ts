@@ -5,9 +5,12 @@ export const API_PATHS = {
     token: '/auth/token/',
     refresh: '/auth/token/refresh/',
     register: '/auth/register/',
+    verifyCode: '/auth/verify-code/',
+    resendCode: '/auth/resend-code/',
   },
   mortgage: {
     match: '/mortgage/match/',
+    predict: '/mortgage/predict/',
     programs: '/mortgage/programs/',
     programDetail: (id: number) => `/mortgage/programs/${id}/`,
     apartments: '/mortgage/apartments/',

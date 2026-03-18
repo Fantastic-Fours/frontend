@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import type { Apartment } from '../../core/interfaces/apartment.types';
+import { KZ_BIG_CITIES } from '../../core/constants/kz-cities.constants';
 
 const PAGE_SIZE = 12;
 
@@ -23,6 +24,20 @@ export class EstateSecondaryPage implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
+  cities = KZ_BIG_CITIES;
+  filters = signal({
+    city: 'Алматы',
+    min_price: undefined as number | undefined,
+    max_price: undefined as number | undefined,
+    rooms: undefined as number | undefined,
+    min_rooms: undefined as number | undefined,
+    property_type: 'apartment' as string | undefined,
+    min_area: undefined as number | undefined,
+    max_area: undefined as number | undefined,
+    floor: undefined as number | undefined,
+    total_floors: undefined as number | undefined,
+  });
+
   totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / PAGE_SIZE)));
   hasNext = computed(() => this.currentPage() < this.totalPages());
   hasPrev = computed(() => this.currentPage() > 1);
@@ -36,8 +51,23 @@ export class EstateSecondaryPage implements OnInit {
   loadPage(page: number): void {
     this.error.set(null);
     this.loading.set(true);
+    const f = this.filters();
     this.mortgageApi
-      .getApartments({ housing_type: 'secondary', page, page_size: PAGE_SIZE })
+      .getApartments({
+        housing_type: 'secondary',
+        page,
+        page_size: PAGE_SIZE,
+        city: f.city || undefined,
+        min_price: f.min_price,
+        max_price: f.max_price,
+        rooms: f.rooms,
+        min_rooms: f.min_rooms,
+        property_type: f.property_type,
+        min_area: f.min_area,
+        max_area: f.max_area,
+        floor: f.floor,
+        total_floors: f.total_floors,
+      })
       .subscribe({
         next: (res) => {
           this.apartments.set(res.results ?? []);
@@ -58,6 +88,41 @@ export class EstateSecondaryPage implements OnInit {
 
   prevPage(): void {
     if (this.hasPrev()) this.loadPage(this.currentPage() - 1);
+  }
+
+  applyFilters(next: any): void {
+    this.filters.set({ ...this.filters(), ...next });
+    this.loadPage(1);
+  }
+
+  clearFilters(): void {
+    this.filters.set({
+      city: 'Алматы',
+      min_price: undefined,
+      max_price: undefined,
+      rooms: undefined,
+      min_rooms: undefined,
+      property_type: 'apartment',
+      min_area: undefined,
+      max_area: undefined,
+      floor: undefined,
+      total_floors: undefined,
+    });
+    this.loadPage(1);
+  }
+
+  toInt(value: unknown): number | undefined {
+    const s = String(value ?? '').trim();
+    if (!s) return undefined;
+    const n = Number.parseInt(s, 10);
+    return Number.isFinite(n) ? n : undefined;
+  }
+
+  toFloat(value: unknown): number | undefined {
+    const s = String(value ?? '').trim();
+    if (!s) return undefined;
+    const n = Number.parseFloat(s);
+    return Number.isFinite(n) ? n : undefined;
   }
 
   formatMoney(value: string | number | undefined): string {

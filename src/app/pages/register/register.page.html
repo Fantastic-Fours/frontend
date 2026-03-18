@@ -9,20 +9,20 @@
       }
 
       <div class="field">
-        <label for="username">Логин</label>
+        <label for="email">Email</label>
         <input
-          id="username"
-          type="text"
-          formControlName="username"
-          autocomplete="username"
-          placeholder="Введите логин"
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="Введите email"
         />
-        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
           <span class="field-error">
-            @if (form.get('username')?.errors?.['required']) {
+            @if (form.get('email')?.errors?.['required']) {
               Обязательное поле
             } @else {
-              Минимум 2 символа
+              Введите корректный email
             }
           </span>
         }

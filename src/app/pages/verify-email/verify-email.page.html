@@ -1,0 +1,63 @@
+<div class="page">
+  <div class="card">
+    <h1>Подтверждение email</h1>
+    <p class="subtitle">Введите код, который мы отправили на ваш email</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      @if (error) {
+        <div class="error" role="alert">{{ error }}</div>
+      }
+      @if (success) {
+        <div class="success" role="status">{{ success }}</div>
+      }
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="Введите email"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="field-error">
+            @if (form.get('email')?.errors?.['required']) {
+              Обязательное поле
+            } @else {
+              Введите корректный email
+            }
+          </span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="code">Код (4–6 цифр)</label>
+        <input
+          id="code"
+          type="text"
+          inputmode="numeric"
+          formControlName="code"
+          autocomplete="one-time-code"
+          placeholder="Например: 123456"
+        />
+        @if (form.get('code')?.invalid && form.get('code')?.touched) {
+          <span class="field-error">Введите корректный код</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Проверка…' : 'Подтвердить' }}
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="onResend()" [disabled]="resendLoading">
+        {{ resendLoading ? 'Отправка…' : 'Отправить код ещё раз' }}
+      </button>
+    </form>
+
+    <p class="footer">
+      Уже подтвердили? <a routerLink="/login">Войти</a> · <a routerLink="/">На главную</a>
+    </p>
+  </div>
+</div>
+
