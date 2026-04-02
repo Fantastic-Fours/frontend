@@ -60,9 +60,14 @@ export class ProgramsListPage implements OnInit {
     if (this.hasPrev()) this.loadPage(this.currentPage() - 1);
   }
 
-  formatMoney(value: string): string {
+  formatMoney(value: string | null | undefined): string {
+    if (value == null || value === '') {
+      return '—';
+    }
     const num = parseFloat(value);
-    if (Number.isNaN(num)) return value;
+    if (Number.isNaN(num)) {
+      return '—';
+    }
     return new Intl.NumberFormat('ru-RU', {
       style: 'decimal',
       minimumFractionDigits: 0,

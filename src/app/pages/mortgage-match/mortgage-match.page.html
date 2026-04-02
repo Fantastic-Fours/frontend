@@ -112,6 +112,15 @@
             </label>
           </div>
         </div>
+        <div class="field full">
+          <label for="privileges">Льготы</label>
+          <select id="privileges" formControlName="privileges" multiple size="5">
+            @for (option of privilegeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          <span class="field-hint">Можно выбрать несколько значений, удерживая `Ctrl` / `Cmd`.</span>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">

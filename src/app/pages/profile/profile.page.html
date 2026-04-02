@@ -26,12 +26,31 @@
             <span class="label">Телефон</span>
             <span class="value">{{ p.phone || '—' }}</span>
           </div>
+          <div class="profile-row">
+            <span class="label">Льготы</span>
+            <span class="value">{{ getPrivilegeLabels(p.privileges) }}</span>
+          </div>
           <button type="button" class="btn btn-secondary btn-sm" (click)="toggleEdit()">Изменить</button>
         } @else {
           <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
             <div class="field">
               <label for="phone">Телефон</label>
               <input id="phone" type="text" formControlName="phone" placeholder="+7 ..." />
+            </div>
+            <div class="field">
+              <span class="label">Льготы</span>
+              <div class="checkbox-list">
+                @for (option of privilegeOptions; track option.value) {
+                  <label class="checkbox-item">
+                    <input
+                      type="checkbox"
+                      [checked]="isPrivilegeSelected(option.value)"
+                      (change)="onPrivilegeToggle(option.value, $any($event.target).checked)"
+                    />
+                    <span>{{ option.label }}</span>
+                  </label>
+                }
+              </div>
             </div>
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" (click)="toggleEdit()">Отмена</button>

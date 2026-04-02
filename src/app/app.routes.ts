@@ -4,6 +4,7 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'match' },
   { path: 'about', loadComponent: () => import('./pages/about/about').then((m) => m.About) },
   { path: 'login', loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage) },
+  { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password.page').then((m) => m.ForgotPasswordPage) },
   { path: 'register', loadComponent: () => import('./pages/register/register.page').then((m) => m.RegisterPage) },
   { path: 'verify-email', loadComponent: () => import('./pages/verify-email/verify-email.page').then((m) => m.VerifyEmailPage) },
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage) },

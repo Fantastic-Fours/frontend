@@ -122,14 +122,37 @@ export class ProgramDetailPage implements OnInit {
     this.calcResult.set(result);
   }
 
-  formatMoney(value: string | number): string {
-    const num = typeof value === 'number' ? value : parseFloat(value);
-    if (Number.isNaN(num)) return String(value);
+  formatMoney(value: string | number | null | undefined): string {
+    if (value == null || value === '') {
+      return '—';
+    }
+    const num = typeof value === 'number' ? value : parseFloat(String(value));
+    if (Number.isNaN(num)) {
+      return '—';
+    }
     return new Intl.NumberFormat('ru-RU', {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(num);
+  }
+
+  /** Удобные подписи для max_loan_by_region с бэка */
+  regionLoanLines(p: ProgramListItem): { label: string; amount: string }[] {
+    const raw = p.max_loan_by_region;
+    if (!raw || typeof raw !== 'object') {
+      return [];
+    }
+    const labels: Record<string, string> = {
+      astana_almaty: 'Астана и Алматы',
+      other_regions: 'Прочие регионы РК',
+    };
+    return Object.entries(raw)
+      .filter(([, v]) => v != null && String(v).trim() !== '')
+      .map(([key, v]) => ({
+        label: labels[key] ?? key,
+        amount: `${this.formatMoney(String(v))} ₸`,
+      }));
   }
 
   housingTypeLabel(type: string): string {

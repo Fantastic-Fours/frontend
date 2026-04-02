@@ -13,6 +13,12 @@ import type {
   AuthVerifyCodeResponse,
   AuthResendCodeRequest,
   AuthResendCodeResponse,
+  AuthForgotPasswordRequest,
+  AuthForgotPasswordResponse,
+  AuthResendResetCodeRequest,
+  AuthResendResetCodeResponse,
+  AuthResetPasswordRequest,
+  AuthResetPasswordResponse,
 } from '../interfaces/auth.types';
 import { AuthTokenService } from './auth-token.service';
 
@@ -82,6 +88,27 @@ export class AuthApiService {
   resendCode(payload: AuthResendCodeRequest): Observable<AuthResendCodeResponse> {
     return this.http.post<AuthResendCodeResponse>(
       `${this.base}${API_PATHS.auth.resendCode}`,
+      payload
+    );
+  }
+
+  forgotPassword(payload: AuthForgotPasswordRequest): Observable<AuthForgotPasswordResponse> {
+    return this.http.post<AuthForgotPasswordResponse>(
+      `${this.base}${API_PATHS.auth.forgotPassword}`,
+      payload
+    );
+  }
+
+  resendResetCode(payload: AuthResendResetCodeRequest): Observable<AuthResendResetCodeResponse> {
+    return this.http.post<AuthResendResetCodeResponse>(
+      `${this.base}${API_PATHS.auth.resendResetCode}`,
+      payload
+    );
+  }
+
+  resetPassword(payload: AuthResetPasswordRequest): Observable<AuthResetPasswordResponse> {
+    return this.http.post<AuthResetPasswordResponse>(
+      `${this.base}${API_PATHS.auth.resetPassword}`,
       payload
     );
   }

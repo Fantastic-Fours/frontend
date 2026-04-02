@@ -7,8 +7,12 @@ export const API_PATHS = {
     register: '/auth/register/',
     verifyCode: '/auth/verify-code/',
     resendCode: '/auth/resend-code/',
+    forgotPassword: '/auth/forgot-password/',
+    resetPassword: '/auth/reset-password/',
+    resendResetCode: '/auth/resend-reset-code/',
   },
   mortgage: {
+    recommend: '/recommend-mortgage/',
     match: '/mortgage/match/',
     predict: '/mortgage/predict/',
     programs: '/mortgage/programs/',

@@ -53,3 +53,36 @@ export interface AuthResendCodeRequest {
 export interface AuthResendCodeResponse {
   detail: string;
 }
+
+/** Request body for POST /api/auth/forgot-password/ */
+export interface AuthForgotPasswordRequest {
+  email: string;
+}
+
+/** Response from POST /api/auth/forgot-password/ */
+export interface AuthForgotPasswordResponse {
+  detail: string;
+}
+
+/** Request body for POST /api/auth/resend-reset-code/ */
+export interface AuthResendResetCodeRequest {
+  email: string;
+}
+
+/** Response from POST /api/auth/resend-reset-code/ */
+export interface AuthResendResetCodeResponse {
+  detail: string;
+}
+
+/** Request body for POST /api/auth/reset-password/ */
+export interface AuthResetPasswordRequest {
+  email: string;
+  code: string;
+  password: string;
+  password_confirm: string;
+}
+
+/** Response from POST /api/auth/reset-password/ */
+export interface AuthResetPasswordResponse {
+  detail: string;
+}

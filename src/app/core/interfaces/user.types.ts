@@ -20,6 +20,7 @@ export interface UserProfile {
   email: string;
   phone?: string;
   avatar?: string | null;
+  privileges?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +29,7 @@ export interface UserProfile {
 export interface UserProfileUpdate {
   phone?: string;
   avatar?: string | null;
+  privileges?: string[];
 }
 
 /** Single saved apartment: GET /api/users/me/saved-apartments/ item. */

@@ -28,6 +28,18 @@
           <dt>Максимальная сумма кредита</dt>
           <dd>{{ formatMoney(p.max_loan_amount) }} ₸</dd>
         </div>
+        @if (regionLoanLines(p).length) {
+          <div>
+            <dt>По регионам</dt>
+            <dd>
+              <ul class="region-loans">
+                @for (line of regionLoanLines(p); track line.label) {
+                  <li><strong>{{ line.label }}:</strong> {{ line.amount }}</li>
+                }
+              </ul>
+            </dd>
+          </div>
+        }
         <div>
           <dt>Минимальный первоначальный взнос</dt>
           <dd>от {{ p.min_down_payment_percent }}%</dd>

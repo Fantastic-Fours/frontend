@@ -82,6 +82,25 @@ h1 {
   font-size: 0.95rem;
 }
 
+.checkbox-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+.checkbox-item input {
+  width: auto;
+  margin: 0;
+}
+
 .form-actions {
   display: flex;
   gap: 0.5rem;

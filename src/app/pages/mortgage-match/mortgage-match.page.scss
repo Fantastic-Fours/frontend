@@ -115,6 +115,11 @@ h2 {
   color: var(--error);
 }
 
+.field-hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
 .optional-section {
   padding: 1.25rem 0;
   border-top: 1px solid var(--border);

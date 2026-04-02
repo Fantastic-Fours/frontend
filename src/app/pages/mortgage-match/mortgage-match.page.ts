@@ -26,6 +26,18 @@ export class MortgageMatchPage {
   error: string | null = null;
   submitted = false;
 
+  privilegeOptions = [
+    { value: 'veteran_ww2', label: 'Ветеран ВОВ' },
+    { value: 'veteran_equivalent', label: 'Приравненный к ветерану ВОВ' },
+    { value: 'combat_veteran', label: 'Ветеран боевых действий' },
+    { value: 'disabled_group_1', label: 'Инвалид I группы' },
+    { value: 'disabled_group_2', label: 'Инвалид II группы' },
+    { value: 'family_with_disabled_child', label: 'Семья с ребенком-инвалидом' },
+    { value: 'widow', label: 'Вдова' },
+    { value: 'large_family', label: 'Многодетная семья' },
+    { value: 'orphan', label: 'Сирота' },
+  ] as const;
+
   housingTypes = [
     { value: 'primary', label: 'Основное жильё' },
     { value: 'secondary', label: 'Вторичное жильё' },
@@ -33,8 +45,8 @@ export class MortgageMatchPage {
 
   sortByOptions = [
     { value: 'score', label: 'По совпадению' },
-    { value: 'rate', label: 'По ставке' },
-    { value: 'overpayment', label: 'По переплате' },
+    { value: 'monthly_payment', label: 'По ежемесячному платежу' },
+    { value: 'total_overpayment', label: 'По переплате' },
   ] as const;
 
   hasHousingOptions = [
@@ -59,6 +71,7 @@ export class MortgageMatchPage {
       require_income_confirmation: [true],
       children_under_18: [0, [Validators.min(0)]],
       has_housing: [null as boolean | null],
+      privileges: [[] as string[]],
       sort_by: ['score' as const],
     });
   }
@@ -94,6 +107,7 @@ export class MortgageMatchPage {
       require_income_confirmation: raw.require_income_confirmation,
       children_under_18: raw.children_under_18,
       has_housing: raw.has_housing ?? undefined,
+      privileges: raw.privileges ?? [],
       sort_by: raw.sort_by,
     };
     this.programs = [];
@@ -111,6 +125,7 @@ export class MortgageMatchPage {
         require_income_confirmation: params.require_income_confirmation,
         children_under_18: params.children_under_18,
         has_housing: raw.has_housing ?? null,
+        privileges: raw.privileges ?? [],
       };
       this.mortgageApi.predict(aiParams).subscribe({
         next: (res) => {

@@ -112,6 +112,16 @@
     font-weight: 600;
     color: var(--text, #111827);
   }
+
+  .region-loans {
+    margin: 0.25rem 0 0;
+    padding-left: 1.25rem;
+    font-weight: 500;
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+  }
 }
 
 .tags {
