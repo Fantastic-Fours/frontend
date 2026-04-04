@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CheckboxComponent, DropdownMultiCheckboxComponent, DropdownSelectComponent } from '../../components/ui';
+import { DigitThousandSepDirective } from '../../shared/digit-thousand-sep.directive';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
@@ -13,7 +15,15 @@ import { DecimalPipe } from '@angular/common';
 @Component({
   selector: 'app-mortgage-match-page',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, DecimalPipe],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    DecimalPipe,
+    DigitThousandSepDirective,
+    CheckboxComponent,
+    DropdownSelectComponent,
+    DropdownMultiCheckboxComponent,
+  ],
   templateUrl: './mortgage-match.page.html',
   styleUrl: './mortgage-match.page.scss',
 })
@@ -54,6 +64,31 @@ export class MortgageMatchPage {
     { value: true, label: 'Да' },
     { value: false, label: 'Нет' },
   ] as const;
+
+  readonly modeDropdownOptions: { label: string; value: string }[] = [
+    { value: 'rules', label: 'Правила (match)' },
+    { value: 'ai', label: 'AI рекомендации (Top-3)' },
+  ];
+
+  readonly housingTypeDropdownOptions = this.housingTypes.map((o) => ({
+    label: o.label,
+    value: o.value,
+  }));
+
+  readonly sortByDropdownOptions = this.sortByOptions.map((o) => ({
+    label: o.label,
+    value: o.value,
+  }));
+
+  readonly hasHousingDropdownOptions = this.hasHousingOptions.map((o) => ({
+    label: o.label,
+    value: o.value,
+  }));
+
+  readonly privilegeDropdownOptions = this.privilegeOptions.map((o) => ({
+    label: o.label,
+    value: o.value,
+  }));
 
   constructor(
     private fb: FormBuilder,

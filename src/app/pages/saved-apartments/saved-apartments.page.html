@@ -46,9 +46,13 @@
     }
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-        <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-        <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+        <app-wheel-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          [visibleCount]="7"
+          [disabled]="loading()"
+          (pageSelected)="loadPage($event)"
+        />
       </div>
     }
   }

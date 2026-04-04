@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { WaveTextComponent } from '../../components/ui';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, WaveTextComponent],
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss',
 })

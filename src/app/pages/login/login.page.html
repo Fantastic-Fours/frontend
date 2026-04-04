@@ -37,7 +37,11 @@
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Вход…' : 'Войти' }}
+        @if (loading) {
+          <app-wave-text text="Вход…" />
+        } @else {
+          <app-wave-text text="Войти" />
+        }
       </button>
     </form>
 

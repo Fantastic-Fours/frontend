@@ -1,0 +1,123 @@
+.dd {
+  position: relative;
+  width: 100%;
+  font-size: 0.9375rem;
+}
+
+.dd__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text, #0f172a);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(14, 165, 233, 0.45);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary, #0ea5e9);
+    box-shadow: 0 0 0 3px var(--primary-focus, rgba(14, 165, 233, 0.25));
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.dd__trigger-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd__chevron {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-muted, #64748b);
+  transition: transform 0.2s ease;
+}
+
+.dd--open .dd__chevron {
+  transform: rotate(180deg);
+}
+
+.dd__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 3000;
+  padding: 0.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: #fff;
+  box-shadow: var(--shadow-md, 0 12px 24px -8px rgba(15, 23, 42, 0.12));
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.dd__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.45rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text, #0f172a);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    background: var(--primary-light, rgba(14, 165, 233, 0.1));
+  }
+}
+
+.dd__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.dd__check-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary, #0ea5e9);
+}
+
+.dd__item-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.dd__item--active .dd__item-label {
+  font-weight: 600;
+  color: var(--primary-dark, #0284c7);
+}

@@ -6,40 +6,32 @@
     <div class="filters-row">
       <div class="filter">
         <label>Город</label>
-        <select
-          [value]="filters().city"
-          (change)="applyFilters({ city: ($any($event.target).value) })"
-        >
-          @for (c of cities; track c) {
-            <option [value]="c">{{ c }}</option>
-          }
-        </select>
+        <app-dropdown-select
+          [options]="cityDropdownOptions"
+          [ngModel]="filters().city"
+          (ngModelChange)="applyFilters({ city: $event })"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </div>
 
       <div class="filter">
         <label>Тип</label>
-        <select
-          [value]="filters().property_type ?? ''"
-          (change)="applyFilters({ property_type: ($any($event.target).value) || undefined })"
-        >
-          <option value="">Любой</option>
-          <option value="apartment">Квартира</option>
-          <option value="house">Дом</option>
-        </select>
+        <app-dropdown-select
+          [options]="propertyTypeDropdownOptions"
+          [ngModel]="filters().property_type ?? ''"
+          (ngModelChange)="applyFilters({ property_type: $event === '' ? undefined : $event })"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </div>
 
       <div class="filter">
         <label>Комнат</label>
-        <select
-          [value]="filters().rooms ?? ''"
-          (change)="applyFilters({ rooms: undefined, min_rooms: toInt($any($event.target).value) })"
-        >
-          <option value="">Любое</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4+</option>
-        </select>
+        <app-dropdown-select
+          [options]="roomDropdownOptions"
+          [ngModel]="roomsFilterKey()"
+          (ngModelChange)="onRoomsFilterChange($event)"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </div>
     </div>
 
@@ -47,21 +39,25 @@
       <div class="filter">
         <label>Цена от</label>
         <input
-          type="number"
-          [value]="filters().min_price ?? ''"
-          (change)="applyFilters({ min_price: toFloat($any($event.target).value) })"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="displayThousandFromNumber(filters().min_price)"
+          (input)="onThousandFilterInput($event, 'min_price')"
+          (blur)="commitFilterSearch()"
           placeholder="0"
-          min="0"
         />
       </div>
       <div class="filter">
         <label>Цена до</label>
         <input
-          type="number"
-          [value]="filters().max_price ?? ''"
-          (change)="applyFilters({ max_price: toFloat($any($event.target).value) })"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="displayThousandFromNumber(filters().max_price)"
+          (input)="onThousandFilterInput($event, 'max_price')"
+          (blur)="commitFilterSearch()"
           placeholder="0"
-          min="0"
         />
       </div>
       <div class="filter">
@@ -92,21 +88,25 @@
       <div class="filter">
         <label>Этаж</label>
         <input
-          type="number"
-          [value]="filters().floor ?? ''"
-          (change)="applyFilters({ floor: toInt($any($event.target).value) })"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="displayThousandFromNumber(filters().floor)"
+          (input)="onThousandFilterInput($event, 'floor')"
+          (blur)="commitFilterSearch()"
           placeholder="Любой"
-          min="0"
         />
       </div>
       <div class="filter">
         <label>Этажность</label>
         <input
-          type="number"
-          [value]="filters().total_floors ?? ''"
-          (change)="applyFilters({ total_floors: toInt($any($event.target).value) })"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="displayThousandFromNumber(filters().total_floors)"
+          (input)="onThousandFilterInput($event, 'total_floors')"
+          (blur)="commitFilterSearch()"
           placeholder="Любая"
-          min="0"
         />
       </div>
 
@@ -150,9 +150,13 @@
     }
 
     <div class="pagination">
-      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+      <app-wheel-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [visibleCount]="7"
+        [disabled]="loading()"
+        (pageSelected)="loadPage($event)"
+      />
     </div>
   }
 </div>

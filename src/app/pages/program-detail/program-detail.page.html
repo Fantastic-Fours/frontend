@@ -81,15 +81,42 @@
         <div class="calc-grid">
           <div class="field">
             <label for="calc-price">Стоимость жилья</label>
-            <input id="calc-price" type="number" formControlName="price" min="1" placeholder="₸" />
+            <input
+              id="calc-price"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="price"
+              digitThousandSep
+              [digitThousandEmpty]="'zero'"
+              placeholder="₸"
+            />
           </div>
           <div class="field">
             <label for="calc-down">Первоначальный взнос</label>
-            <input id="calc-down" type="number" formControlName="down_payment" min="0" placeholder="₸" />
+            <input
+              id="calc-down"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="down_payment"
+              digitThousandSep
+              [digitThousandEmpty]="'zero'"
+              placeholder="₸"
+            />
           </div>
           <div class="field">
             <label for="calc-term">Срок займа</label>
-            <input id="calc-term" type="number" formControlName="term_years" min="1" max="30" placeholder="лет" />
+            <input
+              id="calc-term"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="term_years"
+              digitThousandSep
+              [digitThousandEmpty]="'zero'"
+              placeholder="лет"
+            />
             <span class="field-hint">лет</span>
           </div>
         </div>
@@ -99,10 +126,9 @@
           </p>
         }
         <div class="calc-options">
-          <label class="checkbox-label">
-            <input type="checkbox" formControlName="without_income_confirmation" />
+          <app-checkbox formControlName="without_income_confirmation" class="checkbox-label">
             без подтверждения дохода
-          </label>
+          </app-checkbox>
           <div class="payment-type">
             <label class="radio-label">
               <input type="radio" formControlName="payment_type" value="differentiated" />

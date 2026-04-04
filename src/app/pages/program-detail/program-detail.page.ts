@@ -1,5 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CheckboxComponent } from '../../components/ui';
+import { DigitThousandSepDirective } from '../../shared/digit-thousand-sep.directive';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
@@ -14,7 +16,7 @@ import {
 @Component({
   selector: 'app-program-detail-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, DigitThousandSepDirective, CheckboxComponent],
   templateUrl: './program-detail.page.html',
   styleUrl: './program-detail.page.scss',
 })

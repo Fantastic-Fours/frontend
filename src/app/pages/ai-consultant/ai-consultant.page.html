@@ -9,15 +9,45 @@
     <div class="context-grid">
       <div class="field">
         <label for="ctx-income">Доход (тг/мес)</label>
-        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" placeholder="500000" />
+        <input
+          id="ctx-income"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          name="ctxIncome"
+          [(ngModel)]="contextIncome"
+          digitThousandSep
+          [digitThousandStringModel]="true"
+          placeholder="500000"
+        />
       </div>
       <div class="field">
         <label for="ctx-down">Первоначальный взнос</label>
-        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" placeholder="10000000" />
+        <input
+          id="ctx-down"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          name="ctxDown"
+          [(ngModel)]="contextDownPayment"
+          digitThousandSep
+          [digitThousandStringModel]="true"
+          placeholder="10000000"
+        />
       </div>
       <div class="field">
         <label for="ctx-term">Срок (лет)</label>
-        <input id="ctx-term" type="number" [(ngModel)]="contextTermYears" placeholder="20" />
+        <input
+          id="ctx-term"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          name="ctxTerm"
+          [(ngModel)]="contextTermYears"
+          digitThousandSep
+          [digitThousandStringModel]="true"
+          placeholder="20"
+        />
       </div>
       <div class="field">
         <label for="ctx-type">Тип жилья</label>

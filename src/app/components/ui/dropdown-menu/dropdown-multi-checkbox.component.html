@@ -1,0 +1,47 @@
+<div
+  class="dm"
+  [class.dm--open]="open()"
+  [class.dm--disabled]="isDisabled()"
+>
+  <button
+    type="button"
+    class="dm__trigger"
+    [disabled]="isDisabled()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-haspopup]="true"
+    (click)="toggleOpen($event)"
+  >
+    <span class="dm__trigger-text">{{ summary() }}</span>
+    <svg class="dm__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+  @if (open()) {
+    <div class="dm__panel" role="listbox" [attr.aria-multiselectable]="true">
+      @for (opt of options(); track opt.value) {
+        <button
+          type="button"
+          class="dm__item"
+          role="option"
+          [attr.aria-selected]="isChecked(opt.value)"
+          (click)="toggle(opt.value, $event)"
+        >
+          <span class="dm__box" aria-hidden="true">
+            @if (isChecked(opt.value)) {
+              <svg class="dm__check-icon" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M14 7L8.5 12.5L6 10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            }
+          </span>
+          <span class="dm__label">{{ opt.label }}</span>
+        </button>
+      }
+    </div>
+  }
+</div>

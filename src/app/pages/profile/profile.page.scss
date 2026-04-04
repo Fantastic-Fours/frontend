@@ -89,16 +89,10 @@ h1 {
 }
 
 .checkbox-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
   font-size: 0.9rem;
   color: #111827;
-}
-
-.checkbox-item input {
-  width: auto;
-  margin: 0;
 }
 
 .form-actions {

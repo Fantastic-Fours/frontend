@@ -1,0 +1,43 @@
+<label
+  class="app-checkbox"
+  [class.app-checkbox--disabled]="isDisabled"
+  [class.app-checkbox--checked]="value && !indeterminate()"
+  [class.app-checkbox--indeterminate]="indeterminate()"
+>
+  <input
+    #nativeInput
+    type="checkbox"
+    class="app-checkbox__native"
+    [checked]="value"
+    [disabled]="isDisabled"
+    (change)="onInputChange($event)"
+    (blur)="onInputBlur()"
+  />
+  <span class="app-checkbox__box" aria-hidden="true">
+    <svg class="app-checkbox__icon" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      @if (indeterminate()) {
+        <line
+          x1="5"
+          y1="10"
+          x2="15"
+          y2="10"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      } @else if (value) {
+        <path
+          d="M14 7L8.5 12.5L6 10"
+          stroke="#ffffff"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      }
+    </svg>
+  </span>
+  <span class="app-checkbox__label">
+    <ng-content />
+  </span>
+</label>

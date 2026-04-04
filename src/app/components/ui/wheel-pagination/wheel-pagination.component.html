@@ -1,0 +1,59 @@
+<div
+  #container
+  class="wheel-pagination__surface"
+  [class.wheel-pagination__surface--disabled]="disabled()"
+>
+  <button
+    type="button"
+    class="wheel-pagination__icon-btn"
+    [disabled]="disabled() || currentPage() <= 1"
+    (click)="prevPage()"
+    aria-label="Предыдущая страница"
+  >
+    <svg class="wheel-pagination__chevron" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m15 18-6-6 6-6"
+      />
+    </svg>
+  </button>
+
+  <nav class="wheel-pagination__pages" aria-label="Номера страниц">
+    @for (p of visiblePages(); track p) {
+      <button
+        type="button"
+        class="wheel-pagination__page"
+        [class.wheel-pagination__page--active]="p === currentPage()"
+        [disabled]="disabled()"
+        (click)="selectPage(p)"
+        [attr.aria-current]="p === currentPage() ? 'page' : null"
+        [attr.aria-label]="'Страница ' + p"
+      >
+        {{ p }}
+      </button>
+    }
+  </nav>
+
+  <button
+    type="button"
+    class="wheel-pagination__icon-btn"
+    [disabled]="disabled() || currentPage() >= totalPages()"
+    (click)="nextPage()"
+    aria-label="Следующая страница"
+  >
+    <svg class="wheel-pagination__chevron" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m9 18 6-6-6-6"
+      />
+    </svg>
+  </button>
+</div>

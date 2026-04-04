@@ -1,5 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DropdownSelectComponent } from '../../components/ui';
+import { DigitThousandSepDirective } from '../../shared/digit-thousand-sep.directive';
 import { Router, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { AuthTokenService } from '../../core/services/auth-token.service';
@@ -10,7 +12,7 @@ import type { UserProfile } from '../../core/interfaces/user.types';
 @Component({
   selector: 'app-submit-ad-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, DigitThousandSepDirective, DropdownSelectComponent],
   templateUrl: './submit-ad.page.html',
   styleUrl: './submit-ad.page.scss',
 })
@@ -26,6 +28,19 @@ export class SubmitAdPage implements OnInit {
   loading = false;
   submitted = false;
   cities = KZ_BIG_CITIES;
+
+  readonly cityDropdownOptions = KZ_BIG_CITIES.map((c) => ({ label: c, value: c }));
+
+  readonly housingDropdownOptions: { label: string; value: string }[] = [
+    { value: 'primary', label: 'Первичка (новостройка)' },
+    { value: 'secondary', label: 'Вторичка' },
+  ];
+
+  readonly propertyDropdownOptions: { label: string; value: string }[] = [
+    { value: 'apartment', label: 'Квартира' },
+    { value: 'house', label: 'Дом' },
+  ];
+
   selectedFiles: File[] = [];
   profile: UserProfile | null = null;
   profileLoading = true;

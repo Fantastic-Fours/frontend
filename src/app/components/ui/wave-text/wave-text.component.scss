@@ -1,0 +1,37 @@
+/* Let clicks go to the parent <a routerLink> / <button> — avoids broken navigation */
+:host {
+  display: inline-block;
+  cursor: inherit;
+  text-align: center;
+  pointer-events: none;
+}
+
+.wave-text__inner,
+.wave-text__char {
+  pointer-events: none;
+}
+
+.wave-text__inner {
+  display: inline-block;
+}
+
+.wave-text__char {
+  --wave-index: 0;
+  display: inline-block;
+  transform: translateY(0) scale(1);
+  transition:
+    transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.2s ease;
+  transition-delay: calc(var(--wave-index) * 30ms);
+}
+
+/* Animate when the host sits inside a hovered, enabled button (full hit area) */
+:host-context(button:hover:not(:disabled)) .wave-text__char {
+  transform: translateY(-4px) scale(1.2);
+}
+
+:host-context(a.nav-link:hover) .wave-text__char,
+:host-context(a.nav-link--wave:hover) .wave-text__char,
+:host-context(a.site-footer__link:hover) .wave-text__char {
+  transform: translateY(-4px) scale(1.2);
+}

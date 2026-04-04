@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, computed, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { WheelPaginationComponent } from '../../components/ui';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
@@ -10,7 +11,7 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-programs-list-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, WheelPaginationComponent],
   templateUrl: './programs-list.page.html',
   styleUrl: './programs-list.page.scss',
 })
@@ -25,8 +26,6 @@ export class ProgramsListPage implements OnInit {
   error = signal<string | null>(null);
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / PAGE_SIZE)));
-  hasNext = computed(() => this.currentPage() < this.totalPages());
-  hasPrev = computed(() => this.currentPage() > 1);
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -50,14 +49,6 @@ export class ProgramsListPage implements OnInit {
         this.error.set(msg);
       },
     });
-  }
-
-  nextPage(): void {
-    if (this.hasNext()) this.loadPage(this.currentPage() + 1);
-  }
-
-  prevPage(): void {
-    if (this.hasPrev()) this.loadPage(this.currentPage() - 1);
   }
 
   formatMoney(value: string | null | undefined): string {

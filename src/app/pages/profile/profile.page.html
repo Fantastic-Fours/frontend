@@ -41,14 +41,14 @@
               <span class="label">Льготы</span>
               <div class="checkbox-list">
                 @for (option of privilegeOptions; track option.value) {
-                  <label class="checkbox-item">
-                    <input
-                      type="checkbox"
-                      [checked]="isPrivilegeSelected(option.value)"
-                      (change)="onPrivilegeToggle(option.value, $any($event.target).checked)"
-                    />
-                    <span>{{ option.label }}</span>
-                  </label>
+                  <app-checkbox
+                    class="checkbox-item"
+                    [ngModel]="isPrivilegeSelected(option.value)"
+                    (ngModelChange)="onPrivilegeToggle(option.value, $event)"
+                    [ngModelOptions]="{ standalone: true }"
+                  >
+                    {{ option.label }}
+                  </app-checkbox>
                 }
               </div>
             </div>

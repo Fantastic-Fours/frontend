@@ -1,0 +1,7 @@
+<span class="wave-text__inner">
+  @for (ch of chars(); track idx; let idx = $index) {
+    <span class="wave-text__char" [style.--wave-index]="idx">{{
+      ch === ' ' ? '\u00A0' : ch
+    }}</span>
+  }
+</span>

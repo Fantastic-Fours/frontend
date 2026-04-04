@@ -1,0 +1,47 @@
+<div
+  class="dd"
+  [class.dd--open]="open()"
+  [class.dd--disabled]="isDisabled()"
+>
+  <button
+    type="button"
+    class="dd__trigger"
+    [disabled]="isDisabled()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-haspopup]="true"
+    (click)="toggle($event)"
+  >
+    <span class="dd__trigger-text">{{ displayLabel() }}</span>
+    <svg class="dd__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+  @if (open()) {
+    <div class="dd__panel" role="listbox">
+      @for (opt of options(); track optTrack($index, opt)) {
+        <button
+          type="button"
+          class="dd__item"
+          role="option"
+          [class.dd__item--active]="equal(opt.value, innerValue())"
+          (click)="selectValue(opt.value, $event)"
+        >
+          <span class="dd__check" aria-hidden="true">
+            @if (equal(opt.value, innerValue())) {
+              <svg class="dd__check-icon" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M14 7L8.5 12.5L6 10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            }
+          </span>
+          <span class="dd__item-label">{{ opt.label }}</span>
+        </button>
+      }
+    </div>
+  }
+</div>

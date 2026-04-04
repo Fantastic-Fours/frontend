@@ -1,45 +1,42 @@
+<app-soft-glow-background>
 <div class="app">
   <nav class="nav">
     <a routerLink="/match" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="logo-link">
       <img src="assets/logo.jpg" alt="iDom" class="logo-img" />
     </a>
-    <div class="nav-links">
-      <a routerLink="/about" routerLinkActive="active" class="nav-link">О нас</a>
+    <div class="nav-center">
+      <app-mega-menu [items]="primaryNavItems" />
+    </div>
 
-      <div class="dropdown" (mouseenter)="openDropdown('mortgage')" (mouseleave)="closeDropdown('mortgage')">
-        <button type="button" class="nav-link dropdown-trigger" [class.active]="isActiveMortgage()">
-          Ипотека ▾
-        </button>
-        <div class="dropdown-menu" [class.open]="openMenu === 'mortgage'">
-          <a routerLink="/match" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('mortgage')">Подбор</a>
-          <a routerLink="/programs" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('mortgage')">Программы</a>
-        </div>
-      </div>
-
-      <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link">AI-консультант</a>
-      <a routerLink="/news" routerLinkActive="active" class="nav-link">Новости</a>
-
-      <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
-        <button type="button" class="nav-link dropdown-trigger" [class.active]="isActiveEstate()">
-          Недвижимость ▾
-        </button>
-        <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
-          <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Первичка</a>
-          <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Вторичка</a>
-          <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Подать объявление</a>
-        </div>
-      </div>
-
+    <div class="nav-links nav-links--auth">
       @if (!isAuthenticated()) {
-        <a routerLink="/register" routerLinkActive="active" class="nav-link">Регистрация</a>
-        <a routerLink="/login" routerLinkActive="active" class="nav-link">Вход</a>
+        <a
+          routerLink="/register"
+          routerLinkActive="active"
+          class="nav-link nav-link--wave"
+        >
+          <app-wave-text text="Регистрация" />
+        </a>
+        <a
+          routerLink="/login"
+          routerLinkActive="active"
+          class="nav-link nav-link--wave"
+        >
+          <app-wave-text text="Вход" />
+        </a>
       } @else {
-        <a routerLink="/profile" routerLinkActive="active" class="nav-link">Профиль</a>
-        <button type="button" class="nav-link nav-logout" (click)="logout()">Выйти</button>
+        <a routerLink="/profile" routerLinkActive="active" class="nav-link nav-link--wave">
+          <app-wave-text text="Профиль" />
+        </a>
+        <button type="button" class="nav-link nav-logout" (click)="logout()">
+          <app-wave-text text="Выйти" />
+        </button>
       }
     </div>
   </nav>
   <main class="main">
     <router-outlet />
   </main>
+  <app-site-footer />
 </div>
+</app-soft-glow-background>

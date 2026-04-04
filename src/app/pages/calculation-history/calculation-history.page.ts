@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { WheelPaginationComponent } from '../../components/ui';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { CalculationHistoryItem } from '../../core/interfaces/user.types';
 
@@ -9,7 +10,7 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-calculation-history-page',
   standalone: true,
-  imports: [RouterLink, JsonPipe],
+  imports: [RouterLink, JsonPipe, WheelPaginationComponent],
   templateUrl: './calculation-history.page.html',
   styleUrl: './calculation-history.page.scss',
 })
@@ -23,8 +24,6 @@ export class CalculationHistoryPage implements OnInit {
   error = signal<string | null>(null);
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / PAGE_SIZE)));
-  hasNext = computed(() => this.currentPage() < this.totalPages());
-  hasPrev = computed(() => this.currentPage() > 1);
 
   ngOnInit(): void {
     this.loadPage(1);
@@ -45,14 +44,6 @@ export class CalculationHistoryPage implements OnInit {
         this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
       },
     });
-  }
-
-  nextPage(): void {
-    if (this.hasNext()) this.loadPage(this.currentPage() + 1);
-  }
-
-  prevPage(): void {
-    if (this.hasPrev()) this.loadPage(this.currentPage() - 1);
   }
 
   formatDate(iso: string | undefined): string {

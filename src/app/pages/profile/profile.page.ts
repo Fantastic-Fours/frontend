@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { CheckboxComponent } from '../../components/ui';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { AuthApiService } from '../../core/services/auth-api.service';
 import { UserApiService } from '../../core/services/user-api.service';
@@ -14,7 +15,7 @@ type PrivilegeOption = {
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, FormsModule, CheckboxComponent],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.scss',
 })

@@ -1,0 +1,86 @@
+<ul class="mega-menu" role="menubar">
+  @for (navItem of items(); track navItem.id) {
+    <li
+      class="mega-menu__item"
+      role="none"
+      (mouseenter)="onEnterMenu(navItem.label)"
+      (mouseleave)="onLeaveMenu()"
+    >
+      @if (navItem.subMenus?.length) {
+        <button
+          type="button"
+          class="mega-menu__trigger"
+          [class.mega-menu__trigger--active]="isRouteActiveForItem(navItem)"
+          [class.mega-menu__trigger--open]="openMenuLabel() === navItem.label"
+          [attr.aria-expanded]="openMenuLabel() === navItem.label"
+          (mouseenter)="onEnterTrigger(navItem.id)"
+          (mouseleave)="onLeaveTrigger()"
+          (click)="onTriggerClick(navItem, $event)"
+        >
+          @if (hoveredTriggerId() === navItem.id || openMenuLabel() === navItem.label) {
+            <span class="mega-menu__trigger-pill" aria-hidden="true"></span>
+          }
+          <span class="mega-menu__trigger-label">{{ navItem.label }}</span>
+          <svg
+            class="mega-menu__chevron"
+            [class.mega-menu__chevron--open]="openMenuLabel() === navItem.label"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        @if (openMenuLabel() === navItem.label) {
+          <div class="mega-menu__panel-wrap">
+            <div class="mega-menu__panel">
+              <div class="mega-menu__columns">
+                @for (sub of navItem.subMenus!; track sub.title) {
+                  <div class="mega-menu__column">
+                    <h3 class="mega-menu__column-title">{{ sub.title }}</h3>
+                    <ul class="mega-menu__sublist" role="menu">
+                      @for (entry of sub.items; track entry.label) {
+                        <li role="none">
+                          <a
+                            [routerLink]="entry.routerLink"
+                            routerLinkActive="mega-menu__entry-link--active"
+                            [routerLinkActiveOptions]="{ exact: entry.routerLink === '/' }"
+                            class="mega-menu__entry-link"
+                            role="menuitem"
+                            (click)="closeMenu()"
+                          >
+                            <span class="mega-menu__entry-icon" aria-hidden="true">
+                              <app-mega-menu-icon [name]="entry.icon" />
+                            </span>
+                            <span class="mega-menu__entry-text">
+                              <span class="mega-menu__entry-label">{{ entry.label }}</span>
+                              <span class="mega-menu__entry-desc">{{ entry.description }}</span>
+                            </span>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      } @else if (navItem.routerLink) {
+        <a
+          [routerLink]="navItem.routerLink"
+          routerLinkActive="mega-menu__simple-link--active"
+          [routerLinkActiveOptions]="{ exact: navItem.routerLink === '/' }"
+          class="mega-menu__simple-link"
+          role="menuitem"
+        >
+          {{ navItem.label }}
+        </a>
+      }
+    </li>
+  }
+</ul>

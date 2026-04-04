@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
@@ -27,6 +28,24 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  overflow: visible;
+}
+
+/* overflow must stay visible or mega-menu panels (position: absolute) are clipped and hover breaks */
+.nav-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+.nav-links--auth {
+  flex-shrink: 0;
+  position: relative;
+  /* Above mega-menu panels (z-index 2000) so /register and /login stay clickable */
+  z-index: 2100;
 }
 
 .logo-link {

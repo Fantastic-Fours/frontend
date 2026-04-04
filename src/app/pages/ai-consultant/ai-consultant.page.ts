@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DigitThousandSepDirective } from '../../shared/digit-thousand-sep.directive';
 import { AIConsultantApiService } from '../../core/services/ai-consultant-api.service';
 import type { AIChatResponse } from '../../core/interfaces/ai-consultant.types';
 
@@ -14,7 +15,7 @@ interface ChatMessage {
 @Component({
   selector: 'app-ai-consultant-page',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, DigitThousandSepDirective],
   templateUrl: './ai-consultant.page.html',
   styleUrl: './ai-consultant.page.scss',
 })

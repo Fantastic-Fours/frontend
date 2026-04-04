@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { WheelPaginationComponent } from '../../components/ui';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { SavedApartmentItem } from '../../core/interfaces/user.types';
 import type { ApartmentListItem } from '../../core/interfaces/user.types';
@@ -9,7 +10,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-saved-apartments-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, WheelPaginationComponent],
   templateUrl: './saved-apartments.page.html',
   styleUrl: './saved-apartments.page.scss',
 })
@@ -24,8 +25,6 @@ export class SavedApartmentsPage implements OnInit {
   removingId = signal<number | null>(null);
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / PAGE_SIZE)));
-  hasNext = computed(() => this.currentPage() < this.totalPages());
-  hasPrev = computed(() => this.currentPage() > 1);
 
   ngOnInit(): void {
     this.loadPage(1);
@@ -61,14 +60,6 @@ export class SavedApartmentsPage implements OnInit {
         this.removingId.set(null);
       },
     });
-  }
-
-  nextPage(): void {
-    if (this.hasNext()) this.loadPage(this.currentPage() + 1);
-  }
-
-  prevPage(): void {
-    if (this.hasPrev()) this.loadPage(this.currentPage() - 1);
   }
 
   formatMoney(value: string | number | undefined): string {

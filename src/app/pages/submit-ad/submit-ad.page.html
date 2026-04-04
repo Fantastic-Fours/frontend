@@ -36,18 +36,22 @@
       <div class="row">
         <div class="field">
           <label for="price">Цена (₸) *</label>
-          <input id="price" type="number" formControlName="price" placeholder="0" min="1" />
+          <input
+            id="price"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            formControlName="price"
+            digitThousandSep
+            placeholder="0"
+          />
           @if (form.get('price')?.invalid && form.get('price')?.touched) {
             <span class="field-error">Укажите цену</span>
           }
         </div>
         <div class="field">
           <label for="city">Город *</label>
-          <select id="city" formControlName="city">
-            @for (c of cities; track c) {
-              <option [value]="c">{{ c }}</option>
-            }
-          </select>
+          <app-dropdown-select id="city" formControlName="city" [options]="cityDropdownOptions" />
           @if (form.get('city')?.invalid && form.get('city')?.touched) {
             <span class="field-error">Обязательное поле</span>
           }
@@ -71,27 +75,44 @@
         <div class="field">
           <label for="floor">Этаж / этажей</label>
           <div class="inline-fields">
-            <input id="floor" type="number" formControlName="floor" placeholder="5" min="0" />
+            <input
+              id="floor"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="floor"
+              digitThousandSep
+              placeholder="5"
+            />
             <span>/</span>
-            <input type="number" formControlName="total_floors" placeholder="9" min="0" />
+            <input
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="total_floors"
+              digitThousandSep
+              placeholder="9"
+            />
           </div>
         </div>
       </div>
 
       <div class="field">
         <label for="housing_type">Тип жилья *</label>
-        <select id="housing_type" formControlName="housing_type">
-          <option value="primary">Первичка (новостройка)</option>
-          <option value="secondary">Вторичка</option>
-        </select>
+        <app-dropdown-select
+          id="housing_type"
+          formControlName="housing_type"
+          [options]="housingDropdownOptions"
+        />
       </div>
 
       <div class="field">
         <label for="property_type">Тип недвижимости *</label>
-        <select id="property_type" formControlName="property_type">
-          <option value="apartment">Квартира</option>
-          <option value="house">Дом</option>
-        </select>
+        <app-dropdown-select
+          id="property_type"
+          formControlName="property_type"
+          [options]="propertyDropdownOptions"
+        />
       </div>
 
       <div class="field">

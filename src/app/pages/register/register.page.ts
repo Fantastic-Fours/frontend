@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { WaveTextComponent } from '../../components/ui';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, WaveTextComponent],
   templateUrl: './register.page.html',
   styleUrl: './register.page.scss',
 })

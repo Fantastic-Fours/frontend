@@ -1,5 +1,5 @@
 <div class="page">
-  <div class="section form-section">
+  <div class="section form-section ui-form-surface">
     <h1>Подбор ипотеки</h1>
     <p class="subtitle">Заполните параметры для подбора программ</p>
 
@@ -11,14 +11,30 @@
       <div class="grid">
         <div class="field">
           <label for="price">Стоимость (тг)</label>
-          <input id="price" type="number" formControlName="price" min="1" />
+          <input
+            id="price"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            formControlName="price"
+            digitThousandSep
+            [digitThousandEmpty]="'zero'"
+          />
           @if (form.get('price')?.invalid && form.get('price')?.touched) {
             <span class="field-error">Введите корректную сумму</span>
           }
         </div>
         <div class="field">
           <label for="down_payment">Первоначальный взнос (тг)</label>
-          <input id="down_payment" type="number" formControlName="down_payment" min="0" />
+          <input
+            id="down_payment"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            formControlName="down_payment"
+            digitThousandSep
+            [digitThousandEmpty]="'zero'"
+          />
           @if (form.get('down_payment')?.invalid && form.get('down_payment')?.touched) {
             <span class="field-error">Введите корректную сумму</span>
           }
@@ -35,7 +51,15 @@
         </div>
         <div class="field">
           <label for="expenses">Расходы (тг/мес)</label>
-          <input id="expenses" type="number" formControlName="expenses" min="0" />
+          <input
+            id="expenses"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            formControlName="expenses"
+            digitThousandSep
+            [digitThousandEmpty]="'zero'"
+          />
           @if (form.get('expenses')?.invalid && form.get('expenses')?.touched) {
             <span class="field-error">Обязательное поле</span>
           }
@@ -45,18 +69,26 @@
       <div class="grid">
         <div class="field">
           <label for="term_years">Срок (лет)</label>
-          <input id="term_years" type="number" formControlName="term_years" min="1" max="30" />
+          <input
+            id="term_years"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            formControlName="term_years"
+            digitThousandSep
+            [digitThousandEmpty]="'zero'"
+          />
           @if (form.get('term_years')?.invalid && form.get('term_years')?.touched) {
             <span class="field-error">От 1 до 30</span>
           }
         </div>
         <div class="field">
           <label for="housing_type">Тип жилья</label>
-          <select id="housing_type" formControlName="housing_type">
-            @for (opt of housingTypes; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
+          <app-dropdown-select
+            id="housing_type"
+            formControlName="housing_type"
+            [options]="housingTypeDropdownOptions"
+          />
         </div>
       </div>
 
@@ -75,51 +107,52 @@
         <div class="grid">
           <div class="field">
             <label for="mode">Режим</label>
-            <select id="mode" formControlName="mode">
-              <option value="rules">Правила (match)</option>
-              <option value="ai">AI рекомендации (Top-3)</option>
-            </select>
+            <app-dropdown-select id="mode" formControlName="mode" [options]="modeDropdownOptions" />
           </div>
           <div class="field"></div>
         </div>
         <div class="grid">
           <div class="field">
             <label for="sort_by">Сортировка</label>
-            <select id="sort_by" formControlName="sort_by">
-              @for (opt of sortByOptions; track opt.value) {
-                <option [value]="opt.value">{{ opt.label }}</option>
-              }
-            </select>
+            <app-dropdown-select id="sort_by" formControlName="sort_by" [options]="sortByDropdownOptions" />
           </div>
           <div class="field">
             <label for="children_under_18">Детей до 18 лет</label>
-            <input id="children_under_18" type="number" formControlName="children_under_18" min="0" />
+            <input
+              id="children_under_18"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              formControlName="children_under_18"
+              digitThousandSep
+              [digitThousandEmpty]="'zero'"
+            />
           </div>
         </div>
         <div class="grid">
           <div class="field">
             <label for="has_housing">Есть жильё</label>
-            <select id="has_housing" formControlName="has_housing">
-              @for (opt of hasHousingOptions; track opt.value) {
-                <option [ngValue]="opt.value">{{ opt.label }}</option>
-              }
-            </select>
+            <app-dropdown-select
+              id="has_housing"
+              formControlName="has_housing"
+              [options]="hasHousingDropdownOptions"
+            />
           </div>
           <div class="field checkbox-field">
-            <label class="checkbox-label">
-              <input type="checkbox" formControlName="require_income_confirmation" />
+            <app-checkbox formControlName="require_income_confirmation" class="checkbox-label">
               Подтверждение дохода
-            </label>
+            </app-checkbox>
           </div>
         </div>
         <div class="field full">
           <label for="privileges">Льготы</label>
-          <select id="privileges" formControlName="privileges" multiple size="5">
-            @for (option of privilegeOptions; track option.value) {
-              <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-          <span class="field-hint">Можно выбрать несколько значений, удерживая `Ctrl` / `Cmd`.</span>
+          <app-dropdown-multi-checkbox
+            id="privileges"
+            formControlName="privileges"
+            [options]="privilegeDropdownOptions"
+            placeholder="Выберите льготы…"
+          />
+          <span class="field-hint">Откройте список и отметьте одну или несколько льгот.</span>
         </div>
       </div>
 
