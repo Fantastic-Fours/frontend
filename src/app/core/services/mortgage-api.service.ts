@@ -12,6 +12,10 @@ import type {
   MortgageNNPredictResponse,
   MortgageRecommendationRequest,
   MortgageRecommendationResponse,
+  PricePredictionRequest,
+  PricePredictionResponse,
+  Bank,
+  BanksListResponse,
 } from '../interfaces/mortgage.types';
 import type {
   ApartmentsListParams,
@@ -81,6 +85,26 @@ export class MortgageApiService {
     return this.http.get<ProgramListItem>(
       `${this.base}${API_PATHS.mortgage.programDetail(id)}`
     );
+  }
+
+  /**
+   * GET /api/mortgage/banks/
+   * Список банков (пагинация): отделения и отзывы внутри каждой записи.
+   */
+  getBanks(page?: number, pageSize?: number): Observable<BanksListResponse> {
+    let httpParams = new HttpParams();
+    if (page != null) httpParams = httpParams.set('page', String(page));
+    if (pageSize != null) httpParams = httpParams.set('page_size', String(pageSize));
+    return this.http.get<BanksListResponse>(`${this.base}${API_PATHS.mortgage.banks}`, {
+      params: httpParams,
+    });
+  }
+
+  /**
+   * GET /api/mortgage/banks/<id>/
+   */
+  getBank(id: number): Observable<Bank> {
+    return this.http.get<Bank>(`${this.base}${API_PATHS.mortgage.bankDetail(id)}`);
   }
 
   /**
@@ -204,6 +228,27 @@ export class MortgageApiService {
   deleteApartment(id: number): Observable<void> {
     return this.http.delete<void>(
       `${this.base}${API_PATHS.mortgage.apartmentDetail(id)}`
+    );
+  }
+
+  /**
+   * POST /api/predict-price/
+   * Krisha ML regression: market price vs listing.
+   */
+  predictPrice(body: PricePredictionRequest): Observable<PricePredictionResponse> {
+    return this.http.post<PricePredictionResponse>(
+      `${this.base}${API_PATHS.mortgage.predictPrice}`,
+      body
+    );
+  }
+
+  /**
+   * GET /api/property/<id>/analysis/
+   * Same model using stored apartment (id = mortgage apartment pk).
+   */
+  getPropertyPriceAnalysis(apartmentId: number): Observable<PricePredictionResponse> {
+    return this.http.get<PricePredictionResponse>(
+      `${this.base}${API_PATHS.mortgage.propertyPriceAnalysis(apartmentId)}`
     );
   }
 }

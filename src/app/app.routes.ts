@@ -15,6 +15,8 @@ export const routes: Routes = [
   { path: 'match', loadComponent: () => import('./pages/mortgage-match/mortgage-match.page').then((m) => m.MortgageMatchPage) },
   { path: 'programs', loadComponent: () => import('./pages/programs-list/programs-list.page').then((m) => m.ProgramsListPage) },
   { path: 'programs/:id', loadComponent: () => import('./pages/program-detail/program-detail.page').then((m) => m.ProgramDetailPage) },
+  { path: 'banks', loadComponent: () => import('./pages/banks-list/banks-list.page').then((m) => m.BanksListPage) },
+  { path: 'banks/:id', loadComponent: () => import('./pages/bank-detail/bank-detail.page').then((m) => m.BankDetailPage) },
   { path: 'news', loadComponent: () => import('./pages/news/news.page').then((m) => m.NewsPage) },
   { path: 'news/:id', loadComponent: () => import('./pages/news-detail/news-detail.page').then((m) => m.NewsDetailPage) },
   { path: 'estate/primary', loadComponent: () => import('./pages/estate-primary/estate-primary.page').then((m) => m.EstatePrimaryPage) },

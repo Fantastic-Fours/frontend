@@ -44,13 +44,6 @@
 
       <div class="grid">
         <div class="field">
-          <label for="term_years">Срок (лет)</label>
-          <input id="term_years" type="number" formControlName="term_years" min="1" max="30" />
-          @if (form.get('term_years')?.invalid && form.get('term_years')?.touched) {
-            <span class="field-error">От 1 до 30</span>
-          }
-        </div>
-        <div class="field">
           <label for="housing_type">Тип жилья</label>
           <select id="housing_type" formControlName="housing_type">
             @for (opt of housingTypes; track opt.value) {
@@ -58,16 +51,7 @@
             }
           </select>
         </div>
-      </div>
-
-      <div class="field full">
-        <label for="tagsStr">Теги (через запятую)</label>
-        <input
-          id="tagsStr"
-          type="text"
-          formControlName="tagsStr"
-          placeholder="семейная, господдержка"
-        />
+        <div class="field"></div>
       </div>
 
       <div class="optional-section">

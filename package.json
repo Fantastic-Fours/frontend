@@ -23,6 +23,7 @@
   },
   "private": true,
   "dependencies": {
+    "@2gis/mapgl": "^1.72.0",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",

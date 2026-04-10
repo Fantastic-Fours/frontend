@@ -29,7 +29,6 @@ export class AIConsultantPage {
   /** Optional context (can be pre-filled from mortgage match params later). */
   contextIncome = '';
   contextDownPayment = '';
-  contextTermYears = '';
   contextHousingType = '';
 
   send(): void {
@@ -40,13 +39,11 @@ export class AIConsultantPage {
     this.message = '';
     this.loading.set(true);
 
-    const context: { income?: number; down_payment?: number; term_years?: number; housing_type?: string } = {};
+    const context: { income?: number; down_payment?: number; housing_type?: string } = {};
     const income = parseFloat(this.contextIncome);
     if (!Number.isNaN(income)) context.income = income;
     const down = parseFloat(this.contextDownPayment);
     if (!Number.isNaN(down)) context.down_payment = down;
-    const term = parseInt(this.contextTermYears, 10);
-    if (!Number.isNaN(term)) context.term_years = term;
     if (this.contextHousingType.trim()) context.housing_type = this.contextHousingType.trim();
 
     this.aiApi.chat({ message: text, context: Object.keys(context).length ? context : undefined }).subscribe({

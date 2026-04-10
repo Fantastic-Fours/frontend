@@ -1,0 +1,57 @@
+<div class="page">
+  <h1>Банки</h1>
+  <p class="subtitle">Справочник с контактами, отделениями и отзывами</p>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else {
+    <p class="meta">Всего: {{ totalCount() }}</p>
+
+    <div class="bank-cards">
+      @for (b of banks(); track b.id) {
+        <article class="bank-card">
+          <div class="card-main">
+            <div class="card-header">
+              @if (resolveBankLogo(b.logo, b.name); as logo) {
+                <img [src]="logo" [alt]="b.name" class="bank-logo" />
+              }
+              <div class="card-header-text">
+                <h2 class="bank-title">{{ b.name }}</h2>
+                @if (b.phone) {
+                  <span class="bank-meta">{{ b.phone }}</span>
+                }
+              </div>
+            </div>
+            <ul class="card-info">
+              @if (b.website) {
+                <li>
+                  <strong>Сайт:</strong>
+                  <a [href]="b.website" target="_blank" rel="noopener noreferrer" class="ext-link">{{ b.website }}</a>
+                </li>
+              }
+              <li><strong>Отделений на карте:</strong> {{ branchCount(b) }}</li>
+              <li><strong>Отзывов:</strong> {{ reviewCount(b) }}</li>
+            </ul>
+          </div>
+          <div class="card-actions">
+            <a [routerLink]="['/banks', b.id]" class="btn btn-primary">Подробнее</a>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (banks().length === 0 && !loading()) {
+      <p class="empty">Банки не найдены.</p>
+    }
+
+    <div class="pagination">
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
+      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+    </div>
+  }
+</div>

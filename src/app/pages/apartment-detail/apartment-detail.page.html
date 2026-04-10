@@ -16,6 +16,48 @@
         · {{ housingTypeLabel(apt.housing_type ?? '') }}
       </p>
 
+      @if (apt['area_sqm'] != null && apt['rooms'] != null) {
+        <div class="analysis-actions">
+          <button
+            type="button"
+            class="btn-analysis"
+            (click)="runPriceAnalysis()"
+            [disabled]="analysisLoading()"
+          >
+            @if (analysisLoading()) {
+              Расчёт…
+            } @else if (priceAnalysis()) {
+              Обновить оценку
+            } @else {
+              Оценить рыночную цену
+            }
+          </button>
+        </div>
+      }
+
+      @if (analysisLoading()) {
+        <p class="analysis-loading">Оценка рыночной цены…</p>
+      }
+      @if (analysisError()) {
+        <div class="analysis-unavailable" role="status">{{ analysisError() }}</div>
+      }
+      @if (priceAnalysis(); as pa) {
+        <div class="market-analysis" [class]="analysisCardMod()">
+          <h2 class="market-title">Оценка по модели рынка</h2>
+          @if (pa.trustworthy !== false && pa.label !== 'inconclusive') {
+            <p class="market-price-line">Рыночная оценка: {{ formatMoney(pa.predicted_price) }}</p>
+            @if (pa.diff_percent != null) {
+              <p class="market-diff">Отклонение от модели: {{ formatDiffPercent(pa.diff_percent) }}</p>
+            }
+          } @else {
+            <p class="market-mismatch-hint">
+              Прогноз численно не сопоставим с ценой продажи (модель обучена на аренде).
+            </p>
+          }
+          <p class="market-verdict">{{ analysisVerdictText() }}</p>
+        </div>
+      }
+
       @if (getImages(apt).length > 0) {
         <div class="carousel">
           <div class="carousel-stage">
@@ -56,6 +98,17 @@
           <div class="spec"><span class="spec-label">Этаж</span> {{ apt['floor'] }}{{ apt['total_floors'] ? ' из ' + apt['total_floors'] : '' }}</div>
         }
       </div>
+
+      @if (apartmentHasMapCoords(apt)) {
+        <div class="apartment-map">
+          <h2>Местоположение</h2>
+          <p class="map-caption">Карта 2GIS по координатам объявления</p>
+          @if (mapError()) {
+            <div class="map-error" role="status">{{ mapError() }}</div>
+          }
+          <div #mapHost class="map-host"></div>
+        </div>
+      }
 
       @if (apt['description']) {
         <div class="apartment-description">

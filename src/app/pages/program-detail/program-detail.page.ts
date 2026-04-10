@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
-import { getBankLogoPath } from '../../core/utils/bank-logo';
+import { resolveBankLogo } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
 import {
   calcAnnuity,
@@ -36,7 +36,6 @@ export class ProgramDetailPage implements OnInit {
     return id ? parseInt(id, 10) : null;
   });
 
-  /** Minimum down payment in currency (by program's min %) */
   getMinDownPayment(): number {
     const p = this.program();
     const price = this.calcForm?.get('price')?.value;
@@ -45,7 +44,6 @@ export class ProgramDetailPage implements OnInit {
     return (price * percent) / 100;
   }
 
-  /** How much less the user could put as down payment (if they put more than min) */
   getDownPaymentCouldBeLess(): number {
     const down = this.calcForm?.get('down_payment')?.value;
     const min = this.getMinDownPayment();
@@ -57,7 +55,6 @@ export class ProgramDetailPage implements OnInit {
     this.calcForm = this.fb.nonNullable.group({
       price: [25_000_000, [Validators.required, Validators.min(1)]],
       down_payment: [5_000_000, [Validators.required, Validators.min(0)]],
-      term_years: [15, [Validators.required, Validators.min(1), Validators.max(30)]],
       payment_type: ['annuity' as const],
       without_income_confirmation: [false],
     });
@@ -88,7 +85,7 @@ export class ProgramDetailPage implements OnInit {
       return;
     }
     this.calcError.set(null);
-    const { price, down_payment, term_years, payment_type } = this.calcForm.getRawValue();
+    const { price, down_payment, payment_type } = this.calcForm.getRawValue();
     const loanAmount = price - down_payment;
     if (loanAmount <= 0) {
       this.calcError.set('Первоначальный взнос не может быть больше или равен стоимости');
@@ -108,17 +105,12 @@ export class ProgramDetailPage implements OnInit {
       this.calcResult.set(null);
       return;
     }
-    const maxTerm = p.max_term_years ?? 30;
-    if (term_years > maxTerm) {
-      this.calcError.set(`Максимальный срок по программе: ${maxTerm} лет`);
-      this.calcResult.set(null);
-      return;
-    }
+    const termYears = Math.min(p.max_term_years ?? 20, 30);
     const rate = parseFloat(p.interest_rate) || 0;
     const result =
       payment_type === 'annuity'
-        ? calcAnnuity(loanAmount, rate, term_years)
-        : calcDifferentiated(loanAmount, rate, term_years);
+        ? calcAnnuity(loanAmount, rate, termYears)
+        : calcDifferentiated(loanAmount, rate, termYears);
     this.calcResult.set(result);
   }
 
@@ -137,7 +129,6 @@ export class ProgramDetailPage implements OnInit {
     }).format(num);
   }
 
-  /** Удобные подписи для max_loan_by_region с бэка */
   regionLoanLines(p: ProgramListItem): { label: string; amount: string }[] {
     const raw = p.max_loan_by_region;
     if (!raw || typeof raw !== 'object') {
@@ -159,8 +150,12 @@ export class ProgramDetailPage implements OnInit {
     return type === 'primary' ? 'Первичное жильё' : type === 'secondary' ? 'Вторичное жильё' : type;
   }
 
-  getBankLogo(bankName: string): string | null {
-    return getBankLogoPath(bankName);
+  bankSectionText(value: string | null | undefined): boolean {
+    return Boolean(value && String(value).trim());
+  }
+
+  programHeaderLogo(p: ProgramListItem): string | null {
+    return resolveBankLogo(p.bank_public?.logo, p.bank_name);
   }
 
   getScheduleRows(): ScheduleRow[] {

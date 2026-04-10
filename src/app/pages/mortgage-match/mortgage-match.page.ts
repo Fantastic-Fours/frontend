@@ -65,9 +65,7 @@ export class MortgageMatchPage {
       down_payment: [10000000, [Validators.required, Validators.min(0)]],
       income: [500000, [Validators.required, Validators.min(0)]],
       expenses: [150000, [Validators.required, Validators.min(0)]],
-      term_years: [20, [Validators.required, Validators.min(1), Validators.max(30)]],
       housing_type: ['primary' as const, Validators.required],
-      tagsStr: ['семейная, господдержка'],
       require_income_confirmation: [true],
       children_under_18: [0, [Validators.min(0)]],
       has_housing: [null as boolean | null],
@@ -80,10 +78,6 @@ export class MortgageMatchPage {
     return (this.form.get('mode')?.value as 'rules' | 'ai') ?? 'rules';
   }
 
-  get tagsStr(): string {
-    return this.form.get('tagsStr')?.value ?? '';
-  }
-
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -93,17 +87,12 @@ export class MortgageMatchPage {
     this.loading = true;
     this.submitted = true;
     const raw = this.form.getRawValue();
-    const tags = raw.tagsStr
-      ? raw.tagsStr.split(',').map((s: string) => s.trim()).filter(Boolean)
-      : [];
     const params: MortgageMatchRequest = {
       price: raw.price,
       down_payment: raw.down_payment,
       income: raw.income,
       expenses: raw.expenses,
-      term_years: raw.term_years,
       housing_type: raw.housing_type,
-      tags,
       require_income_confirmation: raw.require_income_confirmation,
       children_under_18: raw.children_under_18,
       has_housing: raw.has_housing ?? undefined,
@@ -119,9 +108,7 @@ export class MortgageMatchPage {
         down_payment: params.down_payment,
         income: params.income,
         expenses: params.expenses,
-        term_years: params.term_years,
         housing_type: params.housing_type,
-        tags: params.tags,
         require_income_confirmation: params.require_income_confirmation,
         children_under_18: params.children_under_18,
         has_housing: raw.has_housing ?? null,

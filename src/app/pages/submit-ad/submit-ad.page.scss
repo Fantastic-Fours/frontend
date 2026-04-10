@@ -94,6 +94,51 @@ h1 {
   color: var(--error, #dc2626);
 }
 
+.field-note {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.map-field {
+  .label-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text, #111827);
+  }
+}
+
+.map-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.4;
+}
+
+.map-host {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border, #e5e7eb);
+  background: #f3f4f6;
+}
+
+.map-error {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.coords-line {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+}
+
 .row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

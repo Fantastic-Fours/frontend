@@ -7,18 +7,31 @@
   } @else if (program(); as p) {
     <a routerLink="/programs" class="back-link">← К списку программ</a>
 
-    <header class="detail-header">
-      @if (getBankLogo(p.bank_name); as logo) {
-        <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
-      }
-      <div class="detail-header-text">
-        <h1>{{ p.name }}</h1>
-        <p class="bank-name">{{ p.bank_name }}</p>
-      </div>
+    <header class="program-title-block">
+      <h1>{{ p.name }}</h1>
     </header>
 
+    <section class="bank-compact" aria-label="Банк">
+      <div class="bank-compact-inner">
+        @if (programHeaderLogo(p); as logo) {
+          <img [src]="logo" [alt]="p.bank_name" class="bank-compact-logo" />
+        }
+        <div class="bank-compact-text">
+          <span class="bank-compact-label">Банк</span>
+          <span class="bank-compact-name">{{ p.bank_name }}</span>
+        </div>
+        <a [routerLink]="['/banks', p.bank]" class="bank-compact-link">Подробнее о банке</a>
+      </div>
+      @if (bankSectionText(p.bank_public?.requisites)) {
+        <div class="bank-compact-requisites">
+          <h2 class="bank-compact-req-title">Реквизиты</h2>
+          <div class="bank-compact-req-body">{{ p.bank_public!.requisites }}</div>
+        </div>
+      }
+    </section>
+
     <section class="detail-section">
-      <h2>Основные условия</h2>
+      <h2 class="section-title">Основные условия</h2>
       <dl class="detail-list">
         <div>
           <dt>Процентная ставка</dt>
@@ -63,20 +76,8 @@
       </dl>
     </section>
 
-    @if (p.special_tags.length) {
-      <section class="detail-section">
-        <h2>Особые условия / теги</h2>
-        <div class="tags">
-          @for (tag of p.special_tags; track tag) {
-            <span class="tag">{{ tag }}</span>
-          }
-        </div>
-      </section>
-    }
-
-    <!-- Калькулятор -->
     <section class="detail-section calculator-section">
-      <h2>Калькулятор</h2>
+      <h2 class="section-title">Калькулятор</h2>
       <form [formGroup]="calcForm" (ngSubmit)="calculate()" class="calc-form">
         <div class="calc-grid">
           <div class="field">
@@ -87,12 +88,8 @@
             <label for="calc-down">Первоначальный взнос</label>
             <input id="calc-down" type="number" formControlName="down_payment" min="0" placeholder="₸" />
           </div>
-          <div class="field">
-            <label for="calc-term">Срок займа</label>
-            <input id="calc-term" type="number" formControlName="term_years" min="1" max="30" placeholder="лет" />
-            <span class="field-hint">лет</span>
-          </div>
         </div>
+        <p class="field-hint calc-term-hint">Срок расчёта: максимальный по программе ({{ program()?.max_term_years }} лет).</p>
         @if (getDownPaymentCouldBeLess() > 0) {
           <p class="hint-less">
             Можно внести первоначальный взнос на {{ formatMoney(getDownPaymentCouldBeLess()) }} ₸ меньше

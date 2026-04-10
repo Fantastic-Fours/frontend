@@ -30,7 +30,7 @@ export class App {
 
   isActiveMortgage(): boolean {
     const url = this.router.url;
-    return url.startsWith('/match') || url.startsWith('/programs');
+    return url.startsWith('/match') || url.startsWith('/programs') || url.startsWith('/banks');
   }
 
   isActiveEstate(): boolean {

@@ -22,6 +22,9 @@
               <div class="card-header-text">
                 <h2 class="program-name">{{ p.name }}</h2>
                 <span class="bank-name">{{ p.bank_name }}</span>
+                <a [routerLink]="['/banks', p.bank]" class="bank-detail-link" (click)="$event.stopPropagation()"
+                  >О банке</a
+                >
               </div>
             </div>
             <ul class="card-info">
@@ -30,12 +33,9 @@
               <li><strong>Первоначальный взнос:</strong> от {{ p.min_down_payment_percent }}%</li>
               <li><strong>Срок:</strong> до {{ p.max_term_years }} лет</li>
               <li><strong>Тип жилья:</strong> {{ housingTypeLabel(p.housing_type) }}</li>
-              @if (p.special_tags.length) {
-                <li class="tags">
-                  @for (tag of p.special_tags; track tag) {
-                    <span class="tag">{{ tag }}</span>
-                  }
-                </li>
+              @let ps = privilegeSummary(p);
+              @if (ps) {
+                <li><strong>Льготы:</strong> {{ ps }}</li>
               }
             </ul>
           </div>

@@ -4,7 +4,8 @@ export interface MortgageMatchRequest {
   down_payment: number;
   income: number;
   expenses: number;
-  term_years: number;
+  /** Если не указан, API использует 20 лет */
+  term_years?: number;
   housing_type: 'primary' | 'secondary' | string;
   tags?: string[];
   require_income_confirmation?: boolean;
@@ -21,7 +22,8 @@ export interface MortgageNNPredictRequest {
   down_payment: number;
   income: number;
   expenses?: number;
-  term_years: number;
+  /** Если не указан, API использует 20 лет */
+  term_years?: number;
   housing_type: 'primary' | 'secondary' | string;
   tags?: string[];
   require_income_confirmation?: boolean;
@@ -29,6 +31,9 @@ export interface MortgageNNPredictRequest {
   has_housing?: boolean | null;
   privileges?: string[];
   has_deposit?: boolean;
+  /** Опционально: улучшает Keras-ранжирование (иначе берётся default с бэкенда) */
+  age?: number | null;
+  family_status?: 'single' | 'married' | 'divorced' | 'widowed' | null;
 }
 
 export interface MortgageNNPredictItem {
@@ -50,7 +55,8 @@ export interface MortgageRecommendationRequest {
   monthly_expenses?: number;
   down_payment_percent: number;
   age: number;
-  loan_term: number;
+  /** @deprecated игнорируется API; срок подбирается автоматически */
+  loan_term?: number | null;
   family_status: 'single' | 'married' | 'divorced' | 'widowed' | string;
   privileges?: string[];
   has_deposit?: boolean;
@@ -76,6 +82,9 @@ export interface MortgageRecommendationItem {
   matched_privileges: string[];
   reasons: string[];
   monthly_payment: string | null;
+  /** Подобранный срок (лет) для расчёта платежа и переплаты */
+  selected_loan_term_years?: number | null;
+  total_overpayment?: string | null;
 }
 
 export interface MortgageRecommendationResponse {
@@ -101,6 +110,62 @@ export interface MortgageProgramItem {
 export interface MortgageMatchResponse {
   programs: MortgageProgramItem[];
   total_count: number;
+}
+
+/** Данные банка (GET /api/mortgage/programs/:id/ во вложении bank_public) */
+export interface BankPublic {
+  id: number;
+  name: string;
+  code: string;
+  requisites: string;
+  about: string;
+  customer_reviews: string;
+  /** Относительный URL медиа, например /media/bank_logos/... */
+  logo?: string | null;
+  license_info?: string | null;
+  phone?: string | null;
+  head_office_address?: string | null;
+  website?: string | null;
+}
+
+export interface BankBranch {
+  id: number;
+  latitude: number;
+  longitude: number;
+}
+
+export interface BankReview {
+  id: number;
+  user_id: number;
+  username: string;
+  text: string;
+  score: number;
+  created_at: string;
+}
+
+/** GET /api/mortgage/banks/ и GET /api/mortgage/banks/:id/ */
+export interface Bank {
+  id: number;
+  name: string;
+  code: string;
+  is_active: boolean;
+  requisites: string;
+  about: string;
+  customer_reviews: string;
+  logo: string | null;
+  license_info: string | null;
+  phone: string | null;
+  head_office_address: string | null;
+  website: string | null;
+  branches: BankBranch[];
+  reviews: BankReview[];
+}
+
+export interface BanksListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Bank[];
 }
 
 /** Item from GET /api/mortgage/programs/ (list) and GET /api/mortgage/programs/<id>/ (detail) */
@@ -129,8 +194,9 @@ export interface ProgramListItem {
   is_government_program?: boolean;
   is_privileged_program?: boolean;
   eligible_privileges?: string[];
-  special_tags: string[];
   is_active: boolean;
+  /** Только в ответе детальной программы */
+  bank_public?: BankPublic | null;
 }
 
 export interface MortgageProgramsResponse {
@@ -138,4 +204,29 @@ export interface MortgageProgramsResponse {
   next: string | null;
   previous: string | null;
   results: ProgramListItem[];
+}
+
+/** POST /api/predict-price/ */
+export interface PricePredictionRequest {
+  district?: string;
+  city?: string;
+  address?: string;
+  area: number;
+  floor?: number | null;
+  total_floors?: number | null;
+  rooms: number;
+  condition?: string;
+  description?: string;
+  price: number;
+}
+
+export type PriceDealLabel = 'overpriced' | 'good deal' | 'fair price' | 'inconclusive';
+
+export interface PricePredictionResponse {
+  predicted_price: number;
+  diff_percent: number | null;
+  label: PriceDealLabel;
+  /** False when listing scale (e.g. sale) does not match training data (e.g. rent). */
+  trustworthy?: boolean;
+  note?: string | null;
 }

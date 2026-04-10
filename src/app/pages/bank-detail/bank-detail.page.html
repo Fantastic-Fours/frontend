@@ -1,0 +1,113 @@
+<div class="bank-page">
+  @if (loading()) {
+    <p class="loading">Загрузка…</p>
+  } @else if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+    <a routerLink="/banks" class="back-link">← К списку банков</a>
+  } @else if (bank(); as b) {
+    <a routerLink="/banks" class="back-link">← К списку банков</a>
+
+    <header class="hero">
+      <div class="hero-card">
+        @if (resolveBankLogo(b.logo, b.name); as logo) {
+          <div class="hero-logo-wrap">
+            <img [src]="logo" [alt]="b.name" class="hero-logo" />
+          </div>
+        }
+        <div class="hero-text">
+          <h1>{{ b.name }}</h1>
+          <span class="hero-code">{{ b.code }}</span>
+        </div>
+      </div>
+    </header>
+
+    @if (bankSectionText(b.phone) || bankSectionText(b.website) || bankSectionText(b.head_office_address)) {
+      <section class="panel">
+        <h2 class="panel-title">Контакты</h2>
+        <div class="contact-grid">
+          @if (bankSectionText(b.phone)) {
+            <div class="contact-tile">
+              <span class="contact-label">Телефон</span>
+              <a [href]="'tel:' + b.phone" class="contact-value link">{{ b.phone }}</a>
+            </div>
+          }
+          @if (bankSectionText(b.website)) {
+            <div class="contact-tile">
+              <span class="contact-label">Сайт</span>
+              <a [href]="b.website!" target="_blank" rel="noopener noreferrer" class="contact-value link">{{
+                b.website
+              }}</a>
+            </div>
+          }
+          @if (bankSectionText(b.head_office_address)) {
+            <div class="contact-tile contact-tile-wide">
+              <span class="contact-label">Адрес головного офиса</span>
+              <span class="contact-value">{{ b.head_office_address }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    @if (bankSectionText(b.license_info)) {
+      <section class="panel panel-muted">
+        <h2 class="panel-title">Лицензия и регистрация</h2>
+        <p class="prose">{{ b.license_info }}</p>
+      </section>
+    }
+
+    @if (bankSectionText(b.requisites) || bankSectionText(b.about) || bankSectionText(b.customer_reviews)) {
+      <section class="panel">
+        <h2 class="panel-title">О банке</h2>
+        @if (bankSectionText(b.requisites)) {
+          <h3 class="subhead">Реквизиты</h3>
+          <p class="prose prose-block">{{ b.requisites }}</p>
+        }
+        @if (bankSectionText(b.about)) {
+          <h3 class="subhead">Информация</h3>
+          <p class="prose">{{ b.about }}</p>
+        }
+        @if (bankSectionText(b.customer_reviews)) {
+          <h3 class="subhead">Отзывы и рейтинги</h3>
+          <p class="prose prose-block">{{ b.customer_reviews }}</p>
+        }
+      </section>
+    }
+
+    @if (branches(b).length) {
+      <section class="panel panel-map">
+        <h2 class="panel-title">Отделения на карте</h2>
+        <p class="map-lead">На карте отмечены офисы и отделения. Координаты в списке не показываем — смотрите точки на карте или откройте вид в 2GIS.</p>
+        @if (mapError()) {
+          <div class="map-fallback" role="status">{{ mapError() }}</div>
+        }
+        <div class="map-shell">
+          <div #mapHost class="map-canvas"></div>
+        </div>
+        @if (twogisOpenUrl(b); as gisUrl) {
+          <a [href]="gisUrl" target="_blank" rel="noopener noreferrer" class="btn-2gis">Открыть в 2GIS</a>
+        }
+      </section>
+    }
+
+    @if (reviews(b).length) {
+      <section class="panel">
+        <h2 class="panel-title">Отзывы клиентов</h2>
+        <ul class="reviews-grid">
+          @for (r of reviews(b); track r.id) {
+            <li class="review-card">
+              <div class="review-top">
+                <span class="review-stars" aria-hidden="true">{{ stars(r.score) }}</span>
+                <span class="review-who">{{ r.username }}</span>
+              </div>
+              <time class="review-time">{{ formatDateTime(r.created_at) }}</time>
+              <p class="review-body">{{ r.text }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <p class="footer-status">{{ b.is_active ? 'Банк активен в справочнике' : 'Банк неактивен' }}</p>
+  }
+</div>

@@ -1,11 +1,27 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+  inject,
+  signal,
+  computed,
+  Injector,
+  ElementRef,
+  ViewChild,
+  afterNextRender,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { load } from '@2gis/mapgl';
+import type { Map as Map2gis, Marker as Marker2gis } from '@2gis/mapgl/types';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { UserApiService } from '../../core/services/user-api.service';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
+import { getTwogisApiKey } from '../../core/constants/twogis.constants';
 import type { Apartment } from '../../core/interfaces/apartment.types';
+import type { PricePredictionResponse } from '../../core/interfaces/mortgage.types';
 
 @Component({
   selector: 'app-apartment-detail-page',
@@ -20,10 +36,14 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
   private readonly userApi = inject(UserApiService);
   private readonly authTokens = inject(AuthTokenService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly injector = inject(Injector);
+
+  @ViewChild('mapHost') mapHost?: ElementRef<HTMLElement>;
 
   apartment = signal<Apartment | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
+  mapError = signal<string | null>(null);
   /** SavedApartment id if this apartment is in user's saved list. */
   savedId = signal<number | null>(null);
   saving = signal(false);
@@ -32,6 +52,38 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
   slideIndex = signal(0);
   autoplay = signal(true);
   private autoplayHandle: number | null = null;
+  private map: Map2gis | null = null;
+  private mapMarker: Marker2gis | null = null;
+
+  priceAnalysis = signal<PricePredictionResponse | null>(null);
+  analysisLoading = signal(false);
+  analysisError = signal<string | null>(null);
+
+  analysisCardMod = computed(() => {
+    const a = this.priceAnalysis();
+    if (!a) return '';
+    if (a.trustworthy === false || a.label === 'inconclusive') return 'deal-unknown';
+    if (a.label === 'overpriced') return 'deal-over';
+    if (a.label === 'good deal') return 'deal-good';
+    return 'deal-fair';
+  });
+
+  analysisVerdictText = computed(() => {
+    const a = this.priceAnalysis();
+    if (!a) return '';
+    if (a.trustworthy === false || a.label === 'inconclusive') {
+      return a.note ?? 'Оценка модели не сопоставима с этим объявлением.';
+    }
+    if (a.diff_percent == null) return '';
+    const pct = Math.round(Math.abs(a.diff_percent * 100));
+    if (a.label === 'overpriced') {
+      return `Объявление завышено примерно на ${pct}% относительно рыночной оценки`;
+    }
+    if (a.label === 'good deal') {
+      return `Выгодная сделка: цена примерно на ${pct}% ниже рыночной оценки`;
+    }
+    return 'Цена близка к рыночной оценке модели';
+  });
 
   id = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -51,10 +103,20 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
     }
     this.mortgageApi.getApartment(id).subscribe({
       next: (data) => {
+        this.mapError.set(null);
+        this.destroyDetailMap();
         this.apartment.set(data);
         this.slideIndex.set(0);
         this.setupAutoplay();
         this.loading.set(false);
+        if (this.apartmentHasMapCoords(data)) {
+          afterNextRender(
+            () => {
+              void this.initDetailMap();
+            },
+            { injector: this.injector }
+          );
+        }
         if (this.authTokens.hasTokens()) {
           this.userApi.getSavedApartments(1, 100).subscribe({
             next: (res) => {
@@ -63,6 +125,8 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
             },
           });
         }
+        this.priceAnalysis.set(null);
+        this.analysisError.set(null);
       },
       error: (err) => {
         this.loading.set(false);
@@ -73,6 +137,54 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearAutoplay();
+    this.destroyDetailMap();
+  }
+
+  apartmentHasMapCoords(apt: Apartment | null): boolean {
+    if (!apt) return false;
+    const lat = apt.latitude;
+    const lng = apt.longitude;
+    if (lat == null || lng == null) return false;
+    const la = typeof lat === 'number' ? lat : parseFloat(String(lat));
+    const lo = typeof lng === 'number' ? lng : parseFloat(String(lng));
+    return !Number.isNaN(la) && !Number.isNaN(lo);
+  }
+
+  private destroyDetailMap(): void {
+    this.mapMarker?.destroy();
+    this.mapMarker = null;
+    this.map?.destroy();
+    this.map = null;
+  }
+
+  private async initDetailMap(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const apt = this.apartment();
+    if (!this.apartmentHasMapCoords(apt) || !apt) return;
+    const el = this.mapHost?.nativeElement;
+    if (!el) return;
+    const apiKey = getTwogisApiKey();
+    if (!apiKey) {
+      this.mapError.set(
+        'Карта недоступна: укажите ключ 2GIS в twogis.constants.ts или window.__TWOGIS_API_KEY__'
+      );
+      return;
+    }
+    this.destroyDetailMap();
+    const lat = typeof apt.latitude === 'number' ? apt.latitude : parseFloat(String(apt.latitude));
+    const lng = typeof apt.longitude === 'number' ? apt.longitude : parseFloat(String(apt.longitude));
+    const center: [number, number] = [lng, lat];
+    try {
+      const mapgl = await load();
+      this.map = new mapgl.Map(el, {
+        key: apiKey,
+        center,
+        zoom: 15,
+      });
+      this.mapMarker = new mapgl.Marker(this.map, { coordinates: center });
+    } catch {
+      this.mapError.set('Не удалось загрузить карту 2GIS.');
+    }
   }
 
   addToSaved(): void {
@@ -189,6 +301,37 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
 
   getBankLogo(bankName: string): string | null {
     return getBankLogoPath(bankName);
+  }
+
+  formatDiffPercent(diff: number): string {
+    const p = Math.round(diff * 100);
+    if (p > 0) return `+${p}%`;
+    return `${p}%`;
+  }
+
+  runPriceAnalysis(): void {
+    const apartmentId = this.id();
+    if (apartmentId == null || Number.isNaN(apartmentId)) return;
+    this.fetchPriceAnalysis(apartmentId);
+  }
+
+  private fetchPriceAnalysis(apartmentId: number): void {
+    this.analysisLoading.set(true);
+    this.analysisError.set(null);
+    this.priceAnalysis.set(null);
+    this.mortgageApi.getPropertyPriceAnalysis(apartmentId).subscribe({
+      next: (res) => {
+        this.priceAnalysis.set(res);
+        this.analysisLoading.set(false);
+      },
+      error: (err) => {
+        this.analysisLoading.set(false);
+        const msg = err?.error?.detail ?? err?.message;
+        this.analysisError.set(
+          typeof msg === 'string' ? msg : 'Оценка рынка временно недоступна'
+        );
+      },
+    });
   }
 
   backLink(): string {

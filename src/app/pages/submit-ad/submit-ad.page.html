@@ -57,6 +57,24 @@
       <div class="field">
         <label for="address">Адрес</label>
         <input id="address" type="text" formControlName="address" placeholder="Улица, дом" />
+        @if (geocoding) {
+          <span class="field-note">Определение адреса по карте…</span>
+        }
+      </div>
+
+      <div class="field map-field">
+        <span class="label-text">Местоположение на карте (2GIS)</span>
+        <p class="map-hint">Кликните по карте, чтобы поставить метку и сохранить координаты. При необходимости поле адреса заполнится автоматически.</p>
+        @if (mapError) {
+          <div class="map-error" role="status">{{ mapError }}</div>
+        }
+        <div #mapHost class="map-host"></div>
+        @if (form.get('lat')?.value != null && form.get('lng')?.value != null) {
+          <p class="coords-line">
+            Широта: {{ form.get('lat')?.value | number : '1.5-7' }}, долгота:
+            {{ form.get('lng')?.value | number : '1.5-7' }}
+          </p>
+        }
       </div>
 
       <div class="row">

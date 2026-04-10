@@ -26,6 +26,9 @@ export interface Apartment {
   title?: string;
   price?: number;
   city?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
   housing_type?: string;
   property_type?: string;
   allowed_program_ids?: number[];

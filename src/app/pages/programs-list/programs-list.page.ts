@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
+import { formatPrivilegeLabels } from '../../core/utils/privilege-labels';
 
 const PAGE_SIZE = 10;
 
@@ -81,5 +82,9 @@ export class ProgramsListPage implements OnInit {
 
   getBankLogo(bankName: string): string | null {
     return getBankLogoPath(bankName);
+  }
+
+  privilegeSummary(p: ProgramListItem): string {
+    return formatPrivilegeLabels(p.eligible_privileges);
   }
 }
