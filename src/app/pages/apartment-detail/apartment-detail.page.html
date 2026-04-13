@@ -51,10 +51,12 @@
             }
           } @else {
             <p class="market-mismatch-hint">
-              Прогноз численно не сопоставим с ценой продажи (модель обучена на аренде).
+              {{ pa.note || 'Прогноз сильно отличается от цены в объявлении; сравнение в процентах не показано.' }}
             </p>
           }
-          <p class="market-verdict">{{ analysisVerdictText() }}</p>
+          @if (analysisVerdictText()) {
+            <p class="market-verdict">{{ analysisVerdictText() }}</p>
+          }
         </div>
       }
 

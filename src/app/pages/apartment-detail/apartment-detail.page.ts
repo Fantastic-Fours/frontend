@@ -72,7 +72,7 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
     const a = this.priceAnalysis();
     if (!a) return '';
     if (a.trustworthy === false || a.label === 'inconclusive') {
-      return a.note ?? 'Оценка модели не сопоставима с этим объявлением.';
+      return '';
     }
     if (a.diff_percent == null) return '';
     const pct = Math.round(Math.abs(a.diff_percent * 100));
