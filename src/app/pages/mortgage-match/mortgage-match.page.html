@@ -61,11 +61,37 @@
             <label for="mode">Режим</label>
             <select id="mode" formControlName="mode">
               <option value="rules">Правила (match)</option>
-              <option value="ai">AI рекомендации (Top-3)</option>
+              <option value="ai">AI advisor (ML + RAG)</option>
             </select>
           </div>
           <div class="field"></div>
         </div>
+        @if (mode === 'ai') {
+          <div class="grid">
+            <div class="field">
+              <label for="age">Возраст</label>
+              <input id="age" type="number" formControlName="age" min="18" max="100" />
+            </div>
+            <div class="field">
+              <label for="family_status">Семейное положение</label>
+              <select id="family_status" formControlName="family_status">
+                <option value="single">Холост/Не замужем</option>
+                <option value="married">Женат/Замужем</option>
+                <option value="divorced">Разведен(а)</option>
+                <option value="widowed">Вдовец/Вдова</option>
+              </select>
+            </div>
+          </div>
+          <div class="field full">
+            <label for="advisor_question">Вопрос AI консультанту</label>
+            <textarea
+              id="advisor_question"
+              formControlName="advisor_question"
+              rows="3"
+              placeholder="Например: Почему эти программы мне подходят и какие риски?"
+            ></textarea>
+          </div>
+        }
         <div class="grid">
           <div class="field">
             <label for="sort_by">Сортировка</label>
@@ -94,6 +120,12 @@
               <input type="checkbox" formControlName="require_income_confirmation" />
               Подтверждение дохода
             </label>
+            @if (mode === 'ai') {
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="has_deposit" />
+                Есть депозит
+              </label>
+            }
           </div>
         </div>
         <div class="field full">
@@ -117,11 +149,17 @@
     <div class="section results-section">
       <h2>Результаты ({{ totalCount }})</h2>
       @if (mode === 'ai') {
-        @if (aiTop3.length === 0) {
+        @if (!advisorAnswer && advisorPrograms.length === 0) {
           <p class="empty">Рекомендации не найдены.</p>
         } @else {
+          @if (advisorAnswer) {
+            <article class="advisor-answer">
+              <h3>Объяснение AI</h3>
+              <p>{{ advisorAnswer }}</p>
+            </article>
+          }
           <div class="programs">
-            @for (p of aiTop3; track p.program_id) {
+            @for (p of advisorPrograms; track p.program_id) {
               <article class="program-card">
                 <div class="program-header">
                   @if (getBankLogo(p.bank_name); as logo) {
@@ -136,9 +174,31 @@
                 <dl class="program-details">
                   <div>
                     <dt>Ставка</dt>
-                    <dd>{{ p.interest_rate }}%</dd>
+                    <dd>{{ p.interest_rate_min }}% - {{ p.interest_rate_max }}%</dd>
+                  </div>
+                  <div>
+                    <dt>Мин. взнос</dt>
+                    <dd>{{ p.min_down_payment_percent }}%</dd>
+                  </div>
+                  <div>
+                    <dt>Срок</dt>
+                    <dd>{{ p.loan_term_min }} - {{ p.loan_term_max }} лет</dd>
+                  </div>
+                  <div>
+                    <dt>Типы займа</dt>
+                    <dd>{{ formatLoansTypes(p.requirements.loan_types) }}</dd>
                   </div>
                 </dl>
+                @if (p.ml_reasons?.length) {
+                  <div class="reasons">
+                    <h4>Почему выбрана программой ML</h4>
+                    <ul>
+                      @for (reason of p.ml_reasons; track reason) {
+                        <li>{{ reason }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
               </article>
             }
           </div>

@@ -86,7 +86,8 @@ h2 {
   }
 
   input,
-  select {
+  select,
+  textarea {
     padding: 0.7rem 1rem;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -107,6 +108,12 @@ h2 {
 
   select {
     cursor: pointer;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 84px;
+    font-family: inherit;
   }
 }
 
@@ -285,5 +292,41 @@ h2 {
     font-weight: 600;
     font-size: 0.9375rem;
     color: var(--text);
+  }
+}
+
+.advisor-answer {
+  margin-bottom: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.125rem;
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+    color: var(--text);
+  }
+}
+
+.reasons {
+  margin-top: 0.875rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+
+  h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
   }
 }

@@ -12,6 +12,8 @@ import type {
   MortgageNNPredictResponse,
   MortgageRecommendationRequest,
   MortgageRecommendationResponse,
+  AIMortgageAdvisorRequest,
+  AIMortgageAdvisorResponse,
   PricePredictionRequest,
   PricePredictionResponse,
   Bank,
@@ -59,6 +61,17 @@ export class MortgageApiService {
   recommend(params: MortgageRecommendationRequest): Observable<MortgageRecommendationResponse> {
     return this.http.post<MortgageRecommendationResponse>(
       `${this.base}${API_PATHS.mortgage.recommend}`,
+      params
+    );
+  }
+
+  /**
+   * POST /api/ai-mortgage-advisor
+   * Hybrid ML + RAG + LLM mortgage explanation.
+   */
+  aiMortgageAdvisor(params: AIMortgageAdvisorRequest): Observable<AIMortgageAdvisorResponse> {
+    return this.http.post<AIMortgageAdvisorResponse>(
+      `${this.base}${API_PATHS.mortgage.aiMortgageAdvisor}`,
       params
     );
   }

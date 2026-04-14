@@ -9,14 +9,47 @@
   @if (loading()) {
     <p class="loading">Загрузка…</p>
   } @else {
+    <section class="filters">
+      <input
+        class="filter-input"
+        type="text"
+        placeholder="Поиск по программе или банку"
+        [value]="search()"
+        (input)="onSearch($any($event.target).value)"
+      />
+      <select class="filter-select" [value]="selectedBank()" (change)="onBankChange($any($event.target).value)">
+        <option value="all">Все банки</option>
+        @for (bank of banks(); track bank) {
+          <option [value]="bank">{{ bank }}</option>
+        }
+      </select>
+      <select
+        class="filter-select"
+        [value]="selectedHousingType()"
+        (change)="onHousingTypeChange($any($event.target).value)"
+      >
+        <option value="all">Любой тип жилья</option>
+        <option value="primary">Первичка</option>
+        <option value="secondary">Вторичка</option>
+      </select>
+      <label class="filter-check">
+        <input type="checkbox" [checked]="onlyGovernment()" (change)="toggleGovernment($any($event.target).checked)" />
+        Только госпрограммы
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" [checked]="onlyPrivileged()" (change)="togglePrivileged($any($event.target).checked)" />
+        Только льготные
+      </label>
+    </section>
+
     <p class="meta">Всего: {{ totalCount() }}</p>
 
     <div class="program-cards">
-      @for (p of programs(); track p.id) {
+      @for (p of pagedPrograms(); track p.id) {
         <article class="program-card">
           <div class="card-main">
             <div class="card-header">
-              @if (getBankLogo(p.bank_name); as logo) {
+              @if (getBankLogo(p); as logo) {
                 <img [src]="logo" [alt]="p.bank_name" class="bank-logo" />
               }
               <div class="card-header-text">
@@ -32,7 +65,7 @@
               <li><strong>Макс. сумма:</strong> {{ formatMoney(p.max_loan_amount) }} тг</li>
               <li><strong>Первоначальный взнос:</strong> от {{ p.min_down_payment_percent }}%</li>
               <li><strong>Срок:</strong> до {{ p.max_term_years }} лет</li>
-              <li><strong>Тип жилья:</strong> {{ housingTypeLabel(p.housing_type) }}</li>
+              <li><strong>Тип жилья:</strong> {{ housingTypeSummary(p.housing_types) }}</li>
               @let ps = privilegeSummary(p);
               @if (ps) {
                 <li><strong>Льготы:</strong> {{ ps }}</li>

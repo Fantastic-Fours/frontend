@@ -95,6 +95,53 @@ export interface MortgageRecommendationResponse {
   recommendations: MortgageRecommendationItem[];
 }
 
+export interface AIMortgageAdvisorUserData {
+  property_price: number;
+  salary: number;
+  monthly_expenses?: number;
+  down_payment_percent: number;
+  age: number;
+  family_status: 'single' | 'married' | 'divorced' | 'widowed' | string;
+  privileges?: string[];
+  has_deposit?: boolean;
+  housing_type?: 'primary' | 'secondary' | string;
+}
+
+export interface AIMortgageAdvisorRequest {
+  user_data: AIMortgageAdvisorUserData;
+  question: string;
+}
+
+export interface AIMortgageAdvisorProgram {
+  program_id: number;
+  program_name: string;
+  bank_name: string;
+  score: number;
+  interest_rate_min: string;
+  interest_rate_max: string;
+  min_down_payment_percent: string;
+  loan_term_min: number;
+  loan_term_max: number;
+  conditions: {
+    requires_deposit: boolean;
+    requires_income_confirmation: boolean;
+    is_government_program: boolean;
+    is_privileged_program: boolean;
+  };
+  requirements: {
+    loan_types: string[];
+    eligible_privileges: string[];
+    minimum_savings_percent: string;
+    minimum_savings_amount: string;
+  };
+  ml_reasons: string[];
+}
+
+export interface AIMortgageAdvisorResponse {
+  answer: string;
+  recommended_programs: AIMortgageAdvisorProgram[];
+}
+
 export interface MortgageProgramItem {
   program_id: number;
   program_name: string;
@@ -174,6 +221,7 @@ export interface ProgramListItem {
   name: string;
   bank: number;
   bank_name: string;
+  bank_logo?: string | null;
   min_down_payment_percent: string;
   max_loan_amount: string;
   /** Локальные лимиты, ₸ (строки для Decimal), например astana_almaty / other_regions */
@@ -186,6 +234,7 @@ export interface ProgramListItem {
   interest_rate_max?: string | null;
   gesv: string;
   housing_type: string;
+  housing_types?: string[];
   loan_types?: string[];
   requires_income_confirmation: boolean;
   requires_deposit?: boolean;

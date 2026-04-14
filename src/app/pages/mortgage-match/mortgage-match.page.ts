@@ -5,8 +5,8 @@ import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
   MortgageProgramItem,
   MortgageMatchRequest,
-  MortgageNNPredictItem,
-  MortgageNNPredictRequest,
+  AIMortgageAdvisorProgram,
+  AIMortgageAdvisorRequest,
 } from '../../core/interfaces/mortgage.types';
 import { DecimalPipe } from '@angular/common';
 
@@ -20,7 +20,8 @@ import { DecimalPipe } from '@angular/common';
 export class MortgageMatchPage {
   form: FormGroup;
   programs: MortgageProgramItem[] = [];
-  aiTop3: MortgageNNPredictItem[] = [];
+  advisorAnswer: string | null = null;
+  advisorPrograms: AIMortgageAdvisorProgram[] = [];
   totalCount = 0;
   loading = false;
   error: string | null = null;
@@ -70,6 +71,10 @@ export class MortgageMatchPage {
       children_under_18: [0, [Validators.min(0)]],
       has_housing: [null as boolean | null],
       privileges: [[] as string[]],
+      has_deposit: [false],
+      age: [30, [Validators.required, Validators.min(18), Validators.max(100)]],
+      family_status: ['single' as const, Validators.required],
+      advisor_question: ['Какая ипотека лучше для меня и почему?', [Validators.required, Validators.maxLength(2000)]],
       sort_by: ['score' as const],
     });
   }
@@ -100,24 +105,31 @@ export class MortgageMatchPage {
       sort_by: raw.sort_by,
     };
     this.programs = [];
-    this.aiTop3 = [];
+    this.advisorAnswer = null;
+    this.advisorPrograms = [];
 
     if (this.mode === 'ai') {
-      const aiParams: MortgageNNPredictRequest = {
-        price: params.price,
-        down_payment: params.down_payment,
-        income: params.income,
-        expenses: params.expenses,
-        housing_type: params.housing_type,
-        require_income_confirmation: params.require_income_confirmation,
-        children_under_18: params.children_under_18,
-        has_housing: raw.has_housing ?? null,
-        privileges: raw.privileges ?? [],
+      const downPaymentPercent =
+        raw.price > 0 ? Math.max(0, Math.min(100, (raw.down_payment / raw.price) * 100)) : 0;
+      const aiAdvisorParams: AIMortgageAdvisorRequest = {
+        user_data: {
+          property_price: raw.price,
+          salary: raw.income,
+          monthly_expenses: raw.expenses,
+          down_payment_percent: downPaymentPercent,
+          age: raw.age,
+          family_status: raw.family_status,
+          privileges: raw.privileges ?? [],
+          has_deposit: !!raw.has_deposit,
+          housing_type: raw.housing_type,
+        },
+        question: raw.advisor_question,
       };
-      this.mortgageApi.predict(aiParams).subscribe({
+      this.mortgageApi.aiMortgageAdvisor(aiAdvisorParams).subscribe({
         next: (res) => {
-          this.aiTop3 = res.top3 ?? [];
-          this.totalCount = this.aiTop3.length;
+          this.advisorAnswer = res.answer ?? null;
+          this.advisorPrograms = res.recommended_programs ?? [];
+          this.totalCount = this.advisorPrograms.length;
           this.loading = false;
         },
         error: (err) => {
@@ -153,5 +165,10 @@ export class MortgageMatchPage {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(num);
+  }
+
+  formatLoansTypes(values: string[] | null | undefined): string {
+    if (!values?.length) return '—';
+    return values.join(', ');
   }
 }

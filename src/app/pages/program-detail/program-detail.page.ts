@@ -150,12 +150,17 @@ export class ProgramDetailPage implements OnInit {
     return type === 'primary' ? 'Первичное жильё' : type === 'secondary' ? 'Вторичное жильё' : type;
   }
 
+  housingTypesSummary(p: ProgramListItem): string {
+    const values = (p.housing_types && p.housing_types.length ? p.housing_types : [p.housing_type]).filter(Boolean);
+    return Array.from(new Set(values)).map((v) => this.housingTypeLabel(v)).join(', ');
+  }
+
   bankSectionText(value: string | null | undefined): boolean {
     return Boolean(value && String(value).trim());
   }
 
   programHeaderLogo(p: ProgramListItem): string | null {
-    return resolveBankLogo(p.bank_public?.logo, p.bank_name);
+    return resolveBankLogo(p.bank_logo ?? p.bank_public?.logo, p.bank_name);
   }
 
   getScheduleRows(): ScheduleRow[] {

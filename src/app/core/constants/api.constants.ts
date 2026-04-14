@@ -13,6 +13,7 @@ export const API_PATHS = {
   },
   mortgage: {
     recommend: '/recommend-mortgage/',
+    aiMortgageAdvisor: '/ai-mortgage-advisor',
     match: '/mortgage/match/',
     predict: '/mortgage/predict/',
     programs: '/mortgage/programs/',
