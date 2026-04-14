@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
   MortgageProgramItem,
@@ -58,7 +59,8 @@ export class MortgageMatchPage {
 
   constructor(
     private fb: FormBuilder,
-    private mortgageApi: MortgageApiService
+    private mortgageApi: MortgageApiService,
+    private authTokens: AuthTokenService
   ) {
     this.form = this.fb.nonNullable.group({
       mode: ['rules' as const],
@@ -109,6 +111,11 @@ export class MortgageMatchPage {
     this.advisorPrograms = [];
 
     if (this.mode === 'ai') {
+      if (!this.authTokens.hasTokens()) {
+        this.loading = false;
+        this.error = 'Режим AI (ML+RAG) доступен после входа в аккаунт. Лимит — несколько запросов в сутки.';
+        return;
+      }
       const downPaymentPercent =
         raw.price > 0 ? Math.max(0, Math.min(100, (raw.down_payment / raw.price) * 100)) : 0;
       const aiAdvisorParams: AIMortgageAdvisorRequest = {
@@ -134,7 +141,13 @@ export class MortgageMatchPage {
         },
         error: (err) => {
           this.loading = false;
-          this.error = err?.error?.detail ?? err?.message ?? 'Ошибка AI рекомендаций';
+          const d = err?.error?.detail;
+          this.error =
+            typeof d === 'string'
+              ? d
+              : Array.isArray(d)
+                ? d.map((x: { string?: string }) => x?.string ?? '').filter(Boolean).join(' ')
+                : err?.message ?? 'Ошибка AI рекомендаций';
         },
       });
       return;

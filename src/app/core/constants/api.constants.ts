@@ -36,5 +36,6 @@ export const API_PATHS = {
   },
   aiConsultant: {
     chat: '/ai-consultant/chat/',
+    history: '/ai-consultant/history/',
   },
 } as const;

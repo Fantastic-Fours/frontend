@@ -99,6 +99,20 @@
         @if (apt['floor'] != null) {
           <div class="spec"><span class="spec-label">Этаж</span> {{ apt['floor'] }}{{ apt['total_floors'] ? ' из ' + apt['total_floors'] : '' }}</div>
         }
+        @if (apt.housing_type === 'secondary') {
+          @if (furnishedLabel(apt['furnished']); as fl) {
+            <div class="spec"><span class="spec-label">Меблировка</span> {{ fl }}</div>
+          }
+          @if (apt['year_built'] != null) {
+            <div class="spec"><span class="spec-label">Год постройки</span> {{ apt['year_built'] }}</div>
+          }
+          @if (parkingLabel(apt['parking']); as pl) {
+            <div class="spec"><span class="spec-label">Парковка</span> {{ pl }}</div>
+          }
+          @if (conditionLabel(apt['condition']); as cl) {
+            <div class="spec"><span class="spec-label">Состояние</span> {{ cl }}</div>
+          }
+        }
       </div>
 
       @if (apartmentHasMapCoords(apt)) {
@@ -135,8 +149,30 @@
         </div>
       }
 
-      @if (apt['created_by_username']) {
-        <p class="apartment-author">Объявление от {{ apt['created_by_username'] }}</p>
+      <div class="author-card">
+        <h2 class="author-card-title">Контакты продавца</h2>
+        <p class="author-name">{{ authorName(apt) }}</p>
+        @if (apt.author_phone) {
+          <p class="author-phone">
+            <a [href]="authorPhoneTel(apt)">{{ apt.author_phone }}</a>
+          </p>
+        } @else {
+          <p class="author-phone-muted">Телефон в профиле не указан</p>
+        }
+      </div>
+
+      @if (isOwner(apt)) {
+        <div class="owner-actions">
+          <a [routerLink]="editListingLink(apt)" class="btn-owner btn-owner-primary">Редактировать</a>
+          <button
+            type="button"
+            class="btn-owner btn-owner-danger"
+            [disabled]="ownerActionLoading()"
+            (click)="confirmDeleteListing()"
+          >
+            {{ ownerActionLoading() ? '…' : 'Снять с публикации' }}
+          </button>
+        </div>
       }
 
       @if (isAuthenticated()) {

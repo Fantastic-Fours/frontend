@@ -1,9 +1,20 @@
 <div class="page">
-  <h1>Подать объявление</h1>
-  <p class="subtitle">Добавьте объявление о продаже квартиры. Требуется вход в аккаунт.</p>
+  <h1>{{ editApartmentId != null ? 'Редактировать объявление' : 'Подать объявление' }}</h1>
+  <p class="subtitle">
+    @if (editApartmentId != null) {
+      Измените данные и сохраните. Если загрузить новые фото, галерея заменится выбранными файлами; без загрузки снимки не меняются.
+    } @else {
+      Добавьте объявление о продаже квартиры. Требуется вход в аккаунт.
+    }
+  </p>
 
   @if (!form) {
     <p class="loading">Проверка авторизации…</p>
+  } @else if (loadExistingError) {
+    <div class="error" role="alert">{{ loadExistingError }}</div>
+    <p><a routerLink="/profile/my-listings">← Мои объявления</a></p>
+  } @else if (loadingExisting) {
+    <p class="loading">Загрузка объявления…</p>
   } @else {
     @if (profileLoading) {
       <p class="loading">Проверка профиля…</p>
@@ -104,6 +115,55 @@
         </select>
       </div>
 
+      @if (form.get('housing_type')?.value === 'secondary') {
+        <div class="secondary-extra" role="group" aria-label="Параметры вторичного жилья">
+          <h2 class="subsection-title">Вторичное жильё</h2>
+          <div class="row">
+            <div class="field">
+              <label for="furnished">Меблировка</label>
+              <select id="furnished" formControlName="furnished">
+                <option value="">Не указано</option>
+                <option value="yes">С мебелью</option>
+                <option value="no">Без мебели</option>
+                <option value="partial">Частично</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="year_built">Год постройки</label>
+              <input
+                id="year_built"
+                type="number"
+                formControlName="year_built"
+                placeholder="Например, 2015"
+                min="1800"
+                [attr.max]="currentYear"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="parking">Парковка</label>
+              <select id="parking" formControlName="parking">
+                <option value="">Не указано</option>
+                <option value="parking">Есть парковка</option>
+                <option value="none">Нет</option>
+                <option value="paid">Платная</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="condition">Состояние</label>
+              <select id="condition" formControlName="condition">
+                <option value="">Не указано</option>
+                <option value="excellent">Отличное</option>
+                <option value="good">Хорошее</option>
+                <option value="average">Удовлетворительное</option>
+                <option value="needs_repair">Требует ремонта</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      }
+
       <div class="field">
         <label for="property_type">Тип недвижимости *</label>
         <select id="property_type" formControlName="property_type">
@@ -113,12 +173,22 @@
       </div>
 
       <div class="field">
-        <label for="images_files">Фотографии (можно несколько)</label>
+        <label for="images_files">
+          @if (editApartmentId != null) {
+            Новые фотографии (необязательно)
+          } @else {
+            Фотографии (можно несколько)
+          }
+        </label>
         <input id="images_files" type="file" multiple accept="image/*" (change)="onFilesSelected($event)" />
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading || !canSubmit">
-        {{ loading ? 'Публикация…' : 'Опубликовать объявление' }}
+        @if (loading) {
+          {{ editApartmentId != null ? 'Сохранение…' : 'Публикация…' }}
+        } @else {
+          {{ editApartmentId != null ? 'Сохранить изменения' : 'Опубликовать объявление' }}
+        }
       </button>
     </form>
   }

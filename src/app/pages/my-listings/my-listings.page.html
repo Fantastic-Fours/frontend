@@ -16,22 +16,25 @@
     } @else {
       <div class="estate-grid">
         @for (apt of apartments(); track apt.id) {
-          <a [routerLink]="['/estate/apartment', apt.id]" class="estate-card">
-            <div class="estate-card-image">
-              @if (firstImage(apt); as src) {
-                <img [src]="src" [alt]="apt.title" />
-              } @else {
-                <div class="estate-card-placeholder">Нет фото</div>
-              }
-            </div>
-            <div class="estate-card-body">
-              <h2 class="estate-card-title">{{ apt.title }}</h2>
-              <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
-              <p class="estate-card-meta">
-                {{ apt.city }}{{ apt.area_sqm ? ' · ' + apt.area_sqm + ' м²' : '' }}{{ apt.rooms ? ' · ' + apt.rooms + ' комн.' : '' }}
-              </p>
-            </div>
-          </a>
+          <div class="estate-card-wrap">
+            <a [routerLink]="['/estate/apartment', apt.id]" class="estate-card">
+              <div class="estate-card-image">
+                @if (firstImage(apt); as src) {
+                  <img [src]="src" [alt]="apt.title" />
+                } @else {
+                  <div class="estate-card-placeholder">Нет фото</div>
+                }
+              </div>
+              <div class="estate-card-body">
+                <h2 class="estate-card-title">{{ apt.title }}</h2>
+                <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
+                <p class="estate-card-meta">
+                  {{ apt.city }}{{ apt.area_sqm ? ' · ' + apt.area_sqm + ' м²' : '' }}{{ apt.rooms ? ' · ' + apt.rooms + ' комн.' : '' }}
+                </p>
+              </div>
+            </a>
+            <a [routerLink]="['/estate/apartment', apt.id, 'edit']" class="estate-card-edit">Изменить</a>
+          </div>
         }
       </div>
     }

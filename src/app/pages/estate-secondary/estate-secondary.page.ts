@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed, PLATFORM_ID, inject } from '@angul
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
-import type { Apartment } from '../../core/interfaces/apartment.types';
+import { type Apartment, PROPERTY_CONDITION_LABELS } from '../../core/interfaces/apartment.types';
 import { KZ_BIG_CITIES } from '../../core/constants/kz-cities.constants';
 
 const PAGE_SIZE = 12;
@@ -140,5 +140,12 @@ export class EstateSecondaryPage implements OnInit {
     const imgs = apartment['images'];
     if (Array.isArray(imgs) && imgs.length > 0 && typeof imgs[0] === 'string') return imgs[0];
     return null;
+  }
+
+  /** Краткая подпись состояния для карточки списка. */
+  conditionListLabel(apartment: Apartment): string | null {
+    const c = apartment.condition;
+    if (c == null || c === '') return null;
+    return PROPERTY_CONDITION_LABELS[c as keyof typeof PROPERTY_CONDITION_LABELS] ?? null;
   }
 }
