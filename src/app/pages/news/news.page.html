@@ -11,7 +11,7 @@
   } @else {
     <p class="meta">Всего: {{ totalCount() }}</p>
 
-    <div class="news-cards">
+    <div class="news-cards js-reveal">
       @for (item of news(); track item.id) {
         <article class="news-card">
           @if (item.image_url) {

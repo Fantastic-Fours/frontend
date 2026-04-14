@@ -1,154 +1,348 @@
-<div class="page">
-  <div class="section form-section">
-    <h1>Подбор ипотеки</h1>
-    <p class="subtitle">Заполните параметры для подбора программ</p>
+<div class="calc-page">
+  <div class="calc-inner">
+    <header class="calc-header">
+      <h1 class="calc-title">Калькулятор ипотеки</h1>
+      <p class="calc-subtitle">
+        Рассчитайте ежемесячный платёж и подберите подходящие программы
+      </p>
+    </header>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
-      @if (error) {
-        <div class="error" role="alert">{{ error }}</div>
-      }
-
-      <div class="grid">
-        <div class="field">
-          <label for="price">Стоимость (тг)</label>
-          <input id="price" type="number" formControlName="price" min="1" />
-          @if (form.get('price')?.invalid && form.get('price')?.touched) {
-            <span class="field-error">Введите корректную сумму</span>
-          }
-        </div>
-        <div class="field">
-          <label for="down_payment">Первоначальный взнос (тг)</label>
-          <input id="down_payment" type="number" formControlName="down_payment" min="0" />
-          @if (form.get('down_payment')?.invalid && form.get('down_payment')?.touched) {
-            <span class="field-error">Введите корректную сумму</span>
-          }
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label for="income">Доход (тг/мес)</label>
-          <input id="income" type="number" formControlName="income" min="0" />
-          @if (form.get('income')?.invalid && form.get('income')?.touched) {
-            <span class="field-error">Обязательное поле</span>
-          }
-        </div>
-        <div class="field">
-          <label for="expenses">Расходы (тг/мес)</label>
-          <input id="expenses" type="number" formControlName="expenses" min="0" />
-          @if (form.get('expenses')?.invalid && form.get('expenses')?.touched) {
-            <span class="field-error">Обязательное поле</span>
-          }
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label for="housing_type">Тип жилья</label>
-          <select id="housing_type" formControlName="housing_type">
-            @for (opt of housingTypes; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
-        </div>
-        <div class="field"></div>
-      </div>
-
-      <div class="optional-section">
-        <h3 class="optional-title">Дополнительно</h3>
-        <div class="grid">
-          <div class="field">
-            <label for="mode">Режим</label>
-            <select id="mode" formControlName="mode">
-              <option value="rules">Правила (match)</option>
-              <option value="ai">AI advisor (ML + RAG)</option>
-            </select>
-          </div>
-          <div class="field"></div>
-        </div>
-        @if (mode === 'ai') {
-          <div class="grid">
-            <div class="field">
-              <label for="age">Возраст</label>
-              <input id="age" type="number" formControlName="age" min="18" max="100" />
-            </div>
-            <div class="field">
-              <label for="family_status">Семейное положение</label>
-              <select id="family_status" formControlName="family_status">
-                <option value="single">Холост/Не замужем</option>
-                <option value="married">Женат/Замужем</option>
-                <option value="divorced">Разведен(а)</option>
-                <option value="widowed">Вдовец/Вдова</option>
-              </select>
-            </div>
-          </div>
-          <div class="field full">
-            <label for="advisor_question">Вопрос AI консультанту</label>
-            <textarea
-              id="advisor_question"
-              formControlName="advisor_question"
-              rows="3"
-              placeholder="Например: Почему эти программы мне подходят и какие риски?"
-            ></textarea>
-          </div>
+    <div class="calc-grid">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="$event.preventDefault()"
+        class="calc-form-card"
+        novalidate
+      >
+        @if (error) {
+          <div class="calc-error" role="alert">{{ error }}</div>
         }
-        <div class="grid">
-          <div class="field">
-            <label for="sort_by">Сортировка</label>
-            <select id="sort_by" formControlName="sort_by">
-              @for (opt of sortByOptions; track opt.value) {
+
+        <div class="calc-fields">
+          <!-- Стоимость жилья -->
+          <div class="field-block">
+            <div class="field-head">
+              <label class="field-label" for="price-input">Стоимость жилья</label>
+              <div class="field-value-row">
+                <input
+                  id="price-input"
+                  type="number"
+                  formControlName="price"
+                  class="num-input"
+                  [min]="PRICE_MIN"
+                  [max]="PRICE_MAX"
+                  [step]="PRICE_STEP"
+                />
+                <span class="unit">&#x20B8;</span>
+              </div>
+            </div>
+            <input
+              type="range"
+              class="range-input"
+              [min]="PRICE_MIN"
+              [max]="PRICE_MAX"
+              [step]="PRICE_STEP"
+              [value]="priceVal"
+              (input)="patchPriceFromRange(+$any($event.target).valueAsNumber)"
+              aria-label="Стоимость жилья, слайдер"
+            />
+            <div class="range-labels">
+              <span>{{ formatMillionLabel(PRICE_MIN) }}</span>
+              <span>{{ formatMillionLabel(PRICE_MAX) }}</span>
+            </div>
+          </div>
+
+          <!-- Первоначальный взнос -->
+          <div class="field-block">
+            <div class="field-head">
+              <label class="field-label" for="down-input">Первоначальный взнос</label>
+              <div class="field-value-row">
+                <input
+                  id="down-input"
+                  type="number"
+                  formControlName="down_payment"
+                  class="num-input"
+                  [min]="downPayMin"
+                  [max]="downPayMax"
+                  [step]="DOWN_STEP"
+                />
+                <span class="unit"
+                  >&#x20B8; (<span class="unit-pct">{{ downPaymentPercent }}%</span>)</span
+                >
+              </div>
+            </div>
+            <input
+              type="range"
+              class="range-input"
+              [min]="downPayMin"
+              [max]="downPayMax"
+              [step]="DOWN_STEP"
+              [value]="form.get('down_payment')?.value"
+              (input)="patchDownFromRange(+$any($event.target).valueAsNumber)"
+              aria-label="Первоначальный взнос, слайдер"
+            />
+          </div>
+
+          <!-- Доход -->
+          <div class="field-block">
+            <div class="field-head">
+              <label class="field-label" for="income-input">Ежемесячный доход</label>
+              <div class="field-value-row">
+                <input
+                  id="income-input"
+                  type="number"
+                  formControlName="income"
+                  class="num-input"
+                  [min]="INCOME_MIN"
+                  [max]="INCOME_MAX"
+                  [step]="INCOME_STEP"
+                />
+                <span class="unit">&#x20B8;</span>
+              </div>
+            </div>
+            <input
+              type="range"
+              class="range-input"
+              [min]="INCOME_MIN"
+              [max]="INCOME_MAX"
+              [step]="INCOME_STEP"
+              [value]="incomeVal"
+              (input)="patchIncomeFromRange(+$any($event.target).valueAsNumber)"
+              aria-label="Ежемесячный доход, слайдер"
+            />
+          </div>
+
+          <!-- Расходы -->
+          <div class="field-block">
+            <div class="field-head">
+              <label class="field-label" for="expenses-input">Ежемесячные расходы</label>
+              <div class="field-value-row">
+                <input
+                  id="expenses-input"
+                  type="number"
+                  formControlName="expenses"
+                  class="num-input"
+                  [min]="EXPENSES_MIN"
+                  [max]="expensesMax"
+                  [step]="EXPENSES_STEP"
+                />
+                <span class="unit">&#x20B8;</span>
+              </div>
+            </div>
+            <input
+              type="range"
+              class="range-input"
+              [min]="EXPENSES_MIN"
+              [max]="expensesMax"
+              [step]="EXPENSES_STEP"
+              [value]="form.get('expenses')?.value"
+              (input)="patchExpensesFromRange(+$any($event.target).valueAsNumber)"
+              aria-label="Ежемесячные расходы, слайдер"
+            />
+          </div>
+
+          <!-- Тип жилья -->
+          <div class="field-block field-block--select">
+            <label class="field-label" for="housing_type">Тип жилья</label>
+            <select id="housing_type" formControlName="housing_type" class="select-input">
+              @for (opt of housingOptions; track opt.value) {
                 <option [value]="opt.value">{{ opt.label }}</option>
               }
             </select>
           </div>
-          <div class="field">
-            <label for="children_under_18">Детей до 18 лет</label>
-            <input id="children_under_18" type="number" formControlName="children_under_18" min="0" />
-          </div>
-        </div>
-        <div class="grid">
-          <div class="field">
-            <label for="has_housing">Есть жильё</label>
-            <select id="has_housing" formControlName="has_housing">
-              @for (opt of hasHousingOptions; track opt.value) {
-                <option [ngValue]="opt.value">{{ opt.label }}</option>
-              }
-            </select>
-          </div>
-          <div class="field checkbox-field">
-            <label class="checkbox-label">
-              <input type="checkbox" formControlName="require_income_confirmation" />
-              Подтверждение дохода
-            </label>
-            @if (mode === 'ai') {
-              <label class="checkbox-label">
-                <input type="checkbox" formControlName="has_deposit" />
-                Есть депозит
-              </label>
-            }
-          </div>
-        </div>
-        <div class="field full">
-          <label for="privileges">Льготы</label>
-          <select id="privileges" formControlName="privileges" multiple size="5">
-            @for (option of privilegeOptions; track option.value) {
-              <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-          <span class="field-hint">Можно выбрать несколько значений, удерживая `Ctrl` / `Cmd`.</span>
-        </div>
-      </div>
 
-      <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Подбор…' : (mode === 'ai' ? 'Рекомендовать (AI)' : 'Подобрать программы') }}
-      </button>
-    </form>
+          <!-- Льготы -->
+          <div class="field-block field-block--benefits">
+            <span class="field-label">Льготные программы</span>
+            <div class="benefits-list">
+              @for (opt of benefitOptions; track opt.id) {
+                <div class="benefit-row">
+                  <input
+                    type="checkbox"
+                    [id]="'benefit-' + opt.id"
+                    [checked]="isBenefitChecked(opt.id)"
+                    (change)="toggleBenefit(opt.id, $any($event.target).checked)"
+                  />
+                  <label [for]="'benefit-' + opt.id" class="benefit-label">{{ opt.label }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Дополнительные параметры подбора (как в прежней форме) -->
+          <div class="field-block calc-advanced">
+            <span class="field-label">Дополнительные параметры</span>
+            <div class="calc-advanced-grid">
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="term_years">Срок кредита (лет)</label>
+                <input
+                  id="term_years"
+                  type="number"
+                  formControlName="term_years"
+                  class="select-input"
+                  min="5"
+                  max="35"
+                />
+              </div>
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="sort_by">Сортировка результатов</label>
+                <select id="sort_by" formControlName="sort_by" class="select-input">
+                  @for (opt of sortByOptions; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="children_under_18">Детей до 18 лет</label>
+                <input
+                  id="children_under_18"
+                  type="number"
+                  formControlName="children_under_18"
+                  class="select-input"
+                  min="0"
+                  max="20"
+                />
+              </div>
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="has_housing">Жильё в собственности</label>
+                <select id="has_housing" formControlName="has_housing" class="select-input">
+                  @for (opt of hasHousingSelectOptions; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" formControlName="require_income_confirmation" />
+              <span>Требуется подтверждение дохода</span>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" formControlName="has_deposit" />
+              <span>Есть депозит / накопления (учитывается в запросе к API)</span>
+            </label>
+          </div>
+
+          <div class="field-block field-block--benefits">
+            <span class="field-label">Льготы (полный список для match / AI)</span>
+            <p class="field-hint">Отметьте официальные категории; пересекается с «Льготные программы» выше — дубликаты объединятся.</p>
+            <div class="privileges-grid">
+              @for (opt of privilegeOptionsFull; track opt.value) {
+                <label class="privilege-item">
+                  <input
+                    type="checkbox"
+                    [checked]="isExtraPrivilegeChecked(opt.value)"
+                    (change)="toggleExtraPrivilege(opt.value, $any($event.target).checked)"
+                  />
+                  <span>{{ opt.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <div class="field-block calc-ai-params">
+            <span class="field-label">Параметры для AI Top-3</span>
+            <p class="field-hint">Используются при нажатии «AI Top-3»; на обычный подбор не влияют.</p>
+            <div class="calc-advanced-grid">
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="age">Возраст</label>
+                <input id="age" type="number" formControlName="age" class="select-input" min="18" max="100" />
+              </div>
+              <div class="field-block field-block--select field-block--tight">
+                <label class="field-label field-label--sm" for="family_status">Семейное положение</label>
+                <select id="family_status" formControlName="family_status" class="select-input">
+                  <option value="single">Холост / не замужем</option>
+                  <option value="married">Женат / замужем</option>
+                  <option value="divorced">Разведён(а)</option>
+                  <option value="widowed">Вдовец / вдова</option>
+                </select>
+              </div>
+            </div>
+            <label class="field-label field-label--sm" for="advisor_question">Вопрос AI-консультанту</label>
+            <textarea
+              id="advisor_question"
+              formControlName="advisor_question"
+              class="textarea-input"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="loading"
+              (click)="submitRegular($event)"
+            >
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="2" width="16" height="20" rx="2" stroke-width="2" />
+                <path d="M8 6h8M8 10h8M8 14h5" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              {{ loading && lastMode === 'rules' ? 'Подбор…' : 'Подобрать программы' }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="loading"
+              (click)="submitAi($event)"
+            >
+              <svg class="btn-icon btn-icon--spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M12 2l1.1 3.4h3.6l-2.9 2.1 1.1 3.4L12 10.9 8.1 10.9l1.1-3.4L6.3 5.4h3.6L12 2zM5 14l.8 2.3h2.4l-1.9 1.4.7 2.3L5 18.7l-2 1.3.7-2.3-1.9-1.4h2.4L5 14zm14 0l.8 2.3h2.4l-1.9 1.4.7 2.3L19 18.7l-2 1.3.7-2.3-1.9-1.4h2.4L19 14z"
+                />
+              </svg>
+              {{ loading && lastMode === 'ai' ? 'AI…' : 'AI Top-3' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <aside class="calc-summary">
+        <h2 class="summary-title">Параметры расчёта</h2>
+        <div class="summary-blocks">
+          <div class="summary-block summary-block--hero">
+            <div class="summary-label">Сумма кредита</div>
+            <div class="summary-value summary-value--xl">{{ formatSum(loanAmount) }} &#x20B8;</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-block">
+            <div class="summary-label">Первый взнос</div>
+            <div class="summary-value">{{ formatSum(form.get('down_payment')?.value || 0) }} &#x20B8;</div>
+            <div class="summary-hint">{{ downPaymentPercent }}% от стоимости</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-block">
+            <div class="summary-label">Платёжеспособность</div>
+            <div class="summary-value">{{ formatSum(paymentCapacity) }} &#x20B8;/мес</div>
+            <div class="summary-hint summary-hint--row">
+              <svg class="hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M23 18l-9-9-5 5-7-7" stroke-width="2" stroke-linecap="round" />
+                <path d="M17 18h6v-6" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              ~ {{ expensePercentOfIncome }}% расходов от дохода
+            </div>
+          </div>
+          @if (selectedBenefitList.length > 0) {
+            <div class="summary-divider"></div>
+            <div class="summary-block">
+              <div class="summary-label">Льготы</div>
+              <div class="benefit-badges">
+                @for (id of selectedBenefitList; track id) {
+                  <span class="benefit-badge">{{ benefitLabel(id) }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </aside>
+    </div>
   </div>
 
-  @if (submitted && !loading) {
-    <div class="section results-section">
-      <h2>Результаты ({{ totalCount }})</h2>
-      @if (mode === 'ai') {
+  @if (submitted) {
+    <div class="calc-results">
+      <h2 class="results-title">Результаты ({{ totalCount }})</h2>
+      @if (loading) {
+        <p class="results-loading">Загрузка…</p>
+      } @else if (mode === 'ai') {
         @if (!advisorAnswer && advisorPrograms.length === 0) {
           <p class="empty">Рекомендации не найдены.</p>
         } @else {
@@ -189,7 +383,7 @@
                     <dd>{{ formatLoansTypes(p.requirements.loan_types) }}</dd>
                   </div>
                 </dl>
-                @if (p.ml_reasons?.length) {
+                @if (p.ml_reasons.length) {
                   <div class="reasons">
                     <h4>Почему выбрана программой ML</h4>
                     <ul>

@@ -14,7 +14,7 @@
     @if (apartments().length === 0) {
       <p class="empty">У вас пока нет объявлений. <a routerLink="/estate/submit">Подать объявление</a></p>
     } @else {
-      <div class="estate-grid">
+      <div class="estate-grid js-reveal">
         @for (apt of apartments(); track apt.id) {
           <a [routerLink]="['/estate/apartment', apt.id]" class="estate-card">
             <div class="estate-card-image">

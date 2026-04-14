@@ -1,46 +1,96 @@
 <div class="app">
   <nav class="nav">
-    <a routerLink="/match" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="logo-link">
-      <img src="assets/logo.jpg" alt="iDom" class="logo-img" />
-    </a>
-    <div class="nav-links">
-      <a routerLink="/about" routerLinkActive="active" class="nav-link">О нас</a>
+    <div class="nav-inner container">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="logo-link"
+        (click)="closeMobileMenu()"
+      >
+        <img src="assets/logo.jpg" alt="Ipotex" class="logo-img" />
+        <span class="logo-text">Ipotex</span>
+      </a>
 
-      <div class="dropdown" (mouseenter)="openDropdown('mortgage')" (mouseleave)="closeDropdown('mortgage')">
-        <button type="button" class="nav-link dropdown-trigger" [class.active]="isActiveMortgage()">
-          Ипотека ▾
-        </button>
-        <div class="dropdown-menu" [class.open]="openMenu === 'mortgage'">
-          <a routerLink="/match" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('mortgage')">Подбор</a>
-          <a routerLink="/programs" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('mortgage')">Программы</a>
-          <a routerLink="/banks" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('mortgage')">Банки</a>
+      <button type="button" class="burger" (click)="toggleMobileMenu()" aria-label="Открыть меню">
+        {{ mobileMenuOpen ? '\u2715' : '\u2630' }}
+      </button>
+
+      <div class="nav-center nav-links" [class.open]="mobileMenuOpen">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="closeMobileMenu()">Главная</a>
+        <a routerLink="/match" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Калькулятор</a>
+
+        <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
+          <button
+            type="button"
+            class="nav-link dropdown-trigger"
+            [class.active]="isActiveEstate()"
+            (click)="toggleEstateNav($event)"
+          >
+            Недвижимость<span class="caret" aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
+            <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Новостройки</a>
+            <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Вторичное жильё</a>
+            <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Подать объявление</a>
+          </div>
+        </div>
+
+        <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Банки</a>
+        <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">AI-консультант</a>
+        <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Новости</a>
+
+        <div class="nav-more mobile-only">
+          <span class="nav-more-label">Ещё в сервисе</span>
+          <a routerLink="/programs" routerLinkActive="active" class="nav-link nav-link-sub" (click)="closeMobileMenu()">Ипотечные программы</a>
         </div>
       </div>
 
-      <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link">AI-консультант</a>
-      <a routerLink="/news" routerLinkActive="active" class="nav-link">Новости</a>
-
-      <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
-        <button type="button" class="nav-link dropdown-trigger" [class.active]="isActiveEstate()">
-          Недвижимость ▾
-        </button>
-        <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
-          <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Первичка</a>
-          <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Вторичка</a>
-          <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate')">Подать объявление</a>
-        </div>
+      <div class="nav-actions" [class.open]="mobileMenuOpen">
+        <a routerLink="/match" class="btn-nav-cta" (click)="closeMobileMenu()">Оставить заявку</a>
+        @if (!isAuthenticated()) {
+          <a routerLink="/login" class="nav-link nav-link-compact" (click)="closeMobileMenu()">Вход</a>
+        } @else {
+          <a routerLink="/profile" class="nav-link nav-link-compact" (click)="closeMobileMenu()">Профиль</a>
+          <button type="button" class="nav-link nav-link-compact nav-logout" (click)="logout()">Выйти</button>
+        }
       </div>
-
-      @if (!isAuthenticated()) {
-        <a routerLink="/register" routerLinkActive="active" class="nav-link">Регистрация</a>
-        <a routerLink="/login" routerLinkActive="active" class="nav-link">Вход</a>
-      } @else {
-        <a routerLink="/profile" routerLinkActive="active" class="nav-link">Профиль</a>
-        <button type="button" class="nav-link nav-logout" (click)="logout()">Выйти</button>
-      }
     </div>
   </nav>
+
   <main class="main">
     <router-outlet />
   </main>
+
+  <footer class="site-footer" id="contacts">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">Ipotex</span>
+        <p class="footer-tagline">Ипотека и недвижимость в Казахстане: подбор программ, сравнение банков и каталог жилья.</p>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-heading">Сервис</h3>
+        <a routerLink="/match">Калькулятор</a>
+        <a routerLink="/banks">Банки</a>
+        <a routerLink="/programs">Программы</a>
+        <a routerLink="/ai-consultant">AI-консультант</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-heading">Недвижимость</h3>
+        <a routerLink="/estate/primary">Новостройки</a>
+        <a routerLink="/estate/secondary">Вторичка</a>
+        <a routerLink="/estate/submit">Подать объявление</a>
+        <a routerLink="/properties">Каталог</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-heading">Помощь</h3>
+        <a routerLink="/news">Новости</a>
+        <a routerLink="/register">Регистрация</a>
+        <span class="footer-note">Поддержка: через форму в личном кабинете</span>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2024 Ipotex. Все права защищены.</p>
+    </div>
+  </footer>
 </div>

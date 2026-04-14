@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'match' },
+  { path: '', pathMatch: 'full', loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage) },
+  { path: 'mortgage-calculator', pathMatch: 'full', redirectTo: 'match' },
+  { path: 'properties', pathMatch: 'full', redirectTo: 'estate/primary' },
   { path: 'about', loadComponent: () => import('./pages/about/about').then((m) => m.About) },
   { path: 'login', loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage) },
   { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password.page').then((m) => m.ForgotPasswordPage) },

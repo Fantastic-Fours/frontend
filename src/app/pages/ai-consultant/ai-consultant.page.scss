@@ -1,38 +1,51 @@
 .page {
-  max-width: 720px;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.25rem 3rem;
 }
 
 .header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--gradient-soft);
+  box-shadow: var(--shadow-sm);
 }
 
 h1 {
-  margin: 0 0 0.25rem;
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #111827;
+  margin: 0.5rem 0 0.25rem;
 }
 
 .subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 0.9375rem;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--gradient-primary);
 }
 
 .context-section {
   margin-bottom: 1.5rem;
-  padding: 1rem 1.25rem;
-  background: #f9fafb;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .context-title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text);
   margin: 0 0 0.75rem;
 }
 
@@ -45,32 +58,35 @@ h1 {
 .field label {
   display: block;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 0.25rem;
 }
 
 .field input {
   width: 100%;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  min-height: 48px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #f9f6f1;
   font-size: 0.9rem;
 }
 
 .error {
   padding: 0.875rem 1rem;
-  background: #fef2f2;
-  color: #dc2626;
+  background: #fff0ee;
+  color: #b63e2d;
   border-radius: 8px;
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
 
 .chat {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .messages {
@@ -81,7 +97,7 @@ h1 {
 }
 
 .placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 2rem 0;
   text-align: center;
@@ -96,20 +112,20 @@ h1 {
 
 .message-user {
   margin-left: auto;
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
+  background: rgba(214, 104, 83, 0.1);
+  border: 1px solid rgba(214, 104, 83, 0.2);
 }
 
 .message-assistant {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
 }
 
 .message-role {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 0.25rem;
 }
 
@@ -120,7 +136,7 @@ h1 {
 }
 
 .message-text.typing {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -128,7 +144,7 @@ h1 {
   margin: 0.5rem 0 0.25rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text);
 }
 
 .suggestions-list {
@@ -138,7 +154,7 @@ h1 {
 }
 
 .suggestions-list a {
-  color: var(--primary);
+  color: var(--secondary);
   text-decoration: none;
 }
 
@@ -150,15 +166,17 @@ h1 {
   display: flex;
   gap: 0.5rem;
   padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-  background: #fafafa;
+  border-top: 1px solid var(--border);
+  background: var(--bg-muted);
 }
 
 .input-message {
   flex: 1;
+  min-height: 48px;
   padding: 0.6rem 0.9rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #f9f6f1;
   font-size: 0.95rem;
 }
 
@@ -168,8 +186,9 @@ h1 {
 }
 
 .btn {
+  min-height: 48px;
   padding: 0.6rem 1.2rem;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -178,12 +197,12 @@ h1 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+  background: var(--gradient-primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 8px 20px rgba(214, 104, 83, 0.36);
   transform: translateY(-1px);
 }
 

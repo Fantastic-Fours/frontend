@@ -14,23 +14,36 @@ export class App {
   private readonly authTokens = inject(AuthTokenService);
   private readonly authApi = inject(AuthApiService);
 
-  openMenu: 'mortgage' | 'estate' | null = null;
+  openMenu: 'estate' | null = null;
+  mobileMenuOpen = false;
 
   isAuthenticated(): boolean {
     return this.authTokens.hasTokens();
   }
 
-  openDropdown(menu: 'mortgage' | 'estate'): void {
+  openDropdown(menu: 'estate'): void {
     this.openMenu = menu;
   }
 
-  closeDropdown(_menu?: 'mortgage' | 'estate'): void {
+  closeDropdown(_menu?: 'estate'): void {
     this.openMenu = null;
   }
 
-  isActiveMortgage(): boolean {
-    const url = this.router.url;
-    return url.startsWith('/match') || url.startsWith('/programs') || url.startsWith('/banks');
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
+  toggleEstateNav(event: Event): void {
+    if (typeof window === 'undefined' || window.innerWidth > 980) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    this.openMenu = this.openMenu === 'estate' ? null : 'estate';
   }
 
   isActiveEstate(): boolean {
@@ -40,5 +53,6 @@ export class App {
 
   logout(): void {
     this.authApi.logout();
+    this.closeMobileMenu();
   }
 }

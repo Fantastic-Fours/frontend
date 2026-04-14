@@ -20,8 +20,9 @@ export class About implements OnInit, OnDestroy {
   link_img: string = 'assets/slide1.jpeg';
 
   // 1. Интерполяция
-  title = 'Why Us?';
-  mission = 'These popular destinations have something to offer';
+  title = 'Почему мы?';
+  mission =
+    'Подбор ипотечных программ, каталог квартир и персональные рекомендации — всё в одном месте';
 
 
 

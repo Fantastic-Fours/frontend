@@ -1,0 +1,149 @@
+<div class="home">
+  <!-- 1. Hero -->
+  <section class="hero" aria-labelledby="home-hero-title">
+    <div class="hero-pattern" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-badge anim-badge">
+        <span class="hero-badge-emoji" aria-hidden="true">&#10024;</span>
+        <span>Умный подбор ипотеки с AI</span>
+      </div>
+
+      <h1 id="home-hero-title" class="hero-title anim-title">
+        Найдите идеальную <span class="text-gradient">ипотеку</span>
+      </h1>
+
+      <p class="hero-desc anim-desc">
+        Подберём программу под ваши критерии. Сравним банки и поможем оформить заявку онлайн в Казахстане.
+      </p>
+
+      <div class="hero-ctas anim-ctas">
+        <a routerLink="/mortgage-calculator" class="btn btn-primary btn-lg">
+          <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect width="16" height="20" x="4" y="2" rx="2" />
+            <line x1="8" x2="16" y1="6" y2="6" />
+            <line x1="8" x2="8" y1="10" y2="10" />
+            <line x1="12" x2="12" y1="10" y2="10" />
+            <line x1="16" x2="16" y1="10" y2="10" />
+            <line x1="8" x2="8" y1="14" y2="14" />
+            <line x1="12" x2="12" y1="14" y2="14" />
+            <line x1="16" x2="16" y1="14" y2="14" />
+            <line x1="8" x2="8" y1="18" y2="18" />
+            <line x1="12" x2="12" y1="18" y2="18" />
+            <line x1="16" x2="16" y1="18" y2="18" />
+          </svg>
+          Рассчитать ипотеку
+        </a>
+        <a routerLink="/properties" class="btn btn-outline btn-lg">
+          <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+            <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+            <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+            <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
+          </svg>
+          Каталог недвижимости
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Features -->
+  <section class="section features" aria-labelledby="features-title">
+    <div class="container">
+      <header class="section-head">
+        <h2 id="features-title">Почему Ipotex?</h2>
+        <p class="section-sub">Всё необходимое для уверенного выбора ипотеки</p>
+      </header>
+
+      <div class="features-grid">
+        @for (f of features; track f.title; let i = $index) {
+          <article
+            class="feature-card js-reveal"
+            [style.--reveal-delay]="(i * 100) + 'ms'"
+            [class.feature-card--primary]="f.variant === 'primary'"
+            [class.feature-card--secondary]="f.variant === 'secondary'"
+            [class.feature-card--accent]="f.variant === 'accent'"
+          >
+            <div class="feature-icon-wrap" aria-hidden="true">
+              @if (f.icon === 'sparkles') {
+                <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+                </svg>
+              }
+              @if (f.icon === 'shield') {
+                <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+                </svg>
+              }
+              @if (f.icon === 'heart') {
+                <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+              }
+            </div>
+            <h3 class="feature-title">{{ f.title }}</h3>
+            <p class="feature-desc">{{ f.description }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. How it works -->
+  <section class="section how" aria-labelledby="how-title">
+    <div class="container">
+      <header class="section-head">
+        <h2 id="how-title">Как это работает</h2>
+        <p class="section-sub">Простой процесс подбора ипотеки</p>
+      </header>
+
+      <div class="steps-grid">
+        @for (s of steps; track s.num; let i = $index) {
+          <div
+            class="step-card js-reveal"
+            [class.step-card--line]="i < 3"
+            [style.--reveal-delay]="(i * 150) + 'ms'"
+          >
+            <span class="step-num" aria-hidden="true">{{ s.num }}</span>
+            <h3 class="step-title">{{ s.title }}</h3>
+            <p class="step-desc">{{ s.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Stats -->
+  <section class="section stats" aria-labelledby="stats-title">
+    <div class="container">
+      <h2 id="stats-title" class="visually-hidden">Статистика сервиса</h2>
+      <div class="stats-grid">
+        @for (st of stats; track st.value; let i = $index) {
+          <div class="stat-block js-reveal" [style.--reveal-delay]="(i * 100) + 'ms'">
+            <div class="stat-value text-gradient-br">{{ st.value }}</div>
+            <p class="stat-label">{{ st.label }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CTA -->
+  <section class="section cta-final js-reveal" aria-labelledby="cta-title">
+    <div class="container cta-inner">
+      <h2 id="cta-title">Готовы найти свою ипотеку?</h2>
+      <p class="cta-sub">
+        Начните прямо сейчас и получите одобрение за 15 минут.
+      </p>
+      <a routerLink="/mortgage-calculator" class="btn btn-cta-emerald btn-lg">
+        <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect width="16" height="20" x="4" y="2" rx="2" />
+          <line x1="8" x2="16" y1="6" y2="6" />
+          <line x1="8" x2="8" y1="10" y2="10" />
+          <line x1="12" x2="12" y1="10" y2="10" />
+          <line x1="16" x2="16" y1="10" y2="10" />
+        </svg>
+        Начать расчёт
+      </a>
+    </div>
+  </section>
+</div>
