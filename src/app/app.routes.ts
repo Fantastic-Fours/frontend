@@ -23,6 +23,7 @@ export const routes: Routes = [
   { path: 'news/:id', loadComponent: () => import('./pages/news-detail/news-detail.page').then((m) => m.NewsDetailPage) },
   { path: 'estate/primary', loadComponent: () => import('./pages/estate-primary/estate-primary.page').then((m) => m.EstatePrimaryPage) },
   { path: 'estate/secondary', loadComponent: () => import('./pages/estate-secondary/estate-secondary.page').then((m) => m.EstateSecondaryPage) },
+  { path: 'estate/apartment/:id/edit', loadComponent: () => import('./pages/submit-ad/submit-ad.page').then((m) => m.SubmitAdPage) },
   { path: 'estate/apartment/:id', loadComponent: () => import('./pages/apartment-detail/apartment-detail.page').then((m) => m.ApartmentDetailPage) },
   { path: 'estate/submit', loadComponent: () => import('./pages/submit-ad/submit-ad.page').then((m) => m.SubmitAdPage) },
 ];

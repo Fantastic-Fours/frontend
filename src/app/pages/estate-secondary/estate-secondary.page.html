@@ -139,7 +139,12 @@
           <div class="estate-card-body">
             <h2 class="estate-card-title">{{ apt.title }}</h2>
             <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
-            <p class="estate-card-meta">{{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' м²' : '' }}{{ apt['rooms'] ? ' · ' + apt['rooms'] + ' комн.' : '' }}</p>
+            <p class="estate-card-meta">
+              {{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' м²' : '' }}{{ apt['rooms'] ? ' · ' + apt['rooms'] + ' комн.' : '' }}
+              @if (conditionListLabel(apt); as condLabel) {
+                <span class="estate-card-chip"> · {{ condLabel }}</span>
+              }
+            </p>
           </div>
         </a>
       }

@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -8,6 +9,7 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
   MortgageProgramItem,
@@ -21,7 +23,7 @@ type BenefitId = '7-20-20' | 'first-home' | 'large-family' | 'young-family';
 @Component({
   selector: 'app-mortgage-match-page',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe],
+  imports: [ReactiveFormsModule, DecimalPipe, RouterLink],
   templateUrl: './mortgage-match.page.html',
   styleUrl: './mortgage-match.page.scss',
 })
@@ -101,6 +103,7 @@ export class MortgageMatchPage implements OnDestroy {
   constructor(
     private fb: FormBuilder,
     private mortgageApi: MortgageApiService,
+    private authTokens: AuthTokenService,
   ) {
     this.form = this.fb.nonNullable.group({
       price: [30_000_000, [Validators.required, Validators.min(this.PRICE_MIN)]],
@@ -359,6 +362,12 @@ export class MortgageMatchPage implements OnDestroy {
     this.advisorPrograms = [];
 
     if (mode === 'ai') {
+      if (!this.authTokens.hasTokens()) {
+        this.loading = false;
+        this.error =
+          'Режим AI (ML+RAG) доступен после входа в аккаунт. Лимит — несколько запросов в сутки.';
+        return;
+      }
       const downPaymentPercent =
         raw.price > 0
           ? Math.max(0, Math.min(100, (raw.down_payment / raw.price) * 100))
@@ -391,7 +400,13 @@ export class MortgageMatchPage implements OnDestroy {
         },
         error: (err) => {
           this.loading = false;
-          this.error = err?.error?.detail ?? err?.message ?? 'Ошибка AI рекомендаций';
+          const d = err?.error?.detail;
+          this.error =
+            typeof d === 'string'
+              ? d
+              : Array.isArray(d)
+                ? d.map((x: { string?: string }) => x?.string ?? '').filter(Boolean).join(' ')
+                : err?.message ?? 'Ошибка AI рекомендаций';
         },
       });
       return;

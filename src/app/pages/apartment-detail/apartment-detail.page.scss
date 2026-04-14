@@ -364,10 +364,93 @@
   }
 }
 
-.apartment-author {
-  margin: 1rem 0 0;
+.author-card {
+  margin: 1.25rem 0;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: #fafafa;
+}
+
+.author-card-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+
+.author-name {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text, #374151);
+}
+
+.author-phone {
+  margin: 0;
+  font-size: 0.95rem;
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.author-phone-muted {
+  margin: 0;
   font-size: 0.875rem;
   color: var(--text-muted, #6b7280);
+}
+
+.owner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+}
+
+.btn-owner {
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-owner:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-owner-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.btn-owner-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-owner-danger {
+  background: #fff;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.btn-owner-danger:hover:not(:disabled) {
+  background: #fef2f2;
 }
 
 .favorite-actions {

@@ -2,10 +2,13 @@
  * MapGL JS API + Geocoder (Catalog API) key from 2GIS Platform Manager.
  * https://docs.2gis.com/en/mapgl/start/first-steps
  *
- * Paste your demo key below, or set it in index.html before the app bundle:
+ * Ключ задаётся в frontend/.env как TWOGIS_API_KEY=… (см. .env.example).
+ * Перед serve/build выполняется `npm run env:generate` → twogis-env.generated.ts
+ *
+ * Либо в index.html до бандла:
  * `<script>window.__TWOGIS_API_KEY__ = '…';</script>`
  */
-const TWOGIS_API_KEY_FILE = 'be1d9244-b813-4a85-b57a-9b58e4c10cfc';
+import { TWOGIS_API_KEY_FROM_DOTENV } from './twogis-env.generated';
 
 declare global {
   interface Window {
@@ -20,5 +23,5 @@ export function getTwogisApiKey(): string {
       return String(fromWindow).trim();
     }
   }
-  return TWOGIS_API_KEY_FILE.trim();
+  return (TWOGIS_API_KEY_FROM_DOTENV || '').trim();
 }

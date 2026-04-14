@@ -241,7 +241,11 @@
 
           <div class="field-block calc-ai-params">
             <span class="field-label">Параметры для AI Top-3</span>
-            <p class="field-hint">Используются при нажатии «AI Top-3»; на обычный подбор не влияют.</p>
+            <p class="field-hint">
+              Используются при нажатии «AI Top-3». Нужен
+              <a routerLink="/login">вход в аккаунт</a>. До 3 обращений к ML+RAG в сутки на пользователя
+              (включая AI-консультант с RAG). На обычный подбор по правилам не влияют.
+            </p>
             <div class="calc-advanced-grid">
               <div class="field-block field-block--select field-block--tight">
                 <label class="field-label field-label--sm" for="age">Возраст</label>

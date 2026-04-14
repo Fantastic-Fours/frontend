@@ -147,7 +147,7 @@ export class BankDetailPage implements OnInit, OnDestroy {
     if (!el) return;
     const apiKey = getTwogisApiKey();
     if (!apiKey) {
-      this.mapError.set('Укажите ключ 2GIS в twogis.constants.ts для отображения карты.');
+      this.mapError.set('Укажите ключ 2GIS в frontend/.env (TWOGIS_API_KEY) для отображения карты.');
       return;
     }
     this.destroyBranchesMap();

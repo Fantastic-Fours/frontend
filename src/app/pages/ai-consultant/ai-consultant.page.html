@@ -2,26 +2,48 @@
   <div class="header">
     <span class="badge">✨ Powered by AI</span>
     <h1>AI-консультант</h1>
-    <p class="subtitle">Задайте вопрос по ипотеке. Укажите параметры для персонализированных рекомендаций.</p>
+    <p class="subtitle">
+      Простой чат: пишите вопросы по ипотеке в Казахстане. Параметры ниже — по желанию, для более точных советов.
+    </p>
+    @if (isAuthenticated) {
+      <div class="history-actions">
+        <button type="button" class="btn btn-outline" (click)="loadPersistedHistory()">Обновить историю</button>
+        <button type="button" class="btn btn-danger" (click)="clearPersistedHistory()">Очистить историю</button>
+      </div>
+    }
   </div>
 
-  <div class="context-section">
-    <h2 class="context-title">Параметры (необязательно)</h2>
+  <details class="context-section">
+    <summary class="context-summary">Параметры (необязательно)</summary>
+    <p class="context-hint">Можно заполнить только то, что знаете — или не заполнять вовсе.</p>
+    <label class="rag-toggle">
+      <input type="checkbox" [(ngModel)]="useRag" name="useRag" />
+      Учитывать данные из каталога программ (RAG по базе)
+    </label>
+    <p class="context-hint">С RAG нужен вход в аккаунт; на пользователя — до 3 запросов ML+RAG в сутки (общий лимит с «AI advisor» на странице подбора).</p>
     <div class="context-grid">
       <div class="field">
         <label for="ctx-income">Доход (тг/мес)</label>
-        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" placeholder="500000" />
+        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" placeholder="например 500000" />
       </div>
       <div class="field">
-        <label for="ctx-down">Первоначальный взнос</label>
-        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" placeholder="10000000" />
+        <label for="ctx-down">Первоначальный взнос (тг)</label>
+        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" placeholder="например 10000000" />
+      </div>
+      <div class="field">
+        <label for="ctx-term">Срок кредита (лет)</label>
+        <input id="ctx-term" type="number" [(ngModel)]="contextTermYears" min="1" max="30" placeholder="например 20" />
       </div>
       <div class="field">
         <label for="ctx-type">Тип жилья</label>
-        <input id="ctx-type" type="text" [(ngModel)]="contextHousingType" placeholder="primary / secondary" />
+        <select id="ctx-type" [(ngModel)]="contextHousingType">
+          <option value="">Не указывать</option>
+          <option value="primary">Первичное</option>
+          <option value="secondary">Вторичное</option>
+        </select>
       </div>
     </div>
-  </div>
+  </details>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
@@ -30,7 +52,7 @@
   <div class="chat">
     <div class="messages">
       @if (messages().length === 0) {
-        <p class="placeholder">Напишите сообщение ниже и нажмите «Отправить».</p>
+        <p class="placeholder">Например: «Что такое ГЭСВ?» или «Как оценить переплату?» — затем «Отправить».</p>
       }
       @for (msg of messages(); track $index) {
         <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'">
@@ -49,6 +71,20 @@
             <ul class="suggestions-list">
               @for (id of msg.suggestedApartmentIds; track $index) {
                 <li><a [routerLink]="['/estate/apartment', id]">Квартира #{{ id }}</a></li>
+              }
+            </ul>
+          }
+          @if (msg.role === 'assistant' && msg.ragSources?.length) {
+            <p class="rag-sources-label">Источники из каталога:</p>
+            <ul class="rag-sources-list">
+              @for (s of msg.ragSources; track $index) {
+                <li>
+                  @if (s.program_id != null) {
+                    <a [routerLink]="['/programs', s.program_id]">{{ s.bank_name || 'Банк' }} — {{ s.program_name || 'Программа #' + s.program_id }}</a>
+                  } @else {
+                    {{ s.bank_name }} — {{ s.program_name }}
+                  }
+                </li>
               }
             </ul>
           }

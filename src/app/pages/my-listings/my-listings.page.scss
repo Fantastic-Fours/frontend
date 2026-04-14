@@ -65,6 +65,24 @@ h1 {
   gap: 1.25rem;
 }
 
+.estate-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.estate-card-edit {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0 0.15rem;
+}
+
+.estate-card-edit:hover {
+  text-decoration: underline;
+}
+
 .estate-card {
   display: block;
   background: #fff;

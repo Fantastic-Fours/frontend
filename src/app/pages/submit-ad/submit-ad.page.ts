@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { load } from '@2gis/mapgl';
 import type { Map as Map2gis, MapPointerEvent, Marker as Marker2gis } from '@2gis/mapgl/types';
@@ -23,6 +23,7 @@ import { mapCenterForCity } from '../../core/constants/kz-city-map-centers.const
 import { getTwogisApiKey } from '../../core/constants/twogis.constants';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { UserProfile } from '../../core/interfaces/user.types';
+import type { Apartment } from '../../core/interfaces/apartment.types';
 
 @Component({
   selector: 'app-submit-ad-page',
@@ -36,6 +37,7 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly authTokens = inject(AuthTokenService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly userApi = inject(UserApiService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -55,14 +57,29 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
 
   mapError: string | null = null;
   geocoding = false;
+  /** Max year for «год постройки» (текущий год). */
+  readonly currentYear = new Date().getFullYear();
 
   private map: Map2gis | null = null;
   private marker: Marker2gis | null = null;
   private mapglApi: typeof import('@2gis/mapgl/types') | null = null;
+  /** Редактирование: id из маршрута `estate/apartment/:id/edit` */
+  editApartmentId: number | null = null;
+  loadingExisting = false;
+  loadExistingError: string | null = null;
+  private pendingMapCoords: [number, number] | null = null;
 
   ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const parsedId = idParam ? parseInt(idParam, 10) : NaN;
+    this.editApartmentId = !Number.isNaN(parsedId) ? parsedId : null;
+
     if (!this.authTokens.hasTokens()) {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/estate/submit' } });
+      const returnUrl =
+        this.editApartmentId != null
+          ? `/estate/apartment/${this.editApartmentId}/edit`
+          : '/estate/submit';
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
     this.userApi.getMe().subscribe({
@@ -91,7 +108,23 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
       housing_type: ['primary' as 'primary' | 'secondary', Validators.required],
       property_type: ['apartment' as 'apartment' | 'house', Validators.required],
       allowed_program_ids: [[] as number[]],
+      furnished: [''],
+      year_built: [null as number | null],
+      parking: [''],
+      condition: [''],
     });
+
+    this.form
+      .get('housing_type')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ht) => {
+        if (ht !== 'secondary') {
+          this.form.patchValue(
+            { furnished: '', year_built: null, parking: '', condition: '' },
+            { emitEvent: false },
+          );
+        }
+      });
 
     this.form
       .get('city')
@@ -100,13 +133,83 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
         if (!this.map) return;
         this.map.setCenter(mapCenterForCity(city));
       });
+
+    if (this.editApartmentId != null) {
+      this.loadingExisting = true;
+      this.mortgageApi.getApartment(this.editApartmentId).subscribe({
+        next: (apt) => {
+          this.loadingExisting = false;
+          if (apt.is_owner !== true) {
+            this.loadExistingError = 'У вас нет права редактировать это объявление.';
+            return;
+          }
+          this.applyApartmentToForm(apt);
+        },
+        error: (err) => {
+          this.loadingExisting = false;
+          const d = err?.error?.detail;
+          this.loadExistingError =
+            typeof d === 'string'
+              ? d
+              : err?.message ?? 'Не удалось загрузить объявление.';
+        },
+      });
+    }
+  }
+
+  private applyApartmentToForm(apt: Apartment): void {
+    const rawPrograms = apt['allowed_programs'] as { id: number }[] | undefined;
+    const programIds = Array.isArray(rawPrograms)
+      ? rawPrograms.map((p) => p.id).filter((id) => typeof id === 'number')
+      : [];
+    const lat = apt.latitude != null ? Number(apt.latitude) : null;
+    const lng = apt.longitude != null ? Number(apt.longitude) : null;
+    this.form.patchValue({
+      title: apt.title ?? '',
+      description: (apt['description'] as string) ?? '',
+      price: apt.price != null ? Number(apt.price) : null,
+      city: apt.city ?? 'Алматы',
+      address: apt.address ?? '',
+      lat,
+      lng,
+      area_sqm: apt['area_sqm'] != null ? Number(apt['area_sqm']) : null,
+      rooms: apt['rooms'] != null ? Number(apt['rooms']) : null,
+      floor: apt['floor'] != null ? Number(apt['floor']) : null,
+      total_floors: apt['total_floors'] != null ? Number(apt['total_floors']) : null,
+      housing_type: (apt.housing_type === 'secondary' ? 'secondary' : 'primary') as
+        | 'primary'
+        | 'secondary',
+      property_type: (apt.property_type === 'house' ? 'house' : 'apartment') as
+        | 'apartment'
+        | 'house',
+      allowed_program_ids: programIds,
+      furnished: (apt['furnished'] as string) ?? '',
+      year_built: apt['year_built'] != null ? Number(apt['year_built']) : null,
+      parking: (apt['parking'] as string) ?? '',
+      condition: (apt['condition'] as string) ?? '',
+    });
+    if (lat != null && lng != null && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+      this.pendingMapCoords = [lng, lat];
+      this.tryApplyPendingMapCoords();
+    }
+  }
+
+  private tryApplyPendingMapCoords(): void {
+    const pending = this.pendingMapCoords;
+    if (!pending || !this.map || !this.mapglApi) return;
+    const [lng, lat] = pending;
+    this.map.setCenter([lng, lat]);
+    this.map.setZoom(15);
+    this.marker?.destroy();
+    this.marker = new this.mapglApi.Marker(this.map, { coordinates: [lng, lat] });
+    this.pendingMapCoords = null;
   }
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     if (!getTwogisApiKey()) {
       this.mapError =
-        'Укажите демо-ключ 2GIS: в twogis.constants.ts (TWOGIS_API_KEY_FILE) или window.__TWOGIS_API_KEY__ в index.html';
+        'Укажите ключ 2GIS: frontend/.env (TWOGIS_API_KEY), см. .env.example, затем npm start; или window.__TWOGIS_API_KEY__ в index.html';
       return;
     }
     void this.initMap();
@@ -143,6 +246,7 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
         });
         void this.reverseGeocode(latN, lngN);
       });
+      this.tryApplyPendingMapCoords();
     } catch {
       this.mapError = 'Не удалось загрузить карту 2GIS. Проверьте ключ и сеть.';
     }
@@ -200,7 +304,7 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
     this.loading = true;
     this.submitted = true;
     const raw = this.form.getRawValue();
-    const body = {
+    const body: Record<string, unknown> = {
       title: raw.title,
       description: raw.description || undefined,
       price: raw.price,
@@ -214,23 +318,58 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
       floor: raw.floor ?? undefined,
       total_floors: raw.total_floors ?? undefined,
       housing_type: raw.housing_type,
-      images_files: this.selectedFiles,
       allowed_program_ids: raw.allowed_program_ids ?? [],
     };
-    this.mortgageApi.createApartment(body).subscribe({
-      next: (created) => {
-        this.loading = false;
-        this.router.navigate(['/estate/apartment', created.id]);
-      },
-      error: (err) => {
-        this.loading = false;
-        const msg = err?.error?.title?.[0]
-          ?? err?.error?.price?.[0]
-          ?? err?.error?.city?.[0]
-          ?? err?.error?.detail
-          ?? 'Ошибка при создании объявления. Проверьте данные.';
-        this.error = typeof msg === 'string' ? msg : JSON.stringify(msg);
-      },
-    });
+    if (this.selectedFiles.length > 0) {
+      body['images_files'] = this.selectedFiles;
+    }
+    if (raw.housing_type === 'secondary') {
+      if (raw.furnished) body['furnished'] = raw.furnished;
+      if (raw.year_built != null && !Number.isNaN(Number(raw.year_built))) {
+        body['year_built'] = Number(raw.year_built);
+      }
+      if (raw.parking) body['parking'] = raw.parking;
+      if (raw.condition) body['condition'] = raw.condition;
+    }
+
+    const onErr = (err: { error?: { title?: string[]; price?: string[]; city?: string[]; detail?: string } }) => {
+      this.loading = false;
+      const msg =
+        err?.error?.title?.[0]
+        ?? err?.error?.price?.[0]
+        ?? err?.error?.city?.[0]
+        ?? err?.error?.detail
+        ?? 'Ошибка при сохранении. Проверьте данные.';
+      this.error = typeof msg === 'string' ? msg : JSON.stringify(msg);
+    };
+
+    if (this.editApartmentId != null) {
+      this.mortgageApi
+        .updateApartment(
+          this.editApartmentId,
+          body as Partial<Apartment> & { images_files?: File[]; allowed_program_ids: number[] },
+        )
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            void this.router.navigate(['/estate/apartment', this.editApartmentId]);
+          },
+          error: onErr,
+        });
+      return;
+    }
+
+    const createBody = { ...body, images_files: this.selectedFiles };
+    this.mortgageApi
+      .createApartment(
+        createBody as Partial<Apartment> & { images_files: File[]; allowed_program_ids: number[] },
+      )
+      .subscribe({
+        next: (created) => {
+          this.loading = false;
+          void this.router.navigate(['/estate/apartment', created.id]);
+        },
+        error: onErr,
+      });
   }
 }

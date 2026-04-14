@@ -12,7 +12,7 @@ import {
   afterNextRender,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { load } from '@2gis/mapgl';
 import type { Map as Map2gis, Marker as Marker2gis } from '@2gis/mapgl/types';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
@@ -20,7 +20,12 @@ import { UserApiService } from '../../core/services/user-api.service';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import { getTwogisApiKey } from '../../core/constants/twogis.constants';
-import type { Apartment } from '../../core/interfaces/apartment.types';
+import {
+  type Apartment,
+  FURNISHED_LABELS,
+  PARKING_LABELS,
+  PROPERTY_CONDITION_LABELS,
+} from '../../core/interfaces/apartment.types';
 import type { PricePredictionResponse } from '../../core/interfaces/mortgage.types';
 
 @Component({
@@ -32,6 +37,7 @@ import type { PricePredictionResponse } from '../../core/interfaces/mortgage.typ
 })
 export class ApartmentDetailPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly userApi = inject(UserApiService);
   private readonly authTokens = inject(AuthTokenService);
@@ -47,6 +53,7 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
   /** SavedApartment id if this apartment is in user's saved list. */
   savedId = signal<number | null>(null);
   saving = signal(false);
+  ownerActionLoading = signal(false);
 
   isAuthenticated = computed(() => this.authTokens.hasTokens());
   slideIndex = signal(0);
@@ -92,6 +99,24 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
 
   housingTypeLabel(type: string): string {
     return type === 'primary' ? 'Первичка' : type === 'secondary' ? 'Вторичка' : type;
+  }
+
+  furnishedLabel(v: unknown): string | null {
+    if (v == null || v === '') return null;
+    const s = String(v);
+    return FURNISHED_LABELS[s as keyof typeof FURNISHED_LABELS] ?? null;
+  }
+
+  parkingLabel(v: unknown): string | null {
+    if (v == null || v === '') return null;
+    const s = String(v);
+    return PARKING_LABELS[s as keyof typeof PARKING_LABELS] ?? null;
+  }
+
+  conditionLabel(v: unknown): string | null {
+    if (v == null || v === '') return null;
+    const s = String(v);
+    return PROPERTY_CONDITION_LABELS[s as keyof typeof PROPERTY_CONDITION_LABELS] ?? null;
   }
 
   ngOnInit(): void {
@@ -166,7 +191,7 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
     const apiKey = getTwogisApiKey();
     if (!apiKey) {
       this.mapError.set(
-        'Карта недоступна: укажите ключ 2GIS в twogis.constants.ts или window.__TWOGIS_API_KEY__'
+        'Карта недоступна: ключ 2GIS в frontend/.env (TWOGIS_API_KEY) или window.__TWOGIS_API_KEY__ в index.html'
       );
       return;
     }
@@ -338,5 +363,48 @@ export class ApartmentDetailPage implements OnInit, OnDestroy {
     const apt = this.apartment();
     if (apt?.housing_type === 'secondary') return '/estate/secondary';
     return '/estate/primary';
+  }
+
+  isOwner(apt: Apartment | null): boolean {
+    return Boolean(apt && apt.is_owner === true);
+  }
+
+  authorName(apt: Apartment): string {
+    const n = apt.author_display_name;
+    if (n && String(n).trim()) return String(n).trim();
+    const u = apt['created_by_username'];
+    return u ? String(u) : 'Автор не указан';
+  }
+
+  authorPhoneTel(apt: Apartment): string {
+    const p = apt.author_phone;
+    if (p == null || !String(p).trim()) return '#';
+    return `tel:${String(p).replace(/\s/g, '')}`;
+  }
+
+  editListingLink(apt: Apartment | null): string[] {
+    if (!apt?.id) return ['/estate/submit'];
+    return ['/estate/apartment', String(apt.id), 'edit'];
+  }
+
+  confirmDeleteListing(): void {
+    const apt = this.apartment();
+    const id = apt?.id;
+    if (id == null || !this.isOwner(apt) || this.ownerActionLoading()) return;
+    if (!confirm('Снять объявление с публикации? Его не будет видно в каталоге.')) return;
+    this.ownerActionLoading.set(true);
+    this.mortgageApi.deleteApartment(id).subscribe({
+      next: () => {
+        this.ownerActionLoading.set(false);
+        void this.router.navigate(['/profile/my-listings']);
+      },
+      error: (err) => {
+        this.ownerActionLoading.set(false);
+        const d = err?.error?.detail;
+        this.error.set(
+          typeof d === 'string' ? d : err?.message ?? 'Не удалось удалить объявление',
+        );
+      },
+    });
   }
 }

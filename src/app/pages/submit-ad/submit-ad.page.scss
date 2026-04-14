@@ -28,6 +28,20 @@ h1 {
   gap: 1.25rem;
 }
 
+.subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--text, #111827);
+}
+
+.secondary-extra {
+  padding: 1rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  background: var(--surface-muted, #f9fafb);
+}
+
 .error {
   padding: 0.875rem 1rem;
   background: var(--error-bg, #fef2f2);

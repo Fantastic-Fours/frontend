@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "env:generate": "node scripts/generate-twogis-env.mjs",
+    "prestart": "npm run env:generate",
+    "prebuild": "npm run env:generate",
+    "postinstall": "npm run env:generate",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
