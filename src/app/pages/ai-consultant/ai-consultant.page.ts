@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AIConsultantApiService } from '../../core/services/ai-consultant-api.service';
 import type { AIChatHistoryItem, AIChatResponse } from '../../core/interfaces/ai-consultant.types';
 import { AuthTokenService } from '../../core/services/auth-token.service';
@@ -16,13 +17,14 @@ interface ChatMessage {
 @Component({
   selector: 'app-ai-consultant-page',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, TranslatePipe],
   templateUrl: './ai-consultant.page.html',
   styleUrl: './ai-consultant.page.scss',
 })
 export class AIConsultantPage implements OnInit {
   private readonly aiApi = inject(AIConsultantApiService);
   private readonly authTokens = inject(AuthTokenService);
+  private readonly translate = inject(TranslateService);
 
   message = '';
   loading = signal(false);
@@ -72,7 +74,9 @@ export class AIConsultantPage implements OnInit {
         this.messages.set([]);
       },
       error: (err) => {
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Не удалось очистить историю');
+        this.error.set(
+          err?.error?.detail ?? err?.message ?? this.translate.instant('aiPage.errClearHistory'),
+        );
       },
     });
   }
@@ -83,9 +87,7 @@ export class AIConsultantPage implements OnInit {
     this.error.set(null);
 
     if (this.useRag && !this.isAuthenticated) {
-      this.error.set(
-        'Включён поиск по каталогу (RAG): войдите в аккаунт. Для ML+RAG действует общий лимит запросов в сутки.'
-      );
+      this.error.set(this.translate.instant('aiPage.errRagNeedLogin'));
       return;
     }
 
@@ -141,10 +143,10 @@ export class AIConsultantPage implements OnInit {
               : Array.isArray(d)
                 ? d.map((x: { string?: string }) => x?.string ?? '').filter(Boolean).join(' ')
                 : err?.message;
-          this.error.set(detail ?? 'Ошибка запроса');
+          this.error.set(detail ?? this.translate.instant('aiPage.err'));
           this.messages.update((m) => [
             ...m,
-            { role: 'assistant', text: 'Не удалось получить ответ. Попробуйте позже.' },
+            { role: 'assistant', text: this.translate.instant('aiPage.fallback') },
           ]);
           this.loading.set(false);
         },

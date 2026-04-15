@@ -1,45 +1,49 @@
 <div class="page">
   <div class="header">
-    <span class="badge">✨ Powered by AI</span>
-    <h1>AI-консультант</h1>
+    <span class="badge">{{ 'aiPage.badge' | translate }}</span>
+    <h1>{{ 'aiPage.title' | translate }}</h1>
     <p class="subtitle">
-      Простой чат: пишите вопросы по ипотеке в Казахстане. Параметры ниже — по желанию, для более точных советов.
+      {{ 'aiPage.pageSubtitle' | translate }}
     </p>
     @if (isAuthenticated) {
       <div class="history-actions">
-        <button type="button" class="btn btn-outline" (click)="loadPersistedHistory()">Обновить историю</button>
-        <button type="button" class="btn btn-danger" (click)="clearPersistedHistory()">Очистить историю</button>
+        <button type="button" class="btn btn-outline" (click)="loadPersistedHistory()">
+          {{ 'aiPage.refreshHistory' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="clearPersistedHistory()">
+          {{ 'aiPage.clearHistory' | translate }}
+        </button>
       </div>
     }
   </div>
 
   <details class="context-section">
-    <summary class="context-summary">Параметры (необязательно)</summary>
-    <p class="context-hint">Можно заполнить только то, что знаете — или не заполнять вовсе.</p>
+    <summary class="context-summary">{{ 'aiPage.ctxTitle' | translate }}</summary>
+    <p class="context-hint">{{ 'aiPage.ctxHint' | translate }}</p>
     <label class="rag-toggle">
       <input type="checkbox" [(ngModel)]="useRag" name="useRag" />
-      Учитывать данные из каталога программ (RAG по базе)
+      {{ 'aiPage.ragToggle' | translate }}
     </label>
-    <p class="context-hint">С RAG нужен вход в аккаунт; на пользователя — до 3 запросов ML+RAG в сутки (общий лимит с «AI advisor» на странице подбора).</p>
+    <p class="context-hint">{{ 'aiPage.ragHint' | translate }}</p>
     <div class="context-grid">
       <div class="field">
-        <label for="ctx-income">Доход (тг/мес)</label>
-        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" placeholder="например 500000" />
+        <label for="ctx-income">{{ 'aiPage.income' | translate }}</label>
+        <input id="ctx-income" type="number" [(ngModel)]="contextIncome" [placeholder]="'aiPage.incomePh' | translate" />
       </div>
       <div class="field">
-        <label for="ctx-down">Первоначальный взнос (тг)</label>
-        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" placeholder="например 10000000" />
+        <label for="ctx-down">{{ 'aiPage.down' | translate }}</label>
+        <input id="ctx-down" type="number" [(ngModel)]="contextDownPayment" [placeholder]="'aiPage.downPh' | translate" />
       </div>
       <div class="field">
-        <label for="ctx-term">Срок кредита (лет)</label>
-        <input id="ctx-term" type="number" [(ngModel)]="contextTermYears" min="1" max="30" placeholder="например 20" />
+        <label for="ctx-term">{{ 'aiPage.termYearsCtx' | translate }}</label>
+        <input id="ctx-term" type="number" [(ngModel)]="contextTermYears" min="1" max="30" [placeholder]="'aiPage.termPh' | translate" />
       </div>
       <div class="field">
-        <label for="ctx-type">Тип жилья</label>
+        <label for="ctx-type">{{ 'aiPage.housingType' | translate }}</label>
         <select id="ctx-type" [(ngModel)]="contextHousingType">
-          <option value="">Не указывать</option>
-          <option value="primary">Первичное</option>
-          <option value="secondary">Вторичное</option>
+          <option value="">{{ 'aiPage.housingSkip' | translate }}</option>
+          <option value="primary">{{ 'aiPage.housingPrimaryOpt' | translate }}</option>
+          <option value="secondary">{{ 'aiPage.housingSecondaryOpt' | translate }}</option>
         </select>
       </div>
     </div>
@@ -52,14 +56,14 @@
   <div class="chat">
     <div class="messages">
       @if (messages().length === 0) {
-        <p class="placeholder">Например: «Что такое ГЭСВ?» или «Как оценить переплату?» — затем «Отправить».</p>
+        <p class="placeholder">{{ 'aiPage.placeholderExamples' | translate }}</p>
       }
       @for (msg of messages(); track $index) {
         <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'">
-          <span class="message-role">{{ msg.role === 'user' ? 'Вы' : 'Консультант' }}</span>
+          <span class="message-role">{{ (msg.role === 'user' ? 'aiPage.you' : 'aiPage.assistant') | translate }}</span>
           <p class="message-text">{{ msg.text }}</p>
           @if (msg.role === 'assistant' && msg.suggestedPrograms?.length) {
-            <p class="suggestions-label">Рекомендованные программы:</p>
+            <p class="suggestions-label">{{ 'aiPage.sugPrograms' | translate }}</p>
             <ul class="suggestions-list">
               @for (name of msg.suggestedPrograms; track $index) {
                 <li>{{ name }}</li>
@@ -67,20 +71,23 @@
             </ul>
           }
           @if (msg.role === 'assistant' && msg.suggestedApartmentIds?.length) {
-            <p class="suggestions-label">Рекомендованные квартиры:</p>
+            <p class="suggestions-label">{{ 'aiPage.sugApt' | translate }}</p>
             <ul class="suggestions-list">
               @for (id of msg.suggestedApartmentIds; track $index) {
-                <li><a [routerLink]="['/estate/apartment', id]">Квартира #{{ id }}</a></li>
+                <li><a [routerLink]="['/estate/apartment', id]">{{ 'aiPage.aptLink' | translate: { id: id } }}</a></li>
               }
             </ul>
           }
           @if (msg.role === 'assistant' && msg.ragSources?.length) {
-            <p class="rag-sources-label">Источники из каталога:</p>
+            <p class="rag-sources-label">{{ 'aiPage.ragSources' | translate }}</p>
             <ul class="rag-sources-list">
               @for (s of msg.ragSources; track $index) {
                 <li>
                   @if (s.program_id != null) {
-                    <a [routerLink]="['/programs', s.program_id]">{{ s.bank_name || 'Банк' }} — {{ s.program_name || 'Программа #' + s.program_id }}</a>
+                    <a [routerLink]="['/programs', s.program_id]">
+                      {{ s.bank_name || ('aiPage.bankFallback' | translate) }} —
+                      {{ s.program_name || ('aiPage.programNum' | translate: { id: s.program_id }) }}
+                    </a>
                   } @else {
                     {{ s.bank_name }} — {{ s.program_name }}
                   }
@@ -92,8 +99,8 @@
       }
       @if (loading()) {
         <div class="message message-assistant">
-          <span class="message-role">Консультант</span>
-          <p class="message-text typing">Отвечаю…</p>
+          <span class="message-role">{{ 'aiPage.assistant' | translate }}</span>
+          <p class="message-text typing">{{ 'aiPage.typing' | translate }}</p>
         </div>
       }
     </div>
@@ -104,11 +111,11 @@
         class="input-message"
         [(ngModel)]="message"
         name="message"
-        placeholder="Ваш вопрос..."
+        [placeholder]="'aiPage.inputPh' | translate"
         [disabled]="loading()"
       />
       <button type="submit" class="btn btn-primary" [disabled]="loading()">
-        {{ loading() ? '…' : 'Отправить' }}
+        {{ loading() ? ('aiPage.sending' | translate) : ('aiPage.send' | translate) }}
       </button>
     </form>
   </div>

@@ -1,7 +1,7 @@
 <div class="page">
   <div class="card">
-    <h1>Регистрация</h1>
-    <p class="subtitle">Создайте учётную запись для доступа к API</p>
+    <h1>{{ 'register.title' | translate }}</h1>
+    <p class="subtitle">{{ 'register.subtitle' | translate }}</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
       @if (error) {
@@ -9,66 +9,67 @@
       }
 
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">{{ 'common.email' | translate }}</label>
         <input
           id="email"
           type="email"
           formControlName="email"
           autocomplete="email"
-          placeholder="Введите email"
+          [placeholder]="'register.emailPh' | translate"
         />
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
           <span class="field-error">
             @if (form.get('email')?.errors?.['required']) {
-              Обязательное поле
+              {{ 'common.required' | translate }}
             } @else {
-              Введите корректный email
+              {{ 'common.invalidEmail' | translate }}
             }
           </span>
         }
       </div>
 
       <div class="field">
-        <label for="password">Пароль</label>
+        <label for="password">{{ 'common.password' | translate }}</label>
         <input
           id="password"
           type="password"
           formControlName="password"
           autocomplete="new-password"
-          placeholder="Введите пароль"
+          [placeholder]="'register.passwordPh' | translate"
         />
         @if (form.get('password')?.invalid && form.get('password')?.touched) {
           <span class="field-error">
             @if (form.get('password')?.errors?.['required']) {
-              Обязательное поле
+              {{ 'common.required' | translate }}
             } @else {
-              Минимум 6 символов
+              {{ 'register.minPassword' | translate }}
             }
           </span>
         }
       </div>
 
       <div class="field">
-        <label for="password_confirm">Повторите пароль</label>
+        <label for="password_confirm">{{ 'register.passwordConfirm' | translate }}</label>
         <input
           id="password_confirm"
           type="password"
           formControlName="password_confirm"
           autocomplete="new-password"
-          placeholder="Повторите пароль"
+          [placeholder]="'register.passwordConfirmPh' | translate"
         />
         @if (form.get('password_confirm')?.invalid && form.get('password_confirm')?.touched) {
-          <span class="field-error">Обязательное поле</span>
+          <span class="field-error">{{ 'common.required' | translate }}</span>
         }
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Регистрация…' : 'Зарегистрироваться' }}
+        {{ loading ? ('register.submitting' | translate) : ('register.submit' | translate) }}
       </button>
     </form>
 
     <p class="footer">
-      Уже есть аккаунт? <a routerLink="/login">Войти</a>
+      {{ 'register.footerHasAccount' | translate }}
+      <a routerLink="/login">{{ 'register.footerLogin' | translate }}</a>
     </p>
   </div>
 </div>

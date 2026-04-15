@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { CalculationHistoryItem } from '../../core/interfaces/user.types';
 
@@ -9,12 +10,13 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-calculation-history-page',
   standalone: true,
-  imports: [RouterLink, JsonPipe],
+  imports: [RouterLink, JsonPipe, TranslatePipe],
   templateUrl: './calculation-history.page.html',
   styleUrl: './calculation-history.page.scss',
 })
 export class CalculationHistoryPage implements OnInit {
   private readonly userApi = inject(UserApiService);
+  private readonly translate = inject(TranslateService);
 
   items = signal<CalculationHistoryItem[]>([]);
   totalCount = signal(0);
@@ -42,7 +44,7 @@ export class CalculationHistoryPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
+        this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('calcHistory.errLoad'));
       },
     });
   }
@@ -56,9 +58,11 @@ export class CalculationHistoryPage implements OnInit {
   }
 
   formatDate(iso: string | undefined): string {
-    if (!iso) return '—';
+    if (!iso) return this.translate.instant('mortgage.dash');
     try {
-      return new Date(iso).toLocaleString('ru-RU', {
+      const locale =
+        this.translate.currentLang === 'en' ? 'en-US' : this.translate.currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+      return new Date(iso).toLocaleString(locale, {
         dateStyle: 'short',
         timeStyle: 'short',
       });
@@ -68,14 +72,20 @@ export class CalculationHistoryPage implements OnInit {
   }
 
   formatMoney(value: unknown): string {
-    if (value == null) return '—';
+    if (value == null) return this.translate.instant('mortgage.dash');
     const num = typeof value === 'number' ? value : parseFloat(String(value));
     if (Number.isNaN(num)) return String(value);
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(num) + ' ₸';
+    const locale =
+      this.translate.currentLang === 'en' ? 'en-US' : this.translate.currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+    return (
+      new Intl.NumberFormat(locale, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(num) +
+      ' ' +
+      this.translate.instant('mortgage.currency')
+    );
   }
 
   /** Whether result_snapshot has keys to display. */
@@ -87,10 +97,25 @@ export class CalculationHistoryPage implements OnInit {
   /** Get short summary from request_snapshot for display. */
   requestSummary(req: Record<string, unknown>): string {
     const parts: string[] = [];
-    if (req['income'] != null) parts.push(`Доход: ${this.formatMoney(req['income'])}`);
-    if (req['down_payment'] != null) parts.push(`Взнос: ${this.formatMoney(req['down_payment'])}`);
-    if (req['term_years'] != null) parts.push(`Срок: ${req['term_years']} лет`);
-    if (req['housing_type']) parts.push(String(req['housing_type']));
-    return parts.length ? parts.join(' · ') : '—';
+    if (req['income'] != null) {
+      parts.push(this.translate.instant('calcHistory.summaryIncome', { v: this.formatMoney(req['income']) }));
+    }
+    if (req['down_payment'] != null) {
+      parts.push(this.translate.instant('calcHistory.summaryDown', { v: this.formatMoney(req['down_payment']) }));
+    }
+    if (req['term_years'] != null) {
+      const y = Number(req['term_years']);
+      if (!Number.isNaN(y)) {
+        parts.push(this.translate.instant('calcHistory.summaryTerm', { y }));
+      }
+    }
+    const ht = req['housing_type'];
+    if (ht != null && String(ht).trim()) {
+      const s = String(ht).toLowerCase();
+      if (s === 'primary') parts.push(this.translate.instant('submitAd.housingPrimary'));
+      else if (s === 'secondary') parts.push(this.translate.instant('submitAd.housingSecondary'));
+      else parts.push(String(ht));
+    }
+    return parts.length ? parts.join(' · ') : this.translate.instant('mortgage.dash');
   }
 }

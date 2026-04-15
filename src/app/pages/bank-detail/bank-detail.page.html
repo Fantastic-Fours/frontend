@@ -1,11 +1,11 @@
 <div class="bank-page">
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
-    <a routerLink="/banks" class="back-link">← К списку банков</a>
+    <a routerLink="/banks" class="back-link">{{ 'bankDetail.back' | translate }}</a>
   } @else if (bank(); as b) {
-    <a routerLink="/banks" class="back-link">← К списку банков</a>
+    <a routerLink="/banks" class="back-link">{{ 'bankDetail.back' | translate }}</a>
 
     <header class="hero">
       <div class="hero-card">
@@ -23,17 +23,17 @@
 
     @if (bankSectionText(b.phone) || bankSectionText(b.website) || bankSectionText(b.head_office_address)) {
       <section class="panel">
-        <h2 class="panel-title">Контакты</h2>
+        <h2 class="panel-title">{{ 'bankDetail.contacts' | translate }}</h2>
         <div class="contact-grid">
           @if (bankSectionText(b.phone)) {
             <div class="contact-tile">
-              <span class="contact-label">Телефон</span>
+              <span class="contact-label">{{ 'bankDetail.phone' | translate }}</span>
               <a [href]="'tel:' + b.phone" class="contact-value link">{{ b.phone }}</a>
             </div>
           }
           @if (bankSectionText(b.website)) {
             <div class="contact-tile">
-              <span class="contact-label">Сайт</span>
+              <span class="contact-label">{{ 'bankDetail.website' | translate }}</span>
               <a [href]="b.website!" target="_blank" rel="noopener noreferrer" class="contact-value link">{{
                 b.website
               }}</a>
@@ -41,7 +41,7 @@
           }
           @if (bankSectionText(b.head_office_address)) {
             <div class="contact-tile contact-tile-wide">
-              <span class="contact-label">Адрес головного офиса</span>
+              <span class="contact-label">{{ 'bankDetail.headAddress' | translate }}</span>
               <span class="contact-value">{{ b.head_office_address }}</span>
             </div>
           }
@@ -51,24 +51,24 @@
 
     @if (bankSectionText(b.license_info)) {
       <section class="panel panel-muted">
-        <h2 class="panel-title">Лицензия и регистрация</h2>
+        <h2 class="panel-title">{{ 'bankDetail.license' | translate }}</h2>
         <p class="prose">{{ b.license_info }}</p>
       </section>
     }
 
     @if (bankSectionText(b.requisites) || bankSectionText(b.about) || bankSectionText(b.customer_reviews)) {
       <section class="panel">
-        <h2 class="panel-title">О банке</h2>
+        <h2 class="panel-title">{{ 'bankDetail.about' | translate }}</h2>
         @if (bankSectionText(b.requisites)) {
-          <h3 class="subhead">Реквизиты</h3>
+          <h3 class="subhead">{{ 'bankDetail.requisites' | translate }}</h3>
           <p class="prose prose-block">{{ b.requisites }}</p>
         }
         @if (bankSectionText(b.about)) {
-          <h3 class="subhead">Информация</h3>
+          <h3 class="subhead">{{ 'bankDetail.info' | translate }}</h3>
           <p class="prose">{{ b.about }}</p>
         }
         @if (bankSectionText(b.customer_reviews)) {
-          <h3 class="subhead">Отзывы и рейтинги</h3>
+          <h3 class="subhead">{{ 'bankDetail.reviewsTitle' | translate }}</h3>
           <p class="prose prose-block">{{ b.customer_reviews }}</p>
         }
       </section>
@@ -76,8 +76,8 @@
 
     @if (branches(b).length) {
       <section class="panel panel-map">
-        <h2 class="panel-title">Отделения на карте</h2>
-        <p class="map-lead">На карте отмечены офисы и отделения. Координаты в списке не показываем — смотрите точки на карте или откройте вид в 2GIS.</p>
+        <h2 class="panel-title">{{ 'bankDetail.branchesTitle' | translate }}</h2>
+        <p class="map-lead">{{ 'bankDetail.mapLead' | translate }}</p>
         @if (mapError()) {
           <div class="map-fallback" role="status">{{ mapError() }}</div>
         }
@@ -85,14 +85,16 @@
           <div #mapHost class="map-canvas"></div>
         </div>
         @if (twogisOpenUrl(b); as gisUrl) {
-          <a [href]="gisUrl" target="_blank" rel="noopener noreferrer" class="btn-2gis">Открыть в 2GIS</a>
+          <a [href]="gisUrl" target="_blank" rel="noopener noreferrer" class="btn-2gis">{{
+            'bankDetail.open2gis' | translate
+          }}</a>
         }
       </section>
     }
 
     @if (reviews(b).length) {
       <section class="panel">
-        <h2 class="panel-title">Отзывы клиентов</h2>
+        <h2 class="panel-title">{{ 'bankDetail.customerReviews' | translate }}</h2>
         <ul class="reviews-grid">
           @for (r of reviews(b); track r.id) {
             <li class="review-card">
@@ -108,6 +110,6 @@
       </section>
     }
 
-    <p class="footer-status">{{ b.is_active ? 'Банк активен в справочнике' : 'Банк неактивен' }}</p>
+    <p class="footer-status">{{ b.is_active ? ('bankDetail.active' | translate) : ('bankDetail.inactive' | translate) }}</p>
   }
 </div>

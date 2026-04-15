@@ -5,11 +5,12 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, TranslatePipe],
   templateUrl: './about.html',
   styleUrl: './about.css',
 })
@@ -18,13 +19,6 @@ export class About implements OnInit, OnDestroy {
   currentIndex: number = 0;
   images: string[] = ['assets/slide1.jpeg', 'assets/slide2.jpg', 'assets/slide3.jpg'];
   link_img: string = 'assets/slide1.jpeg';
-
-  // 1. Интерполяция
-  title = 'Почему мы?';
-  mission =
-    'Подбор ипотечных программ, каталог квартир и персональные рекомендации — всё в одном месте';
-
-
 
   ngOnInit() {}
 

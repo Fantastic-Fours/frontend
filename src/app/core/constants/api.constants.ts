@@ -15,6 +15,7 @@ export const API_PATHS = {
     recommend: '/recommend-mortgage/',
     aiMortgageAdvisor: '/ai-mortgage-advisor',
     match: '/mortgage/match/',
+    planPdf: '/mortgage/plan/pdf/',
     predict: '/mortgage/predict/',
     programs: '/mortgage/programs/',
     programDetail: (id: number) => `/mortgage/programs/${id}/`,

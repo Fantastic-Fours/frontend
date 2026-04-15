@@ -10,11 +10,12 @@ import {
   type CalculatorResult,
   type ScheduleRow,
 } from './calculator.utils';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-program-detail-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './program-detail.page.html',
   styleUrl: './program-detail.page.scss',
 })
@@ -22,6 +23,7 @@ export class ProgramDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   program = signal<ProgramListItem | null>(null);
   loading = signal(true);
@@ -61,7 +63,7 @@ export class ProgramDetailPage implements OnInit {
 
     const id = this.programId();
     if (id == null || Number.isNaN(id)) {
-      this.error.set('Неверный ID программы');
+      this.error.set(this.translate.instant('programDetail.errId'));
       this.loading.set(false);
       return;
     }
@@ -72,7 +74,7 @@ export class ProgramDetailPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки программы');
+        this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('programDetail.errLoad'));
       },
     });
   }
@@ -81,27 +83,38 @@ export class ProgramDetailPage implements OnInit {
     const p = this.program();
     if (!p || this.calcForm.invalid) {
       this.calcForm.markAllAsTouched();
-      this.calcError.set(this.calcForm.invalid ? 'Заполните поля корректно' : null);
+      this.calcError.set(
+        this.calcForm.invalid ? this.translate.instant('programDetail.fillCorrect') : null
+      );
       return;
     }
     this.calcError.set(null);
     const { price, down_payment, payment_type } = this.calcForm.getRawValue();
     const loanAmount = price - down_payment;
     if (loanAmount <= 0) {
-      this.calcError.set('Первоначальный взнос не может быть больше или равен стоимости');
+      this.calcError.set(this.translate.instant('programDetail.downTooBig'));
       this.calcResult.set(null);
       return;
     }
     const maxLoan = parseFloat(p.max_loan_amount) || Infinity;
     if (loanAmount > maxLoan) {
-      this.calcError.set(`Сумма кредита не должна превышать ${this.formatMoney(String(maxLoan))} ₸`);
+      this.calcError.set(
+        this.translate.instant('programDetail.loanExceedsMax', {
+          max: this.formatMoney(String(maxLoan)),
+        })
+      );
       this.calcResult.set(null);
       return;
     }
     const minPercent = parseFloat(p.min_down_payment_percent) || 0;
     const minDown = (price * minPercent) / 100;
     if (down_payment < minDown) {
-      this.calcError.set(`Минимальный первоначальный взнос: ${this.formatMoney(String(minDown))} ₸ (${minPercent}%)`);
+      this.calcError.set(
+        this.translate.instant('programDetail.minDownError', {
+          amount: this.formatMoney(String(minDown)),
+          pct: minPercent,
+        })
+      );
       this.calcResult.set(null);
       return;
     }
@@ -116,13 +129,15 @@ export class ProgramDetailPage implements OnInit {
 
   formatMoney(value: string | number | null | undefined): string {
     if (value == null || value === '') {
-      return '—';
+      return this.translate.instant('mortgage.dash');
     }
     const num = typeof value === 'number' ? value : parseFloat(String(value));
     if (Number.isNaN(num)) {
-      return '—';
+      return this.translate.instant('mortgage.dash');
     }
-    return new Intl.NumberFormat('ru-RU', {
+    const locale =
+      this.translate.currentLang === 'en' ? 'en-US' : this.translate.currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+    return new Intl.NumberFormat(locale, {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
@@ -134,20 +149,22 @@ export class ProgramDetailPage implements OnInit {
     if (!raw || typeof raw !== 'object') {
       return [];
     }
-    const labels: Record<string, string> = {
-      astana_almaty: 'Астана и Алматы',
-      other_regions: 'Прочие регионы РК',
+    const labelKey: Record<string, string> = {
+      astana_almaty: 'programDetail.regionAstanaAlmaty',
+      other_regions: 'programDetail.regionOther',
     };
     return Object.entries(raw)
       .filter(([, v]) => v != null && String(v).trim() !== '')
       .map(([key, v]) => ({
-        label: labels[key] ?? key,
-        amount: `${this.formatMoney(String(v))} ₸`,
+        label: labelKey[key] ? this.translate.instant(labelKey[key]) : key,
+        amount: `${this.formatMoney(String(v))} ${this.translate.instant('mortgage.currency')}`,
       }));
   }
 
   housingTypeLabel(type: string): string {
-    return type === 'primary' ? 'Первичное жильё' : type === 'secondary' ? 'Вторичное жильё' : type;
+    if (type === 'primary') return this.translate.instant('programDetail.housingPrimaryFull');
+    if (type === 'secondary') return this.translate.instant('programDetail.housingSecondaryFull');
+    return type;
   }
 
   housingTypesSummary(p: ProgramListItem): string {

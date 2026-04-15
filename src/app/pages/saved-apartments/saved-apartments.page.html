@@ -1,16 +1,16 @@
 <div class="page">
-  <a routerLink="/profile" class="back-link">← Профиль</a>
-  <h1>Избранные квартиры</h1>
-  <p class="subtitle">Квартиры, которые вы сохранили</p>
+  <a routerLink="/profile" class="back-link">{{ 'common.backToProfile' | translate }}</a>
+  <h1>{{ 'saved.title' | translate }}</h1>
+  <p class="subtitle">{{ 'saved.subtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="meta">Всего: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>
     <div class="estate-grid">
       @for (item of items(); track item.id) {
         <article class="estate-card-wrap">
@@ -19,14 +19,16 @@
               @if (firstImage(item.apartment); as src) {
                 <img [src]="src" [alt]="item.apartment.title" />
               } @else {
-                <div class="estate-card-placeholder">Нет фото</div>
+                <div class="estate-card-placeholder">{{ 'common.noPhoto' | translate }}</div>
               }
             </div>
             <div class="estate-card-body">
               <h2 class="estate-card-title">{{ item.apartment.title }}</h2>
               <p class="estate-card-price">{{ formatMoney(item.apartment.price) }}</p>
               <p class="estate-card-meta">
-                {{ item.apartment.city }}{{ item.apartment.area_sqm ? ' · ' + item.apartment.area_sqm + ' м²' : '' }}{{ item.apartment.rooms ? ' · ' + item.apartment.rooms + ' комн.' : '' }}
+                {{ item.apartment.city }}{{ item.apartment.area_sqm ? ' · ' + item.apartment.area_sqm + ' ' + ('common.sqm' | translate) : '' }}{{
+                  item.apartment.rooms ? ' · ' + item.apartment.rooms + ' ' + ('common.roomsShort' | translate) : ''
+                }}
               </p>
             </div>
           </a>
@@ -36,19 +38,19 @@
             [disabled]="removingId() === item.id"
             (click)="remove(item); $event.preventDefault()"
           >
-            {{ removingId() === item.id ? '…' : 'Удалить из избранного' }}
+            {{ removingId() === item.id ? ('common.dots' | translate) : ('saved.remove' | translate) }}
           </button>
         </article>
       }
     </div>
     @if (items().length === 0 && !loading()) {
-      <p class="empty">Нет избранных квартир. Добавляйте их со страницы объявления.</p>
+      <p class="empty">{{ 'saved.empty' | translate }}</p>
     }
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-        <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-        <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+        <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">{{ 'common.prev' | translate }}</button>
+        <span class="page-info">{{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }} {{ totalPages() }}</span>
+        <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">{{ 'common.next' | translate }}</button>
       </div>
     }
   }

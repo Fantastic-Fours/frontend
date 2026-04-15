@@ -3,19 +3,21 @@ import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import type { MortgageNewsItem } from '../../core/interfaces/news.types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-news-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './news.page.html',
   styleUrl: './news.page.scss',
 })
 export class NewsPage implements OnInit {
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly translate = inject(TranslateService);
 
   news = signal<MortgageNewsItem[]>([]);
   totalCount = signal(0);
@@ -45,7 +47,7 @@ export class NewsPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        const msg = err?.error?.detail ?? err?.message ?? 'Ошибка загрузки новостей';
+        const msg = err?.error?.detail ?? err?.message ?? this.translate.instant('news.errLoad');
         this.error.set(msg);
       },
     });

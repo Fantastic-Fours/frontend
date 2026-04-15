@@ -1,44 +1,48 @@
 <div class="page">
   <div class="card">
     @if (!isAuthenticated()) {
-      <h1>Вы не авторизованы</h1>
-      <p class="subtitle">Чтобы получить доступ к профилю и избранному, выполните вход.</p>
-      <button type="button" class="btn btn-primary" (click)="goToLogin()">Перейти к входу</button>
+      <h1>{{ 'profilePage.guestTitle' | translate }}</h1>
+      <p class="subtitle">{{ 'profilePage.guestSub' | translate }}</p>
+      <button type="button" class="btn btn-primary" (click)="goToLogin()">
+        {{ 'profilePage.goLogin' | translate }}
+      </button>
     } @else if (loading()) {
-      <p class="loading">Загрузка профиля…</p>
+      <p class="loading">{{ 'profilePage.loading' | translate }}</p>
     } @else if (profile(); as p) {
-      <h1>Профиль</h1>
+      <h1>{{ 'profilePage.title' | translate }}</h1>
       @if (error()) {
         <div class="error" role="alert">{{ error() }}</div>
       }
 
       <div class="profile-block">
         <div class="profile-row">
-          <span class="label">Имя пользователя</span>
+          <span class="label">{{ 'profilePage.username' | translate }}</span>
           <span class="value">{{ p.username }}</span>
         </div>
         <div class="profile-row">
-          <span class="label">Email</span>
+          <span class="label">{{ 'common.email' | translate }}</span>
           <span class="value">{{ p.email }}</span>
         </div>
         @if (!editMode()) {
           <div class="profile-row">
-            <span class="label">Телефон</span>
-            <span class="value">{{ p.phone || '—' }}</span>
+            <span class="label">{{ 'profilePage.phone' | translate }}</span>
+            <span class="value">{{ p.phone || ('mortgage.dash' | translate) }}</span>
           </div>
           <div class="profile-row">
-            <span class="label">Льготы</span>
+            <span class="label">{{ 'profilePage.privileges' | translate }}</span>
             <span class="value">{{ getPrivilegeLabels(p.privileges) }}</span>
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" (click)="toggleEdit()">Изменить</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="toggleEdit()">
+            {{ 'profilePage.edit' | translate }}
+          </button>
         } @else {
           <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
             <div class="field">
-              <label for="phone">Телефон</label>
+              <label for="phone">{{ 'profilePage.phone' | translate }}</label>
               <input id="phone" type="text" formControlName="phone" placeholder="+7 ..." />
             </div>
             <div class="field">
-              <span class="label">Льготы</span>
+              <span class="label">{{ 'profilePage.privileges' | translate }}</span>
               <div class="checkbox-list">
                 @for (option of privilegeOptions; track option.value) {
                   <label class="checkbox-item">
@@ -47,15 +51,17 @@
                       [checked]="isPrivilegeSelected(option.value)"
                       (change)="onPrivilegeToggle(option.value, $any($event.target).checked)"
                     />
-                    <span>{{ option.label }}</span>
+                    <span>{{ ('mortgage.privilege.' + option.value) | translate }}</span>
                   </label>
                 }
               </div>
             </div>
             <div class="form-actions">
-              <button type="button" class="btn btn-secondary" (click)="toggleEdit()">Отмена</button>
+              <button type="button" class="btn btn-secondary" (click)="toggleEdit()">
+                {{ 'profilePage.cancel' | translate }}
+              </button>
               <button type="submit" class="btn btn-primary" [disabled]="saving()">
-                {{ saving() ? 'Сохранение…' : 'Сохранить' }}
+                {{ saving() ? ('profilePage.saving' | translate) : ('profilePage.save' | translate) }}
               </button>
             </div>
           </form>
@@ -63,15 +69,15 @@
       </div>
 
       <div class="profile-links">
-        <h2 class="links-title">Мои данные</h2>
-        <a routerLink="/profile/saved-apartments" class="profile-link">Избранные квартиры</a>
-        <a routerLink="/profile/calculation-history" class="profile-link">История расчётов</a>
-        <a routerLink="/profile/my-listings" class="profile-link">Мои объявления</a>
+        <h2 class="links-title">{{ 'profilePage.myData' | translate }}</h2>
+        <a routerLink="/profile/saved-apartments" class="profile-link">{{ 'profilePage.savedApt' | translate }}</a>
+        <a routerLink="/profile/calculation-history" class="profile-link">{{ 'profilePage.calcHistory' | translate }}</a>
+        <a routerLink="/profile/my-listings" class="profile-link">{{ 'profilePage.myListings' | translate }}</a>
       </div>
 
       <div class="actions">
-        <button type="button" class="btn btn-secondary" routerLink="/match">К подбору программ</button>
-        <button type="button" class="btn btn-danger" (click)="logout()">Выйти</button>
+        <button type="button" class="btn btn-secondary" routerLink="/match">{{ 'profilePage.toMatch' | translate }}</button>
+        <button type="button" class="btn btn-danger" (click)="logout()">{{ 'profilePage.logout' | translate }}</button>
       </div>
     }
   </div>

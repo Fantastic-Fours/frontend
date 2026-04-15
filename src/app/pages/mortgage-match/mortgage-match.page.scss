@@ -321,6 +321,43 @@
   }
 }
 
+.form-pdf {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--calc-text, #0f172a) 12%, transparent);
+}
+
+.btn-outline {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 2px solid color-mix(in srgb, var(--calc-primary, #0d9488) 55%, transparent);
+  background: transparent;
+  color: var(--calc-primary, #0d9488);
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--calc-primary, #0d9488) 10%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
 .btn {
   flex: 1;
   display: inline-flex;

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { SavedApartmentItem } from '../../core/interfaces/user.types';
 import type { ApartmentListItem } from '../../core/interfaces/user.types';
@@ -9,12 +10,13 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-saved-apartments-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './saved-apartments.page.html',
   styleUrl: './saved-apartments.page.scss',
 })
 export class SavedApartmentsPage implements OnInit {
   private readonly userApi = inject(UserApiService);
+  private readonly translate = inject(TranslateService);
 
   items = signal<SavedApartmentItem[]>([]);
   totalCount = signal(0);
@@ -43,7 +45,7 @@ export class SavedApartmentsPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
+        this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('saved.errLoad'));
       },
     });
   }
@@ -57,7 +59,7 @@ export class SavedApartmentsPage implements OnInit {
         this.removingId.set(null);
       },
       error: (err) => {
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка удаления');
+        this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('saved.errRemove'));
         this.removingId.set(null);
       },
     });
@@ -72,14 +74,20 @@ export class SavedApartmentsPage implements OnInit {
   }
 
   formatMoney(value: string | number | undefined): string {
-    if (value == null) return '—';
+    if (value == null) return this.translate.instant('mortgage.dash');
     const num = typeof value === 'number' ? value : parseFloat(String(value));
     if (Number.isNaN(num)) return String(value);
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(num) + ' ₸';
+    const locale =
+      this.translate.currentLang === 'en' ? 'en-US' : this.translate.currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+    return (
+      new Intl.NumberFormat(locale, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(num) +
+      ' ' +
+      this.translate.instant('mortgage.currency')
+    );
   }
 
   firstImage(apt: ApartmentListItem): string | null {

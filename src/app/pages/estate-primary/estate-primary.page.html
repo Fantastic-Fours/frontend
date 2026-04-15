@@ -1,11 +1,11 @@
 <div class="page">
-  <h1>Первичная недвижимость</h1>
-  <p class="subtitle">Квартиры в новостройках</p>
+  <h1>{{ 'estate.primaryTitle' | translate }}</h1>
+  <p class="subtitle">{{ 'estate.primarySub' | translate }}</p>
 
-  <section class="filters" aria-label="Фильтры">
+  <section class="filters" [attr.aria-label]="'common.filtersAria' | translate">
     <div class="filters-row">
       <div class="filter">
-        <label>Город</label>
+        <label>{{ 'estate.city' | translate }}</label>
         <select
           [value]="filters().city"
           (change)="applyFilters({ city: ($any($event.target).value) })"
@@ -17,24 +17,24 @@
       </div>
 
       <div class="filter">
-        <label>Тип</label>
+        <label>{{ 'estate.type' | translate }}</label>
         <select
           [value]="filters().property_type ?? ''"
           (change)="applyFilters({ property_type: ($any($event.target).value) || undefined })"
         >
-          <option value="">Любой</option>
-          <option value="apartment">Квартира</option>
-          <option value="house">Дом</option>
+          <option value="">{{ 'common.any' | translate }}</option>
+          <option value="apartment">{{ 'estate.apt' | translate }}</option>
+          <option value="house">{{ 'estate.house' | translate }}</option>
         </select>
       </div>
 
       <div class="filter">
-        <label>Комнат</label>
+        <label>{{ 'estate.rooms' | translate }}</label>
         <select
           [value]="filters().rooms ?? ''"
           (change)="applyFilters({ rooms: undefined, min_rooms: toInt($any($event.target).value) })"
         >
-          <option value="">Любое</option>
+          <option value="">{{ 'common.anyRooms' | translate }}</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -45,7 +45,7 @@
 
     <div class="filters-row">
       <div class="filter">
-        <label>Цена от</label>
+        <label>{{ 'estate.priceFrom' | translate }}</label>
         <input
           type="number"
           [value]="filters().min_price ?? ''"
@@ -55,7 +55,7 @@
         />
       </div>
       <div class="filter">
-        <label>Цена до</label>
+        <label>{{ 'estate.priceTo' | translate }}</label>
         <input
           type="number"
           [value]="filters().max_price ?? ''"
@@ -65,7 +65,7 @@
         />
       </div>
       <div class="filter">
-        <label>Площадь от (м²)</label>
+        <label>{{ 'estate.areaFrom' | translate }}</label>
         <input
           type="number"
           [value]="filters().min_area ?? ''"
@@ -76,7 +76,7 @@
         />
       </div>
       <div class="filter">
-        <label>Площадь до (м²)</label>
+        <label>{{ 'estate.areaTo' | translate }}</label>
         <input
           type="number"
           [value]="filters().max_area ?? ''"
@@ -90,29 +90,29 @@
 
     <div class="filters-row">
       <div class="filter">
-        <label>Этаж</label>
+        <label>{{ 'estate.floor' | translate }}</label>
         <input
           type="number"
           [value]="filters().floor ?? ''"
           (change)="applyFilters({ floor: toInt($any($event.target).value) })"
-          placeholder="Любой"
+          [placeholder]="'estate.phAnyFloor' | translate"
           min="0"
         />
       </div>
       <div class="filter">
-        <label>Этажность</label>
+        <label>{{ 'estate.floors' | translate }}</label>
         <input
           type="number"
           [value]="filters().total_floors ?? ''"
           (change)="applyFilters({ total_floors: toInt($any($event.target).value) })"
-          placeholder="Любая"
+          [placeholder]="'estate.phAnyFloors' | translate"
           min="0"
         />
       </div>
 
       <div class="filter actions">
-        <label class="sr-only">Действия</label>
-        <button type="button" class="btn btn-secondary" (click)="clearFilters()">Сбросить</button>
+        <label class="sr-only">{{ 'common.actionsSrOnly' | translate }}</label>
+        <button type="button" class="btn btn-secondary" (click)="clearFilters()">{{ 'common.reset' | translate }}</button>
       </div>
     </div>
   </section>
@@ -122,9 +122,9 @@
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="meta">Найдено: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.found' | translate }}: {{ totalCount() }}</p>
 
     <div class="estate-grid">
       @for (apt of apartments(); track apt.id) {
@@ -133,26 +133,36 @@
             @if (firstImage(apt); as src) {
               <img [src]="src" [alt]="apt.title" />
             } @else {
-              <div class="estate-card-placeholder">Нет фото</div>
+              <div class="estate-card-placeholder">{{ 'common.noPhoto' | translate }}</div>
             }
           </div>
           <div class="estate-card-body">
             <h2 class="estate-card-title">{{ apt.title }}</h2>
             <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
-            <p class="estate-card-meta">{{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' м²' : '' }}{{ apt['rooms'] ? ' · ' + apt['rooms'] + ' комн.' : '' }}</p>
+            <p class="estate-card-meta">
+              {{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' ' + ('common.sqm' | translate) : '' }}{{
+                apt['rooms'] ? ' · ' + apt['rooms'] + ' ' + ('common.roomsShort' | translate) : ''
+              }}
+            </p>
           </div>
         </a>
       }
     </div>
 
     @if (apartments().length === 0 && !loading()) {
-      <p class="empty">Объявлений пока нет.</p>
+      <p class="empty">{{ 'estate.empty' | translate }}</p>
     }
 
     <div class="pagination">
-      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">
+        {{ 'common.prev' | translate }}
+      </button>
+      <span class="page-info"
+        >{{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }} {{ totalPages() }}</span
+      >
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">
+        {{ 'common.next' | translate }}
+      </button>
     </div>
   }
 </div>

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './forgot-password.page.html',
   styleUrl: './forgot-password.page.scss',
 })
@@ -22,7 +23,8 @@ export class ForgotPasswordPage {
   constructor(
     private fb: FormBuilder,
     private authApi: AuthApiService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.requestForm = this.fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
@@ -47,13 +49,13 @@ export class ForgotPasswordPage {
     this.authApi.forgotPassword({ email }).subscribe({
       next: (res) => {
         this.loading = false;
-        this.success = res.detail ?? 'Если email зарегистрирован, код будет отправлен.';
+        this.success = res.detail ?? this.translate.instant('forgotMsg.codeSent');
         this.resetForm.patchValue({ email });
         this.step = 'reset';
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.detail ?? 'Не удалось отправить код.';
+        this.error = err?.error?.detail ?? this.translate.instant('verify.errResend');
       },
     });
   }
@@ -62,7 +64,7 @@ export class ForgotPasswordPage {
     const email = this.resetForm.get('email')?.value;
     if (!email || this.resetForm.get('email')?.invalid) {
       this.resetForm.get('email')?.markAsTouched();
-      this.error = 'Введите корректный email.';
+      this.error = this.translate.instant('forgot.errEmail');
       return;
     }
     this.error = null;
@@ -71,11 +73,11 @@ export class ForgotPasswordPage {
     this.authApi.resendResetCode({ email }).subscribe({
       next: (res) => {
         this.resendLoading = false;
-        this.success = res.detail ?? 'Код отправлен повторно.';
+        this.success = res.detail ?? this.translate.instant('verify.codeSent');
       },
       error: (err) => {
         this.resendLoading = false;
-        this.error = err?.error?.detail ?? 'Не удалось отправить код.';
+        this.error = err?.error?.detail ?? this.translate.instant('verify.errResend');
       },
     });
   }
@@ -87,7 +89,7 @@ export class ForgotPasswordPage {
     }
     const raw = this.resetForm.getRawValue();
     if (raw.password !== raw.password_confirm) {
-      this.error = 'Пароли не совпадают.';
+      this.error = this.translate.instant('forgot.errMismatch');
       return;
     }
     this.error = null;
@@ -96,7 +98,7 @@ export class ForgotPasswordPage {
     this.authApi.resetPassword(raw).subscribe({
       next: (res) => {
         this.loading = false;
-        this.success = res.detail ?? 'Пароль обновлён.';
+        this.success = res.detail ?? this.translate.instant('forgotMsg.passwordUpdated');
         setTimeout(() => this.router.navigate(['/login']), 800);
       },
       error: (err) => {
@@ -105,7 +107,7 @@ export class ForgotPasswordPage {
           err?.error?.password?.[0] ??
           err?.error?.password_confirm?.[0] ??
           err?.error?.detail ??
-          'Не удалось обновить пароль.';
+          this.translate.instant('forgot.errUpdate');
         this.error = typeof msg === 'string' ? msg : String(msg);
       },
     });

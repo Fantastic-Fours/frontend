@@ -5,15 +5,16 @@
     <div class="container hero-inner">
       <div class="hero-badge anim-badge">
         <span class="hero-badge-emoji" aria-hidden="true">&#10024;</span>
-        <span>Умный подбор ипотеки с AI</span>
+        <span>{{ 'home.badge' | translate }}</span>
       </div>
 
       <h1 id="home-hero-title" class="hero-title anim-title">
-        Найдите идеальную <span class="text-gradient">ипотеку</span>
+        {{ 'home.heroTitleBefore' | translate }}
+        <span class="text-gradient">{{ 'home.heroTitleAccent' | translate }}</span>
       </h1>
 
       <p class="hero-desc anim-desc">
-        Подберём программу под ваши критерии. Сравним банки и поможем оформить заявку онлайн в Казахстане.
+        {{ 'home.heroDesc' | translate }}
       </p>
 
       <div class="hero-ctas anim-ctas">
@@ -31,7 +32,7 @@
             <line x1="12" x2="12" y1="18" y2="18" />
             <line x1="16" x2="16" y1="18" y2="18" />
           </svg>
-          Рассчитать ипотеку
+          {{ 'home.ctaCalc' | translate }}
         </a>
         <a routerLink="/properties" class="btn btn-outline btn-lg">
           <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -40,7 +41,7 @@
             <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
             <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
           </svg>
-          Каталог недвижимости
+          {{ 'home.ctaCatalog' | translate }}
         </a>
       </div>
     </div>
@@ -50,12 +51,12 @@
   <section class="section features" aria-labelledby="features-title">
     <div class="container">
       <header class="section-head">
-        <h2 id="features-title">Почему Ipotex?</h2>
-        <p class="section-sub">Всё необходимое для уверенного выбора ипотеки</p>
+        <h2 id="features-title">{{ 'home.featuresTitle' | translate }}</h2>
+        <p class="section-sub">{{ 'home.featuresSub' | translate }}</p>
       </header>
 
       <div class="features-grid">
-        @for (f of features; track f.title; let i = $index) {
+        @for (f of features; track f.titleKey; let i = $index) {
           <article
             class="feature-card js-reveal"
             [style.--reveal-delay]="(i * 100) + 'ms'"
@@ -80,8 +81,8 @@
                 </svg>
               }
             </div>
-            <h3 class="feature-title">{{ f.title }}</h3>
-            <p class="feature-desc">{{ f.description }}</p>
+            <h3 class="feature-title">{{ f.titleKey | translate }}</h3>
+            <p class="feature-desc">{{ f.descriptionKey | translate }}</p>
           </article>
         }
       </div>
@@ -92,8 +93,8 @@
   <section class="section how" aria-labelledby="how-title">
     <div class="container">
       <header class="section-head">
-        <h2 id="how-title">Как это работает</h2>
-        <p class="section-sub">Простой процесс подбора ипотеки</p>
+        <h2 id="how-title">{{ 'home.howTitle' | translate }}</h2>
+        <p class="section-sub">{{ 'home.howSub' | translate }}</p>
       </header>
 
       <div class="steps-grid">
@@ -104,8 +105,8 @@
             [style.--reveal-delay]="(i * 150) + 'ms'"
           >
             <span class="step-num" aria-hidden="true">{{ s.num }}</span>
-            <h3 class="step-title">{{ s.title }}</h3>
-            <p class="step-desc">{{ s.description }}</p>
+            <h3 class="step-title">{{ s.titleKey | translate }}</h3>
+            <p class="step-desc">{{ s.descriptionKey | translate }}</p>
           </div>
         }
       </div>
@@ -115,12 +116,12 @@
   <!-- 4. Stats -->
   <section class="section stats" aria-labelledby="stats-title">
     <div class="container">
-      <h2 id="stats-title" class="visually-hidden">Статистика сервиса</h2>
+      <h2 id="stats-title" class="visually-hidden">{{ 'home.statsAria' | translate }}</h2>
       <div class="stats-grid">
         @for (st of stats; track st.value; let i = $index) {
           <div class="stat-block js-reveal" [style.--reveal-delay]="(i * 100) + 'ms'">
             <div class="stat-value text-gradient-br">{{ st.value }}</div>
-            <p class="stat-label">{{ st.label }}</p>
+            <p class="stat-label">{{ st.labelKey | translate }}</p>
           </div>
         }
       </div>
@@ -130,9 +131,9 @@
   <!-- 5. CTA -->
   <section class="section cta-final js-reveal" aria-labelledby="cta-title">
     <div class="container cta-inner">
-      <h2 id="cta-title">Готовы найти свою ипотеку?</h2>
+      <h2 id="cta-title">{{ 'home.ctaTitle' | translate }}</h2>
       <p class="cta-sub">
-        Начните прямо сейчас и получите одобрение за 15 минут.
+        {{ 'home.ctaSub' | translate }}
       </p>
       <a routerLink="/mortgage-calculator" class="btn btn-cta-emerald btn-lg">
         <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -142,7 +143,7 @@
           <line x1="12" x2="12" y1="10" y2="10" />
           <line x1="16" x2="16" y1="10" y2="10" />
         </svg>
-        Начать расчёт
+        {{ 'home.ctaStart' | translate }}
       </a>
     </div>
   </section>

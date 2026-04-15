@@ -1,18 +1,18 @@
 <div class="page">
-  <a routerLink="/profile" class="back-link">← Профиль</a>
-  <h1>История расчётов</h1>
-  <p class="subtitle">Ваши сохранённые расчёты ипотеки</p>
+  <a routerLink="/profile" class="back-link">{{ 'common.backToProfile' | translate }}</a>
+  <h1>{{ 'calcHistory.title' | translate }}</h1>
+  <p class="subtitle">{{ 'calcHistory.subtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="meta">Всего: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>
     @if (items().length === 0) {
-      <p class="empty">История расчётов пуста. Расчёты сохраняются при использовании калькулятора на странице программы.</p>
+      <p class="empty">{{ 'calcHistory.empty' | translate }}</p>
     } @else {
       <div class="history-list">
         @for (item of items(); track item.id) {
@@ -21,11 +21,11 @@
               <time [attr.datetime]="item.created_at">{{ formatDate(item.created_at) }}</time>
             </div>
             <div class="history-request">
-              <strong>Параметры:</strong> {{ requestSummary(item.request_snapshot) }}
+              <strong>{{ 'calcHistory.params' | translate }}:</strong> {{ requestSummary(item.request_snapshot) }}
             </div>
             @if (hasResultSnapshot(item)) {
               <div class="history-result">
-                <strong>Результат:</strong>
+                <strong>{{ 'calcHistory.result' | translate }}:</strong>
                 <pre class="result-preview">{{ item.result_snapshot | json }}</pre>
               </div>
             }
@@ -34,9 +34,9 @@
       </div>
       @if (totalPages() > 1) {
         <div class="pagination">
-          <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-          <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-          <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+          <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">{{ 'common.prev' | translate }}</button>
+          <span class="page-info">{{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }} {{ totalPages() }}</span>
+          <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">{{ 'common.next' | translate }}</button>
         </div>
       }
     }

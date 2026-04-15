@@ -1,7 +1,7 @@
 <div class="page">
   <div class="card">
-    <h1>Подтверждение email</h1>
-    <p class="subtitle">Введите код, который мы отправили на ваш email</p>
+    <h1>{{ 'verify.title' | translate }}</h1>
+    <p class="subtitle">{{ 'verify.subtitle' | translate }}</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
       @if (error) {
@@ -12,52 +12,52 @@
       }
 
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">{{ 'common.email' | translate }}</label>
         <input
           id="email"
           type="email"
           formControlName="email"
           autocomplete="email"
-          placeholder="Введите email"
+          [placeholder]="'login.emailPh' | translate"
         />
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
           <span class="field-error">
             @if (form.get('email')?.errors?.['required']) {
-              Обязательное поле
+              {{ 'common.required' | translate }}
             } @else {
-              Введите корректный email
+              {{ 'common.invalidEmail' | translate }}
             }
           </span>
         }
       </div>
 
       <div class="field">
-        <label for="code">Код (4–6 цифр)</label>
+        <label for="code">{{ 'verify.codeLabel' | translate }}</label>
         <input
           id="code"
           type="text"
           inputmode="numeric"
           formControlName="code"
           autocomplete="one-time-code"
-          placeholder="Например: 123456"
+          [placeholder]="'verify.codePh' | translate"
         />
         @if (form.get('code')?.invalid && form.get('code')?.touched) {
-          <span class="field-error">Введите корректный код</span>
+          <span class="field-error">{{ 'verify.invalidCode' | translate }}</span>
         }
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Проверка…' : 'Подтвердить' }}
+        {{ loading ? ('verify.checking' | translate) : ('verify.confirm' | translate) }}
       </button>
 
       <button type="button" class="btn btn-secondary" (click)="onResend()" [disabled]="resendLoading">
-        {{ resendLoading ? 'Отправка…' : 'Отправить код ещё раз' }}
+        {{ resendLoading ? ('forgot.sending' | translate) : ('verify.resend' | translate) }}
       </button>
     </form>
 
     <p class="footer">
-      Уже подтвердили? <a routerLink="/login">Войти</a> · <a routerLink="/">На главную</a>
+      {{ 'verify.footerDone' | translate }}
+      <a routerLink="/login">{{ 'login.submit' | translate }}</a> · <a routerLink="/">{{ 'common.home' | translate }}</a>
     </p>
   </div>
 </div>
-

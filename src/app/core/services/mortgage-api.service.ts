@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { API_BASE_URL, API_PATHS } from '../constants/api.constants';
 import type {
   MortgageMatchRequest,
+  MortgagePlanPdfRequest,
   MortgageMatchResponse,
   MortgageProgramsResponse,
   MortgageProgramItem,
@@ -41,6 +43,74 @@ export class MortgageApiService {
       `${this.base}${API_PATHS.mortgage.match}`,
       params
     );
+  }
+
+  /**
+   * GET /api/mortgage/plan/pdf/
+   * Download mortgage plan PDF.
+   */
+  downloadMortgagePlan(params: MortgagePlanPdfRequest): Observable<Blob> {
+    let httpParams = new HttpParams()
+      .set('price', String(params.price))
+      .set('down_payment', String(params.down_payment))
+      .set('income', String(params.income))
+      .set('housing_type', String(params.housing_type));
+
+    if (params.expenses != null) httpParams = httpParams.set('expenses', String(params.expenses));
+    if (params.term_years != null) httpParams = httpParams.set('term_years', String(params.term_years));
+    if (params.sort_by != null) httpParams = httpParams.set('sort_by', String(params.sort_by));
+    if (params.require_income_confirmation != null) {
+      httpParams = httpParams.set('require_income_confirmation', String(params.require_income_confirmation));
+    }
+    if (params.children_under_18 != null) {
+      httpParams = httpParams.set('children_under_18', String(params.children_under_18));
+    }
+    if (params.has_housing != null) httpParams = httpParams.set('has_housing', String(params.has_housing));
+    if (params.has_deposit != null) httpParams = httpParams.set('has_deposit', String(params.has_deposit));
+    (params.privileges ?? []).forEach((value) => {
+      httpParams = httpParams.append('privileges', value);
+    });
+
+       return this.http
+      .get(`${this.base}${API_PATHS.mortgage.planPdf}`, {
+        params: httpParams,
+        responseType: 'blob',
+        observe: 'response',
+      })
+      .pipe(switchMap((response) => from(this.ensurePdfBlob(response))));
+  }
+
+  /** When responseType is blob, JSON errors are still blobs — parse for a readable message. */
+  private async blobToErrorMessage(blob: Blob): Promise<string> {
+    const text = await blob.text();
+    try {
+      const data = JSON.parse(text) as { detail?: unknown };
+      if (typeof data.detail === 'string') return data.detail;
+      if (Array.isArray(data.detail)) return data.detail.map(String).join(', ');
+    } catch {
+      /* not JSON */
+    }
+    const t = text?.trim();
+    return t || 'Не удалось скачать PDF';
+  }
+
+  private async ensurePdfBlob(response: HttpResponse<Blob>): Promise<Blob> {
+    const body = response.body;
+    if (!body) {
+      throw new Error('Пустой ответ сервера');
+    }
+    if (response.status !== 200) {
+      throw new Error(await this.blobToErrorMessage(body));
+    }
+    const ct = (response.headers.get('content-type') || '').toLowerCase();
+    if (ct.includes('application/pdf')) {
+      return body;
+    }
+    const head = await body.slice(0, Math.min(8, body.size)).text();
+    if (head.startsWith('%PDF')) {
+      return body;
+    }
+    throw new Error(await this.blobToErrorMessage(body));
   }
 
   /**

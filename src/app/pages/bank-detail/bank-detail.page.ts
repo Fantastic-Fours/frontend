@@ -19,11 +19,12 @@ import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { resolveBankLogo } from '../../core/utils/bank-logo';
 import { getTwogisApiKey } from '../../core/constants/twogis.constants';
 import type { Bank, BankBranch } from '../../core/interfaces/mortgage.types';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bank-detail-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './bank-detail.page.html',
   styleUrl: './bank-detail.page.scss',
 })

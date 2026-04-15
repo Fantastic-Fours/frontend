@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { resolveBankLogo } from '../../core/utils/bank-logo';
 import type { ProgramListItem } from '../../core/interfaces/mortgage.types';
-import { formatPrivilegeLabels } from '../../core/utils/privilege-labels';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const PAGE_SIZE = 10;
 
@@ -17,13 +17,14 @@ interface ProgramCardItem extends ProgramListItem {
 @Component({
   selector: 'app-programs-list-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './programs-list.page.html',
   styleUrl: './programs-list.page.scss',
 })
 export class ProgramsListPage implements OnInit {
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly translate = inject(TranslateService);
 
   programs = signal<ProgramCardItem[]>([]);
   currentPage = signal(1);
@@ -94,7 +95,7 @@ export class ProgramsListPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        const msg = err?.error?.detail ?? err?.message ?? 'Ошибка загрузки списка';
+        const msg = err?.error?.detail ?? err?.message ?? this.translate.instant('programsList.errLoad');
         this.error.set(msg);
       },
     });
@@ -204,13 +205,15 @@ export class ProgramsListPage implements OnInit {
 
   formatMoney(value: string | null | undefined): string {
     if (value == null || value === '') {
-      return '—';
+      return this.translate.instant('mortgage.dash');
     }
     const num = parseFloat(value);
     if (Number.isNaN(num)) {
-      return '—';
+      return this.translate.instant('mortgage.dash');
     }
-    return new Intl.NumberFormat('ru-RU', {
+    const locale =
+      this.translate.currentLang === 'en' ? 'en-US' : this.translate.currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+    return new Intl.NumberFormat(locale, {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
@@ -218,7 +221,9 @@ export class ProgramsListPage implements OnInit {
   }
 
   housingTypeLabel(type: string): string {
-    return type === 'primary' ? 'Первичка' : type === 'secondary' ? 'Вторичка' : type;
+    if (type === 'primary') return this.translate.instant('programsList.housingPrimaryShort');
+    if (type === 'secondary') return this.translate.instant('programsList.housingSecondaryShort');
+    return type;
   }
 
   housingTypeSummary(types: string[]): string {
@@ -231,6 +236,8 @@ export class ProgramsListPage implements OnInit {
   }
 
   privilegeSummary(p: ProgramListItem): string {
-    return formatPrivilegeLabels(p.eligible_privileges);
+    const codes = p.eligible_privileges;
+    if (!codes?.length) return '';
+    return codes.map((c) => this.translate.instant('mortgage.privilege.' + c)).join(', ');
   }
 }

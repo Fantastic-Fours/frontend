@@ -1,7 +1,7 @@
 <div class="page">
   <div class="card">
-    <h1>Вход</h1>
-    <p class="subtitle">Получите токен для доступа к API</p>
+    <h1>{{ 'login.title' | translate }}</h1>
+    <p class="subtitle">{{ 'login.subtitle' | translate }}</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
       @if (error) {
@@ -9,40 +9,43 @@
       }
 
       <div class="field">
-        <label for="username">Email</label>
+        <label for="username">{{ 'common.email' | translate }}</label>
         <input
           id="username"
           type="email"
           formControlName="username"
           autocomplete="email"
-          placeholder="Введите email"
+          [placeholder]="'login.emailPh' | translate"
         />
         @if (form.get('username')?.invalid && form.get('username')?.touched) {
-          <span class="field-error">Обязательное поле</span>
+          <span class="field-error">{{ 'common.required' | translate }}</span>
         }
       </div>
 
       <div class="field">
-        <label for="password">Пароль</label>
+        <label for="password">{{ 'common.password' | translate }}</label>
         <input
           id="password"
           type="password"
           formControlName="password"
           autocomplete="current-password"
-          placeholder="Введите пароль"
+          [placeholder]="'login.passwordPh' | translate"
         />
         @if (form.get('password')?.invalid && form.get('password')?.touched) {
-          <span class="field-error">Обязательное поле</span>
+          <span class="field-error">{{ 'common.required' | translate }}</span>
         }
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Вход…' : 'Войти' }}
+        {{ loading ? ('login.submitting' | translate) : ('login.submit' | translate) }}
       </button>
     </form>
 
     <p class="footer">
-      Нет аккаунта? <a routerLink="/register">Регистрация</a> · <a routerLink="/forgot-password">Забыли пароль?</a> · <a routerLink="/">На главную</a>
+      {{ 'login.footerNoAccount' | translate }}
+      <a routerLink="/register">{{ 'login.footerRegister' | translate }}</a> ·
+      <a routerLink="/forgot-password">{{ 'login.footerForgot' | translate }}</a> ·
+      <a routerLink="/">{{ 'common.home' | translate }}</a>
     </p>
   </div>
 </div>

@@ -71,6 +71,40 @@
   justify-self: end;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-right: 0.35rem;
+  padding: 0.15rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.lang-btn.active {
+  color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(214, 104, 83, 0.25);
+}
+
 .caret {
   display: inline-block;
   margin-left: 0.2rem;

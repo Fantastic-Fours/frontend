@@ -1,49 +1,49 @@
 <div class="page">
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
-    <a routerLink="/programs" class="back-link">← К списку программ</a>
+    <a routerLink="/programs" class="back-link">{{ 'programDetail.back' | translate }}</a>
   } @else if (program(); as p) {
-    <a routerLink="/programs" class="back-link">← К списку программ</a>
+    <a routerLink="/programs" class="back-link">{{ 'programDetail.back' | translate }}</a>
 
     <header class="program-title-block">
       <h1>{{ p.name }}</h1>
     </header>
 
-    <section class="bank-compact" aria-label="Банк">
+    <section class="bank-compact" [attr.aria-label]="'programDetail.bank' | translate">
       <div class="bank-compact-inner">
         @if (programHeaderLogo(p); as logo) {
           <img [src]="logo" [alt]="p.bank_name" class="bank-compact-logo" />
         }
         <div class="bank-compact-text">
-          <span class="bank-compact-label">Банк</span>
+          <span class="bank-compact-label">{{ 'programDetail.bank' | translate }}</span>
           <span class="bank-compact-name">{{ p.bank_name }}</span>
         </div>
-        <a [routerLink]="['/banks', p.bank]" class="bank-compact-link">Подробнее о банке</a>
+        <a [routerLink]="['/banks', p.bank]" class="bank-compact-link">{{ 'programDetail.bankMore' | translate }}</a>
       </div>
       @if (bankSectionText(p.bank_public?.requisites)) {
         <div class="bank-compact-requisites">
-          <h2 class="bank-compact-req-title">Реквизиты</h2>
+          <h2 class="bank-compact-req-title">{{ 'programDetail.requisites' | translate }}</h2>
           <div class="bank-compact-req-body">{{ p.bank_public!.requisites }}</div>
         </div>
       }
     </section>
 
     <section class="detail-section">
-      <h2 class="section-title">Основные условия</h2>
+      <h2 class="section-title">{{ 'programDetail.main' | translate }}</h2>
       <dl class="detail-list">
         <div>
-          <dt>Процентная ставка</dt>
+          <dt>{{ 'programDetail.rate' | translate }}</dt>
           <dd>{{ p.interest_rate }}%</dd>
         </div>
         <div>
-          <dt>Максимальная сумма кредита</dt>
-          <dd>{{ formatMoney(p.max_loan_amount) }} ₸</dd>
+          <dt>{{ 'programDetail.maxLoan' | translate }}</dt>
+          <dd>{{ formatMoney(p.max_loan_amount) }} {{ 'mortgage.currency' | translate }}</dd>
         </div>
         @if (regionLoanLines(p).length) {
           <div>
-            <dt>По регионам</dt>
+            <dt>{{ 'programDetail.byRegion' | translate }}</dt>
             <dd>
               <ul class="region-loans">
                 @for (line of regionLoanLines(p); track line.label) {
@@ -54,64 +54,75 @@
           </div>
         }
         <div>
-          <dt>Минимальный первоначальный взнос</dt>
-          <dd>от {{ p.min_down_payment_percent }}%</dd>
+          <dt>{{ 'programDetail.minDown' | translate }}</dt>
+          <dd>{{ 'programsList.downPct' | translate : { pct: p.min_down_payment_percent } }}</dd>
         </div>
         <div>
-          <dt>Максимальный срок</dt>
-          <dd>{{ p.max_term_years }} лет</dd>
+          <dt>{{ 'programDetail.maxTerm' | translate }}</dt>
+          <dd>{{ p.max_term_years }} {{ 'mortgage.years' | translate }}</dd>
         </div>
         <div>
-          <dt>Тип жилья</dt>
+          <dt>{{ 'programDetail.housingType' | translate }}</dt>
           <dd>{{ housingTypesSummary(p) }}</dd>
         </div>
         <div>
-          <dt>Подтверждение дохода</dt>
-          <dd>{{ p.requires_income_confirmation ? 'Требуется' : 'Не требуется' }}</dd>
+          <dt>{{ 'programDetail.incomeConfirm' | translate }}</dt>
+          <dd>
+            {{
+              p.requires_income_confirmation
+                ? ('programDetail.incomeRequired' | translate)
+                : ('programDetail.incomeNotRequired' | translate)
+            }}
+          </dd>
         </div>
         <div>
-          <dt>ГЭСВ</dt>
+          <dt>{{ 'programDetail.gesv' | translate }}</dt>
           <dd>{{ p.gesv }}%</dd>
         </div>
       </dl>
     </section>
 
     <section class="detail-section calculator-section">
-      <h2 class="section-title">Калькулятор</h2>
+      <h2 class="section-title">{{ 'programDetail.calc' | translate }}</h2>
       <form [formGroup]="calcForm" (ngSubmit)="calculate()" class="calc-form">
         <div class="calc-grid">
           <div class="field">
-            <label for="calc-price">Стоимость жилья</label>
-            <input id="calc-price" type="number" formControlName="price" min="1" placeholder="₸" />
+            <label for="calc-price">{{ 'programDetail.propPrice' | translate }}</label>
+            <input id="calc-price" type="number" formControlName="price" min="1" [placeholder]="'mortgage.currency' | translate" />
           </div>
           <div class="field">
-            <label for="calc-down">Первоначальный взнос</label>
-            <input id="calc-down" type="number" formControlName="down_payment" min="0" placeholder="₸" />
+            <label for="calc-down">{{ 'programDetail.downPayment' | translate }}</label>
+            <input id="calc-down" type="number" formControlName="down_payment" min="0" [placeholder]="'mortgage.currency' | translate" />
           </div>
         </div>
-        <p class="field-hint calc-term-hint">Срок расчёта: максимальный по программе ({{ program()?.max_term_years }} лет).</p>
+        <p class="field-hint calc-term-hint">
+          {{ 'programDetail.termHint' | translate : { years: program()?.max_term_years } }}
+        </p>
         @if (getDownPaymentCouldBeLess() > 0) {
           <p class="hint-less">
-            Можно внести первоначальный взнос на {{ formatMoney(getDownPaymentCouldBeLess()) }} ₸ меньше
+            {{
+              'programDetail.hintLessDown'
+                | translate : { amount: formatMoney(getDownPaymentCouldBeLess()) }
+            }}
           </p>
         }
         <div class="calc-options">
           <label class="checkbox-label">
             <input type="checkbox" formControlName="without_income_confirmation" />
-            без подтверждения дохода
+            {{ 'programDetail.withoutIncome' | translate }}
           </label>
           <div class="payment-type">
             <label class="radio-label">
               <input type="radio" formControlName="payment_type" value="differentiated" />
-              Дифференцированный
+              {{ 'programDetail.diffPayment' | translate }}
             </label>
             <label class="radio-label">
               <input type="radio" formControlName="payment_type" value="annuity" />
-              Аннуитетный
+              {{ 'programDetail.annuity' | translate }}
             </label>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">РАССЧИТАТЬ</button>
+        <button type="submit" class="btn btn-primary">{{ 'programDetail.calcBtn' | translate }}</button>
       </form>
 
       @if (calcError()) {
@@ -120,31 +131,31 @@
 
       @if (calcResult(); as res) {
         <div class="calc-result">
-          <h3>Результат</h3>
+          <h3>{{ 'programDetail.result' | translate }}</h3>
           <dl class="result-grid">
             <div>
-              <dt>Ежемесячный платёж</dt>
-              <dd>{{ formatMoney(res.monthlyPayment) }} ₸</dd>
+              <dt>{{ 'programDetail.monthly' | translate }}</dt>
+              <dd>{{ formatMoney(res.monthlyPayment) }} {{ 'mortgage.currency' | translate }}</dd>
             </div>
             <div>
-              <dt>Общая сумма выплат</dt>
-              <dd>{{ formatMoney(res.totalPayment) }} ₸</dd>
+              <dt>{{ 'programDetail.totalPaid' | translate }}</dt>
+              <dd>{{ formatMoney(res.totalPayment) }} {{ 'mortgage.currency' | translate }}</dd>
             </div>
             <div>
-              <dt>Общая переплата</dt>
-              <dd>{{ formatMoney(res.totalOverpayment) }} ₸</dd>
+              <dt>{{ 'programDetail.totalOver' | translate }}</dt>
+              <dd>{{ formatMoney(res.totalOverpayment) }} {{ 'mortgage.currency' | translate }}</dd>
             </div>
           </dl>
-          <h3 class="schedule-title">График платежей</h3>
+          <h3 class="schedule-title">{{ 'programDetail.schedule' | translate }}</h3>
           <div class="schedule-wrap">
             <table class="schedule-table">
               <thead>
                 <tr>
-                  <th>Период</th>
-                  <th>Общ. сумма выплаты, ₸</th>
-                  <th>Проценты, ₸</th>
-                  <th>Кредит, ₸</th>
-                  <th>Осталось выплатить, ₸</th>
+                  <th>{{ 'programDetail.tblPeriod' | translate }}</th>
+                  <th>{{ 'programDetail.tblTotal' | translate }}</th>
+                  <th>{{ 'programDetail.tblInterest' | translate }}</th>
+                  <th>{{ 'programDetail.tblPrincipal' | translate }}</th>
+                  <th>{{ 'programDetail.tblRemaining' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -165,7 +176,7 @@
     </section>
 
     <p class="status">
-      {{ p.is_active ? 'Программа активна' : 'Программа неактивна' }}
+      {{ p.is_active ? ('programDetail.active' | translate) : ('programDetail.inactive' | translate) }}
     </p>
   }
 </div>

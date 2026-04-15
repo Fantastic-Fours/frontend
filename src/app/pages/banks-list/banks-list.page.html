@@ -1,15 +1,15 @@
 <div class="page">
-  <h1>Банки</h1>
-  <p class="subtitle">Справочник с контактами, отделениями и отзывами</p>
+  <h1>{{ 'banksList.title' | translate }}</h1>
+  <p class="subtitle">{{ 'banksList.subtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="meta">Всего: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>
 
     <div class="bank-cards">
       @for (b of banks(); track b.id) {
@@ -29,29 +29,39 @@
             <ul class="card-info">
               @if (b.website) {
                 <li>
-                  <strong>Сайт:</strong>
+                  <strong>{{ 'banksList.site' | translate }}:</strong>
                   <a [href]="b.website" target="_blank" rel="noopener noreferrer" class="ext-link">{{ b.website }}</a>
                 </li>
               }
-              <li><strong>Отделений на карте:</strong> {{ branchCount(b) }}</li>
-              <li><strong>Отзывов:</strong> {{ reviewCount(b) }}</li>
+              <li>
+                <strong>{{ 'banksList.branches' | translate }}:</strong> {{ branchCount(b) }}
+              </li>
+              <li>
+                <strong>{{ 'banksList.reviews' | translate }}:</strong> {{ reviewCount(b) }}
+              </li>
             </ul>
           </div>
           <div class="card-actions">
-            <a [routerLink]="['/banks', b.id]" class="btn btn-primary">Подробнее</a>
+            <a [routerLink]="['/banks', b.id]" class="btn btn-primary">{{ 'common.details' | translate }}</a>
           </div>
         </article>
       }
     </div>
 
     @if (banks().length === 0 && !loading()) {
-      <p class="empty">Банки не найдены.</p>
+      <p class="empty">{{ 'banksList.empty' | translate }}</p>
     }
 
     <div class="pagination">
-      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">Назад</button>
-      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Вперёд</button>
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">
+        {{ 'common.prev' | translate }}
+      </button>
+      <span class="page-info"
+        >{{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }} {{ totalPages() }}</span
+      >
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">
+        {{ 'common.next' | translate }}
+      </button>
     </div>
   }
 </div>

@@ -5,16 +5,16 @@ import { AuthTokenService } from '../../core/services/auth-token.service';
 import { AuthApiService } from '../../core/services/auth-api.service';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { UserProfile } from '../../core/interfaces/user.types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 type PrivilegeOption = {
   value: string;
-  label: string;
 };
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.scss',
 })
@@ -24,16 +24,17 @@ export class ProfilePage {
   private readonly authApi = inject(AuthApiService);
   private readonly userApi = inject(UserApiService);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
   readonly privilegeOptions: PrivilegeOption[] = [
-    { value: 'veteran_ww2', label: 'Ветеран ВОВ' },
-    { value: 'veteran_equivalent', label: 'Приравненный к ветерану ВОВ' },
-    { value: 'combat_veteran', label: 'Ветеран боевых действий' },
-    { value: 'disabled_group_1', label: 'Инвалид I группы' },
-    { value: 'disabled_group_2', label: 'Инвалид II группы' },
-    { value: 'family_with_disabled_child', label: 'Семья с ребенком-инвалидом' },
-    { value: 'widow', label: 'Вдова' },
-    { value: 'large_family', label: 'Многодетная семья' },
-    { value: 'orphan', label: 'Сирота' },
+    { value: 'veteran_ww2' },
+    { value: 'veteran_equivalent' },
+    { value: 'combat_veteran' },
+    { value: 'disabled_group_1' },
+    { value: 'disabled_group_2' },
+    { value: 'family_with_disabled_child' },
+    { value: 'widow' },
+    { value: 'large_family' },
+    { value: 'orphan' },
   ];
 
   profile = signal<UserProfile | null>(null);
@@ -73,7 +74,7 @@ export class ProfilePage {
           this.authApi.logout();
           this.router.navigate(['/login']);
         } else {
-          this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки профиля');
+          this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('profilePage.errLoad'));
         }
         this.loading.set(false);
       },
@@ -107,7 +108,7 @@ export class ProfilePage {
           this.saving.set(false);
         },
         error: (err) => {
-          this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка сохранения');
+          this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('profilePage.errSave'));
           this.saving.set(false);
         },
       });
@@ -130,12 +131,12 @@ export class ProfilePage {
 
   getPrivilegeLabels(privileges?: string[] | null): string {
     if (!privileges || privileges.length === 0) {
-      return '—';
+      return this.translate.instant('mortgage.dash');
     }
     const labels = privileges
-      .map((value) => this.privilegeOptions.find((item) => item.value === value)?.label ?? value)
+      .map((value) => this.translate.instant('mortgage.privilege.' + value))
       .join(', ');
-    return labels || '—';
+    return labels || this.translate.instant('mortgage.dash');
   }
 
   logout(): void {

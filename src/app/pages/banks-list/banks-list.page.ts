@@ -4,19 +4,21 @@ import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { resolveBankLogo } from '../../core/utils/bank-logo';
 import type { Bank } from '../../core/interfaces/mortgage.types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const PAGE_SIZE = 12;
 
 @Component({
   selector: 'app-banks-list-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './banks-list.page.html',
   styleUrl: './banks-list.page.scss',
 })
 export class BanksListPage implements OnInit {
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly translate = inject(TranslateService);
 
   banks = signal<Bank[]>([]);
   totalCount = signal(0);
@@ -48,7 +50,7 @@ export class BanksListPage implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки банков');
+        this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('banksList.errLoad'));
       },
     });
   }

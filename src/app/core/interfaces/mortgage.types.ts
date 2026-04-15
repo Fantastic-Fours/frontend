@@ -16,6 +16,21 @@ export interface MortgageMatchRequest {
   sort_by?: 'score' | 'monthly_payment' | 'total_overpayment';
 }
 
+export interface MortgagePlanPdfRequest {
+  price: number;
+  down_payment: number;
+  income: number;
+  expenses?: number;
+  term_years?: number;
+  housing_type: 'primary' | 'secondary' | string;
+  sort_by?: 'score' | 'monthly_payment' | 'total_overpayment';
+  require_income_confirmation?: boolean;
+  children_under_18?: number;
+  has_housing?: boolean | null;
+  has_deposit?: boolean;
+  privileges?: string[];
+}
+
 /** Request body for POST /api/mortgage/predict/ (neural recommender) */
 export interface MortgageNNPredictRequest {
   price: number;

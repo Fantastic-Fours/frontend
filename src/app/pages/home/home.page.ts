@@ -6,11 +6,12 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
 })
@@ -20,23 +21,20 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   readonly features = [
     {
-      title: 'Умная подборка',
-      description:
-        'AI и правила подбора подберут программы под ваши критерии и покажут прозрачное сравнение.',
+      titleKey: 'home.feat1Title',
+      descriptionKey: 'home.feat1Desc',
       variant: 'primary' as const,
       icon: 'sparkles' as const,
     },
     {
-      title: 'Только актуальные банки',
-      description:
-        'Актуальные ставки и условия от ведущих банков Казахстана — данные обновляются регулярно.',
+      titleKey: 'home.feat2Title',
+      descriptionKey: 'home.feat2Desc',
       variant: 'secondary' as const,
       icon: 'shield' as const,
     },
     {
-      title: 'Бесплатная помощь',
-      description:
-        'Консультации и подсказки по шагам без навязанных продуктов — с заботой о вашем решении.',
+      titleKey: 'home.feat3Title',
+      descriptionKey: 'home.feat3Desc',
       variant: 'accent' as const,
       icon: 'heart' as const,
     },
@@ -45,31 +43,31 @@ export class HomePage implements AfterViewInit, OnDestroy {
   readonly steps = [
     {
       num: '01',
-      title: 'Укажите параметры',
-      description: 'Цена жилья, взнос, доход',
+      titleKey: 'home.step1Title',
+      descriptionKey: 'home.step1Desc',
     },
     {
       num: '02',
-      title: 'Получите подборку',
-      description: 'AI подберёт Top-3 программы',
+      titleKey: 'home.step2Title',
+      descriptionKey: 'home.step2Desc',
     },
     {
       num: '03',
-      title: 'Выберите банк',
-      description: 'Сравните условия и ставки',
+      titleKey: 'home.step3Title',
+      descriptionKey: 'home.step3Desc',
     },
     {
       num: '04',
-      title: 'Оформите заявку',
-      description: 'Онлайн-заявка в выбранный банк',
+      titleKey: 'home.step4Title',
+      descriptionKey: 'home.step4Desc',
     },
   ] as const;
 
   readonly stats = [
-    { value: '25+', label: 'Банков-партнёров' },
-    { value: '150+', label: 'Ипотечных программ' },
-    { value: '10K+', label: 'Счастливых клиентов' },
-    { value: '24/7', label: 'Поддержка' },
+    { value: '25+', labelKey: 'home.stat1Label' },
+    { value: '150+', labelKey: 'home.stat2Label' },
+    { value: '10K+', labelKey: 'home.stat3Label' },
+    { value: '24/7', labelKey: 'home.stat4Label' },
   ] as const;
 
   ngAfterViewInit(): void {

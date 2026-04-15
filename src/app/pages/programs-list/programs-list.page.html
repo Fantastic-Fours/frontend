@@ -1,24 +1,24 @@
 <div class="page">
-  <h1>Программы ипотеки</h1>
-  <p class="subtitle">Список программ с пагинацией</p>
+  <h1>{{ 'programsList.title' | translate }}</h1>
+  <p class="subtitle">{{ 'programsList.subtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
     <section class="filters">
       <input
         class="filter-input"
         type="text"
-        placeholder="Поиск по программе или банку"
+        [placeholder]="'programsList.searchPh' | translate"
         [value]="search()"
         (input)="onSearch($any($event.target).value)"
       />
       <select class="filter-select" [value]="selectedBank()" (change)="onBankChange($any($event.target).value)">
-        <option value="all">Все банки</option>
+        <option value="all">{{ 'programsList.allBanks' | translate }}</option>
         @for (bank of banks(); track bank) {
           <option [value]="bank">{{ bank }}</option>
         }
@@ -28,21 +28,21 @@
         [value]="selectedHousingType()"
         (change)="onHousingTypeChange($any($event.target).value)"
       >
-        <option value="all">Любой тип жилья</option>
-        <option value="primary">Первичка</option>
-        <option value="secondary">Вторичка</option>
+        <option value="all">{{ 'programsList.anyHousing' | translate }}</option>
+        <option value="primary">{{ 'programsList.housingPrimaryShort' | translate }}</option>
+        <option value="secondary">{{ 'programsList.housingSecondaryShort' | translate }}</option>
       </select>
       <label class="filter-check">
         <input type="checkbox" [checked]="onlyGovernment()" (change)="toggleGovernment($any($event.target).checked)" />
-        Только госпрограммы
+        {{ 'programsList.govOnly' | translate }}
       </label>
       <label class="filter-check">
         <input type="checkbox" [checked]="onlyPrivileged()" (change)="togglePrivileged($any($event.target).checked)" />
-        Только льготные
+        {{ 'programsList.privOnly' | translate }}
       </label>
     </section>
 
-    <p class="meta">Всего: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>
 
     <div class="program-cards">
       @for (p of pagedPrograms(); track p.id) {
@@ -55,53 +55,54 @@
               <div class="card-header-text">
                 <h2 class="program-name">{{ p.name }}</h2>
                 <span class="bank-name">{{ p.bank_name }}</span>
-                <a [routerLink]="['/banks', p.bank]" class="bank-detail-link" (click)="$event.stopPropagation()"
-                  >О банке</a
-                >
+                <a [routerLink]="['/banks', p.bank]" class="bank-detail-link" (click)="$event.stopPropagation()">{{
+                  'programsList.aboutBank' | translate
+                }}</a>
               </div>
             </div>
             <ul class="card-info">
-              <li><strong>Ставка:</strong> {{ p.interest_rate }}%</li>
-              <li><strong>Макс. сумма:</strong> {{ formatMoney(p.max_loan_amount) }} тг</li>
-              <li><strong>Первоначальный взнос:</strong> от {{ p.min_down_payment_percent }}%</li>
-              <li><strong>Срок:</strong> до {{ p.max_term_years }} лет</li>
-              <li><strong>Тип жилья:</strong> {{ housingTypeSummary(p.housing_types) }}</li>
+              <li><strong>{{ 'programsList.rate' | translate }}:</strong> {{ p.interest_rate }}%</li>
+              <li>
+                <strong>{{ 'programsList.maxSum' | translate }}:</strong> {{ formatMoney(p.max_loan_amount) }}
+                {{ 'mortgage.currency' | translate }}
+              </li>
+              <li>
+                <strong>{{ 'programsList.downFrom' | translate }}:</strong>
+                {{ 'programsList.downPct' | translate : { pct: p.min_down_payment_percent } }}
+              </li>
+              <li>
+                <strong>{{ 'programsList.termTo' | translate }}:</strong>
+                {{ 'programsList.termMax' | translate : { y: p.max_term_years } }}
+              </li>
+              <li>
+                <strong>{{ 'programsList.housingType' | translate }}:</strong> {{ housingTypeSummary(p.housing_types) }}
+              </li>
               @let ps = privilegeSummary(p);
               @if (ps) {
-                <li><strong>Льготы:</strong> {{ ps }}</li>
+                <li><strong>{{ 'programsList.privileges' | translate }}:</strong> {{ ps }}</li>
               }
             </ul>
           </div>
           <div class="card-actions">
-            <a [routerLink]="['/programs', p.id]" class="btn btn-primary">Подробнее</a>
+            <a [routerLink]="['/programs', p.id]" class="btn btn-primary">{{ 'common.details' | translate }}</a>
           </div>
         </article>
       }
     </div>
 
     @if (programs().length === 0 && !loading()) {
-      <p class="empty">Программы не найдены.</p>
+      <p class="empty">{{ 'programsList.empty' | translate }}</p>
     }
 
     <div class="pagination">
-      <button
-        type="button"
-        class="btn btn-secondary"
-        [disabled]="!hasPrev()"
-        (click)="prevPage()"
-      >
-        Назад
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">
+        {{ 'common.prev' | translate }}
       </button>
       <span class="page-info">
-        Страница {{ currentPage() }} из {{ totalPages() }}
+        {{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }} {{ totalPages() }}
       </span>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        [disabled]="!hasNext()"
-        (click)="nextPage()"
-      >
-        Вперёд
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">
+        {{ 'common.next' | translate }}
       </button>
     </div>
   }

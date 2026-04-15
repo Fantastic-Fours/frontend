@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import {
@@ -8,12 +8,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
   MortgageProgramItem,
   MortgageMatchRequest,
+  MortgagePlanPdfRequest,
   AIMortgageAdvisorProgram,
   AIMortgageAdvisorRequest,
 } from '../../core/interfaces/mortgage.types';
@@ -23,11 +25,13 @@ type BenefitId = '7-20-20' | 'first-home' | 'large-family' | 'young-family';
 @Component({
   selector: 'app-mortgage-match-page',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, RouterLink],
+  imports: [ReactiveFormsModule, DecimalPipe, RouterLink, TranslatePipe],
   templateUrl: './mortgage-match.page.html',
   styleUrl: './mortgage-match.page.scss',
 })
-export class MortgageMatchPage implements OnDestroy {
+export class MortgageMatchPage implements OnDestroy, OnInit {
+  private readonly translate = inject(TranslateService);
+
   readonly PRICE_MIN = 5_000_000;
   readonly PRICE_MAX = 100_000_000;
   readonly PRICE_STEP = 1_000_000;
@@ -38,53 +42,22 @@ export class MortgageMatchPage implements OnDestroy {
   readonly EXPENSES_STEP = 10_000;
   readonly DOWN_STEP = 100_000;
 
-  readonly benefitOptions: {
+  benefitOptions: {
     id: BenefitId;
     label: string;
     tags?: string[];
     privileges?: string[];
     hasHousing?: boolean | null;
-  }[] = [
-    { id: '7-20-20', label: '7-20-20 (Баспана хит)', tags: ['s-nakopleniem-15-20'] },
-    { id: 'first-home', label: 'Первое жильё', hasHousing: false },
-    {
-      id: 'large-family',
-      label: 'Многодетная семья',
-      privileges: ['large_family'],
-      tags: ['mnogodetnaya-semya'],
-    },
-    { id: 'young-family', label: 'Молодая семья', tags: ['molodaya-semya'] },
-  ];
+  }[] = [];
 
-  readonly housingOptions = [
-    { value: 'primary' as const, label: 'Новостройка (первичный рынок)' },
-    { value: 'secondary' as const, label: 'Вторичный рынок' },
-  ];
+  housingOptions: { value: 'primary' | 'secondary'; label: string }[] = [];
 
-  /** Полный список льгот API (как в старой форме подбора) */
-  readonly privilegeOptionsFull: { value: string; label: string }[] = [
-    { value: 'veteran_ww2', label: 'Ветеран ВОВ' },
-    { value: 'veteran_equivalent', label: 'Приравненный к ветерану ВОВ' },
-    { value: 'combat_veteran', label: 'Ветеран боевых действий' },
-    { value: 'disabled_group_1', label: 'Инвалид I группы' },
-    { value: 'disabled_group_2', label: 'Инвалид II группы' },
-    { value: 'family_with_disabled_child', label: 'Семья с ребёнком-инвалидом' },
-    { value: 'widow', label: 'Вдова' },
-    { value: 'large_family', label: 'Многодетная семья' },
-    { value: 'orphan', label: 'Сирота' },
-  ];
+  privilegeOptionsFull: { value: string; label: string }[] = [];
 
-  readonly sortByOptions: { value: 'score' | 'monthly_payment' | 'total_overpayment'; label: string }[] = [
-    { value: 'score', label: 'По релевантности (score)' },
-    { value: 'monthly_payment', label: 'По ежемесячному платежу' },
-    { value: 'total_overpayment', label: 'По сумме переплаты' },
-  ];
+  sortByOptions: { value: 'score' | 'monthly_payment' | 'total_overpayment'; label: string }[] =
+    [];
 
-  readonly hasHousingSelectOptions: { value: string; label: string }[] = [
-    { value: '', label: 'Не указано' },
-    { value: 'true', label: 'Есть жильё' },
-    { value: 'false', label: 'Нет жильё' },
-  ];
+  hasHousingSelectOptions: { value: string; label: string }[] = [];
 
   form: FormGroup;
   selectedBenefits = new Set<BenefitId>();
@@ -94,6 +67,7 @@ export class MortgageMatchPage implements OnDestroy {
   advisorPrograms: AIMortgageAdvisorProgram[] = [];
   totalCount = 0;
   loading = false;
+  pdfLoading = false;
   error: string | null = null;
   submitted = false;
   lastMode: 'rules' | 'ai' = 'rules';
@@ -119,9 +93,7 @@ export class MortgageMatchPage implements OnDestroy {
       privileges_extra: [[] as string[]],
       age: [30, [Validators.min(18), Validators.max(100)]],
       family_status: ['single'],
-      advisor_question: [
-        'Подберите Top-3 ипотечные программы под мои параметры и кратко объясните, почему они мне подходят.',
-      ],
+      advisor_question: [''],
       has_deposit: [false],
     });
 
@@ -147,6 +119,62 @@ export class MortgageMatchPage implements OnDestroy {
     );
     this.clampDownPayment();
     this.clampExpenses();
+  }
+
+  ngOnInit(): void {
+    this.refreshI18n(false);
+    this.subs.add(this.translate.onLangChange.subscribe(() => this.refreshI18n(true)));
+  }
+
+  private refreshI18n(langChangeOnly: boolean): void {
+    const t = (k: string) => this.translate.instant(k);
+    if (!langChangeOnly) {
+      this.form.patchValue(
+        { advisor_question: t('matchPage.aiQuestionDefault') },
+        { emitEvent: false },
+      );
+    }
+
+    this.benefitOptions = [
+      { id: '7-20-20', label: t('matchPage.benefit72020'), tags: ['s-nakopleniem-15-20'] },
+      { id: 'first-home', label: t('matchPage.benefitFirstHome'), hasHousing: false },
+      {
+        id: 'large-family',
+        label: t('matchPage.benefitLargeFamily'),
+        privileges: ['large_family'],
+        tags: ['mnogodetnaya-semya'],
+      },
+      { id: 'young-family', label: t('matchPage.benefitYoungFamily'), tags: ['molodaya-semya'] },
+    ];
+
+    this.housingOptions = [
+      { value: 'primary', label: t('matchPage.housingPrimary') },
+      { value: 'secondary', label: t('matchPage.housingSecondary') },
+    ];
+
+    this.privilegeOptionsFull = [
+      { value: 'veteran_ww2', label: t('matchPage.privVeteranWw2') },
+      { value: 'veteran_equivalent', label: t('matchPage.privVeteranEq') },
+      { value: 'combat_veteran', label: t('matchPage.privCombatVet') },
+      { value: 'disabled_group_1', label: t('matchPage.privDis1') },
+      { value: 'disabled_group_2', label: t('matchPage.privDis2') },
+      { value: 'family_with_disabled_child', label: t('matchPage.privFamDisChild') },
+      { value: 'widow', label: t('matchPage.privWidow') },
+      { value: 'large_family', label: t('matchPage.privLargeFam') },
+      { value: 'orphan', label: t('matchPage.privOrphan') },
+    ];
+
+    this.sortByOptions = [
+      { value: 'score', label: t('matchPage.sortScore') },
+      { value: 'monthly_payment', label: t('matchPage.sortMonthly') },
+      { value: 'total_overpayment', label: t('matchPage.sortOverpay') },
+    ];
+
+    this.hasHousingSelectOptions = [
+      { value: '', label: t('matchPage.hasHousingUnset') },
+      { value: 'true', label: t('matchPage.hasHousingYes') },
+      { value: 'false', label: t('matchPage.hasHousingNo') },
+    ];
   }
 
   ngOnDestroy(): void {
@@ -201,8 +229,15 @@ export class MortgageMatchPage implements OnDestroy {
     return Math.min(100, Math.round((exp / inc) * 100)).toString();
   }
 
+  private numberLocale(): string {
+    const lang = this.translate.getCurrentLang() || 'ru';
+    if (lang === 'en') return 'en-US';
+    if (lang === 'kk') return 'kk-KZ';
+    return 'ru-KZ';
+  }
+
   formatSum(n: number): string {
-    return new Intl.NumberFormat('ru-KZ', {
+    return new Intl.NumberFormat(this.numberLocale(), {
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
     }).format(Math.round(n));
@@ -212,7 +247,7 @@ export class MortgageMatchPage implements OnDestroy {
     if (n >= 1_000_000) {
       const m = n / 1_000_000;
       const label = Number.isInteger(m) ? String(m) : String(Math.round(m * 10) / 10);
-      return `${label} млн \u20B8`;
+      return this.translate.instant('matchPage.formatMillion', { v: label });
     }
     return `${this.formatSum(n)} \u20B8`;
   }
@@ -332,6 +367,76 @@ export class MortgageMatchPage implements OnDestroy {
     this.submit('ai');
   }
 
+  downloadPlanPdf(event?: Event): void {
+    event?.preventDefault();
+    const params = this.buildPlanPdfParams();
+    if (!params) return;
+    this.pdfLoading = true;
+    this.error = null;
+    this.subs.add(
+      this.mortgageApi.downloadMortgagePlan(params).subscribe({
+        next: (blob) => {
+          this.pdfLoading = false;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'my-mortgage-plan.pdf';
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        },
+        error: (err: Error) => {
+          this.pdfLoading = false;
+          this.error = err?.message ?? this.translate.instant('mortgage.errPdf');
+        },
+      }),
+    );
+  }
+
+  /** Параметры для GET /mortgage/plan/pdf/ (как у подбора, без тегов — топ-3 по правилам). */
+  private buildPlanPdfParams(): MortgagePlanPdfRequest | null {
+    this.clampDownPayment();
+    this.clampExpenses();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return null;
+    }
+    const raw = this.form.getRawValue();
+    const { privileges: privFromBenefits, hasHousing: hasHousingFromBenefits } =
+      this.collectPrivilegesAndTags();
+    const privileges = [...new Set([...privFromBenefits, ...(raw.privileges_extra ?? [])])];
+
+    let hasHousing: boolean | null | undefined;
+    if (raw.has_housing === 'true') hasHousing = true;
+    else if (raw.has_housing === 'false') hasHousing = false;
+    else hasHousing = undefined;
+    if (hasHousing === undefined && hasHousingFromBenefits !== undefined) {
+      hasHousing = hasHousingFromBenefits ?? undefined;
+    }
+
+    const termYears = Number(raw.term_years);
+    const termForPdf =
+      Number.isFinite(termYears) && termYears > 0 ? Math.min(35, Math.max(1, termYears)) : 20;
+    const childrenN = Number(raw.children_under_18);
+
+    return {
+      price: raw.price,
+      down_payment: raw.down_payment,
+      income: raw.income,
+      expenses: raw.expenses,
+      term_years: termForPdf,
+      housing_type: raw.housing_type,
+      sort_by: raw.sort_by,
+      require_income_confirmation: raw.require_income_confirmation,
+      children_under_18: Number.isFinite(childrenN) ? Math.max(0, childrenN) : 0,
+      has_housing: hasHousing ?? undefined,
+      has_deposit: raw.has_deposit,
+      privileges,
+    };
+  }
+
   private submit(mode: 'rules' | 'ai'): void {
     this.clampDownPayment();
     this.clampExpenses();
@@ -364,8 +469,7 @@ export class MortgageMatchPage implements OnDestroy {
     if (mode === 'ai') {
       if (!this.authTokens.hasTokens()) {
         this.loading = false;
-        this.error =
-          'Режим AI (ML+RAG) доступен после входа в аккаунт. Лимит — несколько запросов в сутки.';
+        this.error = this.translate.instant('matchPage.errAiNeedLogin');
         return;
       }
       const downPaymentPercent =
@@ -375,7 +479,7 @@ export class MortgageMatchPage implements OnDestroy {
       const q =
         typeof raw.advisor_question === 'string' && raw.advisor_question.trim()
           ? raw.advisor_question.trim()
-          : 'Подберите Top-3 ипотечные программы под мои параметры и кратко объясните, почему они мне подходят.';
+          : this.translate.instant('matchPage.aiQuestionDefault');
       const ageN = Number(raw.age);
       const aiAdvisorParams: AIMortgageAdvisorRequest = {
         user_data: {
@@ -406,7 +510,7 @@ export class MortgageMatchPage implements OnDestroy {
               ? d
               : Array.isArray(d)
                 ? d.map((x: { string?: string }) => x?.string ?? '').filter(Boolean).join(' ')
-                : err?.message ?? 'Ошибка AI рекомендаций';
+                : err?.message ?? this.translate.instant('matchPage.errAi');
         },
       });
       return;
@@ -438,7 +542,8 @@ export class MortgageMatchPage implements OnDestroy {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.detail ?? err?.message ?? 'Ошибка подбора программ';
+        this.error =
+          err?.error?.detail ?? err?.message ?? this.translate.instant('matchPage.errMatch');
       },
     });
   }
@@ -454,7 +559,7 @@ export class MortgageMatchPage implements OnDestroy {
   formatMoney(value: string): string {
     const num = parseFloat(value);
     if (Number.isNaN(num)) return value;
-    return new Intl.NumberFormat('ru-RU', {
+    return new Intl.NumberFormat(this.numberLocale(), {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
@@ -462,7 +567,7 @@ export class MortgageMatchPage implements OnDestroy {
   }
 
   formatLoansTypes(values: string[] | null | undefined): string {
-    if (!values?.length) return '—';
+    if (!values?.length) return this.translate.instant('matchPage.dash');
     return values.join(', ');
   }
 }

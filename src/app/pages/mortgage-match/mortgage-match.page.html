@@ -1,9 +1,9 @@
 <div class="calc-page">
   <div class="calc-inner">
     <header class="calc-header">
-      <h1 class="calc-title">Калькулятор ипотеки</h1>
+      <h1 class="calc-title">{{ 'matchPage.title' | translate }}</h1>
       <p class="calc-subtitle">
-        Рассчитайте ежемесячный платёж и подберите подходящие программы
+        {{ 'matchPage.subtitle' | translate }}
       </p>
     </header>
 
@@ -19,10 +19,9 @@
         }
 
         <div class="calc-fields">
-          <!-- Стоимость жилья -->
           <div class="field-block">
             <div class="field-head">
-              <label class="field-label" for="price-input">Стоимость жилья</label>
+              <label class="field-label" for="price-input">{{ 'matchPage.price' | translate }}</label>
               <div class="field-value-row">
                 <input
                   id="price-input"
@@ -44,7 +43,7 @@
               [step]="PRICE_STEP"
               [value]="priceVal"
               (input)="patchPriceFromRange(+$any($event.target).valueAsNumber)"
-              aria-label="Стоимость жилья, слайдер"
+              [attr.aria-label]="'matchPage.priceSliderAria' | translate"
             />
             <div class="range-labels">
               <span>{{ formatMillionLabel(PRICE_MIN) }}</span>
@@ -52,10 +51,9 @@
             </div>
           </div>
 
-          <!-- Первоначальный взнос -->
           <div class="field-block">
             <div class="field-head">
-              <label class="field-label" for="down-input">Первоначальный взнос</label>
+              <label class="field-label" for="down-input">{{ 'matchPage.downPayment' | translate }}</label>
               <div class="field-value-row">
                 <input
                   id="down-input"
@@ -79,14 +77,13 @@
               [step]="DOWN_STEP"
               [value]="form.get('down_payment')?.value"
               (input)="patchDownFromRange(+$any($event.target).valueAsNumber)"
-              aria-label="Первоначальный взнос, слайдер"
+              [attr.aria-label]="'matchPage.downSliderAria' | translate"
             />
           </div>
 
-          <!-- Доход -->
           <div class="field-block">
             <div class="field-head">
-              <label class="field-label" for="income-input">Ежемесячный доход</label>
+              <label class="field-label" for="income-input">{{ 'matchPage.income' | translate }}</label>
               <div class="field-value-row">
                 <input
                   id="income-input"
@@ -108,14 +105,13 @@
               [step]="INCOME_STEP"
               [value]="incomeVal"
               (input)="patchIncomeFromRange(+$any($event.target).valueAsNumber)"
-              aria-label="Ежемесячный доход, слайдер"
+              [attr.aria-label]="'matchPage.incomeSliderAria' | translate"
             />
           </div>
 
-          <!-- Расходы -->
           <div class="field-block">
             <div class="field-head">
-              <label class="field-label" for="expenses-input">Ежемесячные расходы</label>
+              <label class="field-label" for="expenses-input">{{ 'matchPage.expenses' | translate }}</label>
               <div class="field-value-row">
                 <input
                   id="expenses-input"
@@ -137,13 +133,12 @@
               [step]="EXPENSES_STEP"
               [value]="form.get('expenses')?.value"
               (input)="patchExpensesFromRange(+$any($event.target).valueAsNumber)"
-              aria-label="Ежемесячные расходы, слайдер"
+              [attr.aria-label]="'matchPage.expensesSliderAria' | translate"
             />
           </div>
 
-          <!-- Тип жилья -->
           <div class="field-block field-block--select">
-            <label class="field-label" for="housing_type">Тип жилья</label>
+            <label class="field-label" for="housing_type">{{ 'matchPage.housingType' | translate }}</label>
             <select id="housing_type" formControlName="housing_type" class="select-input">
               @for (opt of housingOptions; track opt.value) {
                 <option [value]="opt.value">{{ opt.label }}</option>
@@ -151,9 +146,8 @@
             </select>
           </div>
 
-          <!-- Льготы -->
           <div class="field-block field-block--benefits">
-            <span class="field-label">Льготные программы</span>
+            <span class="field-label">{{ 'matchPage.benefitsShort' | translate }}</span>
             <div class="benefits-list">
               @for (opt of benefitOptions; track opt.id) {
                 <div class="benefit-row">
@@ -169,12 +163,11 @@
             </div>
           </div>
 
-          <!-- Дополнительные параметры подбора (как в прежней форме) -->
           <div class="field-block calc-advanced">
-            <span class="field-label">Дополнительные параметры</span>
+            <span class="field-label">{{ 'matchPage.advancedTitle' | translate }}</span>
             <div class="calc-advanced-grid">
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="term_years">Срок кредита (лет)</label>
+                <label class="field-label field-label--sm" for="term_years">{{ 'matchPage.termYears' | translate }}</label>
                 <input
                   id="term_years"
                   type="number"
@@ -185,7 +178,7 @@
                 />
               </div>
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="sort_by">Сортировка результатов</label>
+                <label class="field-label field-label--sm" for="sort_by">{{ 'matchPage.sortBy' | translate }}</label>
                 <select id="sort_by" formControlName="sort_by" class="select-input">
                   @for (opt of sortByOptions; track opt.value) {
                     <option [value]="opt.value">{{ opt.label }}</option>
@@ -193,7 +186,7 @@
                 </select>
               </div>
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="children_under_18">Детей до 18 лет</label>
+                <label class="field-label field-label--sm" for="children_under_18">{{ 'matchPage.childrenUnder18' | translate }}</label>
                 <input
                   id="children_under_18"
                   type="number"
@@ -204,7 +197,7 @@
                 />
               </div>
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="has_housing">Жильё в собственности</label>
+                <label class="field-label field-label--sm" for="has_housing">{{ 'matchPage.hasHousing' | translate }}</label>
                 <select id="has_housing" formControlName="has_housing" class="select-input">
                   @for (opt of hasHousingSelectOptions; track opt.value) {
                     <option [value]="opt.value">{{ opt.label }}</option>
@@ -214,17 +207,17 @@
             </div>
             <label class="checkbox-row">
               <input type="checkbox" formControlName="require_income_confirmation" />
-              <span>Требуется подтверждение дохода</span>
+              <span>{{ 'matchPage.requireIncome' | translate }}</span>
             </label>
             <label class="checkbox-row">
               <input type="checkbox" formControlName="has_deposit" />
-              <span>Есть депозит / накопления (учитывается в запросе к API)</span>
+              <span>{{ 'matchPage.hasDeposit' | translate }}</span>
             </label>
           </div>
 
           <div class="field-block field-block--benefits">
-            <span class="field-label">Льготы (полный список для match / AI)</span>
-            <p class="field-hint">Отметьте официальные категории; пересекается с «Льготные программы» выше — дубликаты объединятся.</p>
+            <span class="field-label">{{ 'matchPage.privilegesFullTitle' | translate }}</span>
+            <p class="field-hint">{{ 'matchPage.privilegesFullHint' | translate }}</p>
             <div class="privileges-grid">
               @for (opt of privilegeOptionsFull; track opt.value) {
                 <label class="privilege-item">
@@ -240,28 +233,27 @@
           </div>
 
           <div class="field-block calc-ai-params">
-            <span class="field-label">Параметры для AI Top-3</span>
+            <span class="field-label">{{ 'matchPage.aiParamsTitle' | translate }}</span>
             <p class="field-hint">
-              Используются при нажатии «AI Top-3». Нужен
-              <a routerLink="/login">вход в аккаунт</a>. До 3 обращений к ML+RAG в сутки на пользователя
-              (включая AI-консультант с RAG). На обычный подбор по правилам не влияют.
+              {{ 'matchPage.aiParamsHintBefore' | translate }}
+              <a routerLink="/login">{{ 'matchPage.aiParamsLogin' | translate }}</a>{{ 'matchPage.aiParamsHintAfter' | translate }}
             </p>
             <div class="calc-advanced-grid">
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="age">Возраст</label>
+                <label class="field-label field-label--sm" for="age">{{ 'matchPage.age' | translate }}</label>
                 <input id="age" type="number" formControlName="age" class="select-input" min="18" max="100" />
               </div>
               <div class="field-block field-block--select field-block--tight">
-                <label class="field-label field-label--sm" for="family_status">Семейное положение</label>
+                <label class="field-label field-label--sm" for="family_status">{{ 'matchPage.familyStatus' | translate }}</label>
                 <select id="family_status" formControlName="family_status" class="select-input">
-                  <option value="single">Холост / не замужем</option>
-                  <option value="married">Женат / замужем</option>
-                  <option value="divorced">Разведён(а)</option>
-                  <option value="widowed">Вдовец / вдова</option>
+                  <option value="single">{{ 'matchPage.familySingle' | translate }}</option>
+                  <option value="married">{{ 'matchPage.familyMarried' | translate }}</option>
+                  <option value="divorced">{{ 'matchPage.familyDivorced' | translate }}</option>
+                  <option value="widowed">{{ 'matchPage.familyWidowed' | translate }}</option>
                 </select>
               </div>
             </div>
-            <label class="field-label field-label--sm" for="advisor_question">Вопрос AI-консультанту</label>
+            <label class="field-label field-label--sm" for="advisor_question">{{ 'matchPage.advisorQuestion' | translate }}</label>
             <textarea
               id="advisor_question"
               formControlName="advisor_question"
@@ -281,7 +273,10 @@
                 <rect x="4" y="2" width="16" height="20" rx="2" stroke-width="2" />
                 <path d="M8 6h8M8 10h8M8 14h5" stroke-width="2" stroke-linecap="round" />
               </svg>
-              {{ loading && lastMode === 'rules' ? 'Подбор…' : 'Подобрать программы' }}
+              {{
+                (loading && lastMode === 'rules' ? 'matchPage.submitRulesLoading' : 'matchPage.submitRules')
+                  | translate
+              }}
             </button>
             <button
               type="button"
@@ -294,41 +289,59 @@
                   d="M12 2l1.1 3.4h3.6l-2.9 2.1 1.1 3.4L12 10.9 8.1 10.9l1.1-3.4L6.3 5.4h3.6L12 2zM5 14l.8 2.3h2.4l-1.9 1.4.7 2.3L5 18.7l-2 1.3.7-2.3-1.9-1.4h2.4L5 14zm14 0l.8 2.3h2.4l-1.9 1.4.7 2.3L19 18.7l-2 1.3.7-2.3-1.9-1.4h2.4L19 14z"
                 />
               </svg>
-              {{ loading && lastMode === 'ai' ? 'AI…' : 'AI Top-3' }}
+              {{ (loading && lastMode === 'ai' ? 'matchPage.submitAiLoading' : 'matchPage.submitAi') | translate }}
+            </button>
+          </div>
+
+          <div class="form-pdf">
+            <p class="field-hint">{{ 'mortgage.pdfHint' | translate }}</p>
+            <button
+              type="button"
+              class="btn btn-outline"
+              [disabled]="pdfLoading || loading"
+              (click)="downloadPlanPdf($event)"
+            >
+              {{
+                pdfLoading
+                  ? ('mortgage.pdfLoading' | translate)
+                  : ('mortgage.downloadPdf' | translate)
+              }}
             </button>
           </div>
         </div>
       </form>
 
       <aside class="calc-summary">
-        <h2 class="summary-title">Параметры расчёта</h2>
+        <h2 class="summary-title">{{ 'matchPage.summaryTitle' | translate }}</h2>
         <div class="summary-blocks">
           <div class="summary-block summary-block--hero">
-            <div class="summary-label">Сумма кредита</div>
+            <div class="summary-label">{{ 'matchPage.loanAmount' | translate }}</div>
             <div class="summary-value summary-value--xl">{{ formatSum(loanAmount) }} &#x20B8;</div>
           </div>
           <div class="summary-divider"></div>
           <div class="summary-block">
-            <div class="summary-label">Первый взнос</div>
+            <div class="summary-label">{{ 'matchPage.firstPayment' | translate }}</div>
             <div class="summary-value">{{ formatSum(form.get('down_payment')?.value || 0) }} &#x20B8;</div>
-            <div class="summary-hint">{{ downPaymentPercent }}% от стоимости</div>
+            <div class="summary-hint">{{ 'matchPage.pctOfPrice' | translate: { pct: downPaymentPercent } }}</div>
           </div>
           <div class="summary-divider"></div>
           <div class="summary-block">
-            <div class="summary-label">Платёжеспособность</div>
-            <div class="summary-value">{{ formatSum(paymentCapacity) }} &#x20B8;/мес</div>
+            <div class="summary-label">{{ 'matchPage.paymentCapacity' | translate }}</div>
+            <div class="summary-value">
+              {{ formatSum(paymentCapacity) }} &#x20B8;{{ 'matchPage.perMonthShort' | translate }}
+            </div>
             <div class="summary-hint summary-hint--row">
               <svg class="hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path d="M23 18l-9-9-5 5-7-7" stroke-width="2" stroke-linecap="round" />
                 <path d="M17 18h6v-6" stroke-width="2" stroke-linecap="round" />
               </svg>
-              ~ {{ expensePercentOfIncome }}% расходов от дохода
+              {{ 'matchPage.expenseRatio' | translate: { pct: expensePercentOfIncome } }}
             </div>
           </div>
           @if (selectedBenefitList.length > 0) {
             <div class="summary-divider"></div>
             <div class="summary-block">
-              <div class="summary-label">Льготы</div>
+              <div class="summary-label">{{ 'matchPage.benefitsSummary' | translate }}</div>
               <div class="benefit-badges">
                 @for (id of selectedBenefitList; track id) {
                   <span class="benefit-badge">{{ benefitLabel(id) }}</span>
@@ -343,16 +356,16 @@
 
   @if (submitted) {
     <div class="calc-results">
-      <h2 class="results-title">Результаты ({{ totalCount }})</h2>
+      <h2 class="results-title">{{ 'matchPage.resultsTitle' | translate: { count: totalCount } }}</h2>
       @if (loading) {
-        <p class="results-loading">Загрузка…</p>
+        <p class="results-loading">{{ 'matchPage.loading' | translate }}</p>
       } @else if (mode === 'ai') {
         @if (!advisorAnswer && advisorPrograms.length === 0) {
-          <p class="empty">Рекомендации не найдены.</p>
+          <p class="empty">{{ 'matchPage.noAiResults' | translate }}</p>
         } @else {
           @if (advisorAnswer) {
             <article class="advisor-answer">
-              <h3>Объяснение AI</h3>
+              <h3>{{ 'matchPage.aiExplainTitle' | translate }}</h3>
               <p>{{ advisorAnswer }}</p>
             </article>
           }
@@ -368,28 +381,38 @@
                     <span class="bank">{{ p.bank_name }}</span>
                   </div>
                 </div>
-                <div class="program-score">AI score: {{ p.score | number : '1.2-2' }}</div>
+                <div class="program-score">{{ 'matchPage.aiScore' | translate }} {{ p.score | number : '1.2-2' }}</div>
                 <dl class="program-details">
                   <div>
-                    <dt>Ставка</dt>
-                    <dd>{{ p.interest_rate_min }}% - {{ p.interest_rate_max }}%</dd>
+                    <dt>{{ 'matchPage.rate' | translate }}</dt>
+                    <dd>
+                      {{
+                        'matchPage.rateRange'
+                          | translate: { min: p.interest_rate_min, max: p.interest_rate_max }
+                      }}
+                    </dd>
                   </div>
                   <div>
-                    <dt>Мин. взнос</dt>
+                    <dt>{{ 'matchPage.minDown' | translate }}</dt>
                     <dd>{{ p.min_down_payment_percent }}%</dd>
                   </div>
                   <div>
-                    <dt>Срок</dt>
-                    <dd>{{ p.loan_term_min }} - {{ p.loan_term_max }} лет</dd>
+                    <dt>{{ 'matchPage.term' | translate }}</dt>
+                    <dd>
+                      {{
+                        'matchPage.termRangeYears'
+                          | translate: { min: p.loan_term_min, max: p.loan_term_max }
+                      }}
+                    </dd>
                   </div>
                   <div>
-                    <dt>Типы займа</dt>
+                    <dt>{{ 'matchPage.loanTypes' | translate }}</dt>
                     <dd>{{ formatLoansTypes(p.requirements.loan_types) }}</dd>
                   </div>
                 </dl>
                 @if (p.ml_reasons.length) {
                   <div class="reasons">
-                    <h4>Почему выбрана программой ML</h4>
+                    <h4>{{ 'matchPage.mlWhy' | translate }}</h4>
                     <ul>
                       @for (reason of p.ml_reasons; track reason) {
                         <li>{{ reason }}</li>
@@ -402,7 +425,7 @@
           </div>
         }
       } @else if (programs.length === 0) {
-        <p class="empty">По заданным параметрам программы не найдены.</p>
+        <p class="empty">{{ 'matchPage.noProgramsRules' | translate }}</p>
       } @else {
         <div class="programs">
           @for (p of programs; track p.program_id) {
@@ -416,23 +439,31 @@
                   <span class="bank">{{ p.bank_name }}</span>
                 </div>
               </div>
-              <div class="program-score">Совпадение: {{ p.score | number : '1.1-1' }}%</div>
+              <div class="program-score">
+                {{ 'matchPage.matchScore' | translate }} {{ p.score | number : '1.1-1' }}%
+              </div>
               <dl class="program-details">
                 <div>
-                  <dt>Ставка</dt>
-                  <dd>{{ p.interest_rate }}%</dd>
+                  <dt>{{ 'matchPage.rate' | translate }}</dt>
+                  <dd>{{ 'matchPage.rateSingle' | translate: { v: p.interest_rate } }}</dd>
                 </div>
                 <div>
-                  <dt>Платёж/мес</dt>
-                  <dd>{{ formatMoney(p.monthly_payment) }} тг</dd>
+                  <dt>{{ 'matchPage.payPerMonth' | translate }}</dt>
+                  <dd>
+                    {{ formatMoney(p.monthly_payment) }} {{ 'matchPage.currencyTg' | translate }}
+                  </dd>
                 </div>
                 <div>
-                  <dt>Сумма кредита</dt>
-                  <dd>{{ formatMoney(p.loan_amount) }} тг</dd>
+                  <dt>{{ 'matchPage.loanSum' | translate }}</dt>
+                  <dd>
+                    {{ formatMoney(p.loan_amount) }} {{ 'matchPage.currencyTg' | translate }}
+                  </dd>
                 </div>
                 <div>
-                  <dt>Переплата</dt>
-                  <dd>{{ formatMoney(p.total_overpayment) }} тг</dd>
+                  <dt>{{ 'matchPage.overpay' | translate }}</dt>
+                  <dd>
+                    {{ formatMoney(p.total_overpayment) }} {{ 'matchPage.currencyTg' | translate }}
+                  </dd>
                 </div>
               </dl>
             </article>

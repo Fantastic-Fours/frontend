@@ -12,13 +12,15 @@
         <span class="logo-text">Ipotex</span>
       </a>
 
-      <button type="button" class="burger" (click)="toggleMobileMenu()" aria-label="Открыть меню">
+      <button type="button" class="burger" (click)="toggleMobileMenu()" [attr.aria-label]="'nav.openMenu' | translate">
         {{ mobileMenuOpen ? '\u2715' : '\u2630' }}
       </button>
 
       <div class="nav-center nav-links" [class.open]="mobileMenuOpen">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="closeMobileMenu()">Главная</a>
-        <a routerLink="/match" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Калькулятор</a>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="closeMobileMenu()">{{
+          'nav.home' | translate
+        }}</a>
+        <a routerLink="/match" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.calculator' | translate }}</a>
 
         <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
           <button
@@ -27,32 +29,45 @@
             [class.active]="isActiveEstate()"
             (click)="toggleEstateNav($event)"
           >
-            Недвижимость<span class="caret" aria-hidden="true">&#9662;</span>
+            {{ 'nav.estate' | translate }}<span class="caret" aria-hidden="true">&#9662;</span>
           </button>
           <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
-            <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Новостройки</a>
-            <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Вторичное жильё</a>
-            <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">Подать объявление</a>
+            <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+              'nav.newBuildings' | translate
+            }}</a>
+            <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+              'nav.secondaryHousing' | translate
+            }}</a>
+            <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+              'nav.submitAd' | translate
+            }}</a>
           </div>
         </div>
 
-        <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Банки</a>
-        <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">AI-консультант</a>
-        <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Новости</a>
+        <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.banks' | translate }}</a>
+        <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.aiConsultant' | translate }}</a>
+        <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.news' | translate }}</a>
 
         <div class="nav-more mobile-only">
-          <span class="nav-more-label">Ещё в сервисе</span>
-          <a routerLink="/programs" routerLinkActive="active" class="nav-link nav-link-sub" (click)="closeMobileMenu()">Ипотечные программы</a>
+          <span class="nav-more-label">{{ 'nav.moreInService' | translate }}</span>
+          <a routerLink="/programs" routerLinkActive="active" class="nav-link nav-link-sub" (click)="closeMobileMenu()">{{ 'nav.programs' | translate }}</a>
         </div>
       </div>
 
       <div class="nav-actions" [class.open]="mobileMenuOpen">
-        <a routerLink="/match" class="btn-nav-cta" (click)="closeMobileMenu()">Оставить заявку</a>
+        <div class="lang-switch" role="group" [attr.aria-label]="'nav.language' | translate">
+          @for (l of langCodes; track l.code) {
+            <button type="button" class="lang-btn" [class.active]="currentLang() === l.code" (click)="setLang(l.code)">
+              {{ l.short }}
+            </button>
+          }
+        </div>
+        <a routerLink="/match" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.leaveRequest' | translate }}</a>
         @if (!isAuthenticated()) {
-          <a routerLink="/login" class="nav-link nav-link-compact" (click)="closeMobileMenu()">Вход</a>
+          <a routerLink="/login" class="nav-link nav-link-compact" (click)="closeMobileMenu()">{{ 'nav.login' | translate }}</a>
         } @else {
-          <a routerLink="/profile" class="nav-link nav-link-compact" (click)="closeMobileMenu()">Профиль</a>
-          <button type="button" class="nav-link nav-link-compact nav-logout" (click)="logout()">Выйти</button>
+          <a routerLink="/profile" class="nav-link nav-link-compact" (click)="closeMobileMenu()">{{ 'nav.profile' | translate }}</a>
+          <button type="button" class="nav-link nav-link-compact nav-logout" (click)="logout()">{{ 'nav.logout' | translate }}</button>
         }
       </div>
     </div>
@@ -66,31 +81,31 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="footer-logo">Ipotex</span>
-        <p class="footer-tagline">Ипотека и недвижимость в Казахстане: подбор программ, сравнение банков и каталог жилья.</p>
+        <p class="footer-tagline">{{ 'footer.tagline' | translate }}</p>
       </div>
       <div class="footer-col">
-        <h3 class="footer-heading">Сервис</h3>
-        <a routerLink="/match">Калькулятор</a>
-        <a routerLink="/banks">Банки</a>
-        <a routerLink="/programs">Программы</a>
-        <a routerLink="/ai-consultant">AI-консультант</a>
+        <h3 class="footer-heading">{{ 'footer.service' | translate }}</h3>
+        <a routerLink="/match">{{ 'nav.calculator' | translate }}</a>
+        <a routerLink="/banks">{{ 'nav.banks' | translate }}</a>
+        <a routerLink="/programs">{{ 'nav.programs' | translate }}</a>
+        <a routerLink="/ai-consultant">{{ 'nav.aiConsultant' | translate }}</a>
       </div>
       <div class="footer-col">
-        <h3 class="footer-heading">Недвижимость</h3>
-        <a routerLink="/estate/primary">Новостройки</a>
-        <a routerLink="/estate/secondary">Вторичка</a>
-        <a routerLink="/estate/submit">Подать объявление</a>
-        <a routerLink="/properties">Каталог</a>
+        <h3 class="footer-heading">{{ 'footer.realEstate' | translate }}</h3>
+        <a routerLink="/estate/primary">{{ 'nav.newBuildings' | translate }}</a>
+        <a routerLink="/estate/secondary">{{ 'nav.secondary' | translate }}</a>
+        <a routerLink="/estate/submit">{{ 'nav.submitAd' | translate }}</a>
+        <a routerLink="/properties">{{ 'footer.catalog' | translate }}</a>
       </div>
       <div class="footer-col">
-        <h3 class="footer-heading">Помощь</h3>
-        <a routerLink="/news">Новости</a>
-        <a routerLink="/register">Регистрация</a>
-        <span class="footer-note">Поддержка: через форму в личном кабинете</span>
+        <h3 class="footer-heading">{{ 'footer.help' | translate }}</h3>
+        <a routerLink="/news">{{ 'nav.news' | translate }}</a>
+        <a routerLink="/register">{{ 'nav.register' | translate }}</a>
+        <span class="footer-note">{{ 'footer.supportNote' | translate }}</span>
       </div>
     </div>
     <div class="footer-bottom container">
-      <p>© 2024 Ipotex. Все права защищены.</p>
+      <p>{{ 'footer.copyright' | translate }}</p>
     </div>
   </footer>
 </div>

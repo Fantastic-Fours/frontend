@@ -4,19 +4,21 @@ import { RouterLink } from '@angular/router';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import type { Apartment } from '../../core/interfaces/apartment.types';
 import { KZ_BIG_CITIES } from '../../core/constants/kz-cities.constants';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const PAGE_SIZE = 12;
 
 @Component({
   selector: 'app-estate-primary-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './estate-primary.page.html',
   styleUrl: './estate-primary.page.scss',
 })
 export class EstatePrimaryPage implements OnInit {
   private readonly mortgageApi = inject(MortgageApiService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly translate = inject(TranslateService);
 
   apartments = signal<Apartment[]>([]);
   totalCount = signal(0);
@@ -77,7 +79,7 @@ export class EstatePrimaryPage implements OnInit {
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err?.error?.detail ?? err?.message ?? 'Ошибка загрузки');
+          this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('estate.errLoad'));
         },
       });
   }

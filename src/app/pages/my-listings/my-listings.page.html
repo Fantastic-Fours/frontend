@@ -1,18 +1,21 @@
 <div class="page">
-  <a routerLink="/profile" class="back-link">← Профиль</a>
-  <h1>Мои объявления</h1>
-  <p class="subtitle">Квартиры, которые вы разместили</p>
+  <a routerLink="/profile" class="back-link">{{ 'myListings.backProfile' | translate }}</a>
+  <h1>{{ 'myListings.title' | translate }}</h1>
+  <p class="subtitle">{{ 'myListings.subtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'myListings.loading' | translate }}</p>
   } @else {
-    <p class="meta">Всего: {{ apartments().length }}</p>
+    <p class="meta">{{ 'myListings.total' | translate: { count: apartments().length } }}</p>
     @if (apartments().length === 0) {
-      <p class="empty">У вас пока нет объявлений. <a routerLink="/estate/submit">Подать объявление</a></p>
+      <p class="empty">
+        {{ 'myListings.empty' | translate }}
+        <a routerLink="/estate/submit">{{ 'myListings.submitLink' | translate }}</a>
+      </p>
     } @else {
       <div class="estate-grid js-reveal">
         @for (apt of apartments(); track apt.id) {
@@ -22,18 +25,25 @@
                 @if (firstImage(apt); as src) {
                   <img [src]="src" [alt]="apt.title" />
                 } @else {
-                  <div class="estate-card-placeholder">Нет фото</div>
+                  <div class="estate-card-placeholder">{{ 'myListings.noPhoto' | translate }}</div>
                 }
               </div>
               <div class="estate-card-body">
                 <h2 class="estate-card-title">{{ apt.title }}</h2>
                 <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
                 <p class="estate-card-meta">
-                  {{ apt.city }}{{ apt.area_sqm ? ' · ' + apt.area_sqm + ' м²' : '' }}{{ apt.rooms ? ' · ' + apt.rooms + ' комн.' : '' }}
+                  {{ apt.city
+                  }}{{
+                    apt.area_sqm ? ' · ' + ('myListings.sqmShort' | translate: { n: apt.area_sqm }) : ''
+                  }}{{
+                    apt.rooms ? ' · ' + ('myListings.roomsShort' | translate: { n: apt.rooms }) : ''
+                  }}
                 </p>
               </div>
             </a>
-            <a [routerLink]="['/estate/apartment', apt.id, 'edit']" class="estate-card-edit">Изменить</a>
+            <a [routerLink]="['/estate/apartment', apt.id, 'edit']" class="estate-card-edit">{{
+              'myListings.edit' | translate
+            }}</a>
           </div>
         }
       </div>

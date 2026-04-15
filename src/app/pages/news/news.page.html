@@ -1,15 +1,15 @@
 <div class="page">
-  <h1>Новости об ипотеке</h1>
-  <p class="subtitle">Актуальные новости и изменения в ипотечных программах</p>
+  <h1>{{ 'news.listTitle' | translate }}</h1>
+  <p class="subtitle">{{ 'news.listSubtitle' | translate }}</p>
 
   @if (error()) {
     <div class="error" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="loading">Загрузка…</p>
+    <p class="loading">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="meta">Всего: {{ totalCount() }}</p>
+    <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>
 
     <div class="news-cards js-reveal">
       @for (item of news(); track item.id) {
@@ -25,33 +25,26 @@
             @if (item.summary) {
               <p class="news-summary">{{ item.summary }}</p>
             }
-            <a [routerLink]="['/news', item.id]" class="btn btn-primary">Читать</a>
+            <a [routerLink]="['/news', item.id]" class="btn btn-primary">{{ 'common.readMore' | translate }}</a>
           </div>
         </article>
       }
     </div>
 
     @if (news().length === 0 && !loading()) {
-      <p class="empty">Новостей пока нет.</p>
+      <p class="empty">{{ 'news.empty' | translate }}</p>
     }
 
     <div class="pagination">
-      <button
-        type="button"
-        class="btn btn-secondary"
-        [disabled]="!hasPrev()"
-        (click)="prevPage()"
-      >
-        Назад
+      <button type="button" class="btn btn-secondary" [disabled]="!hasPrev()" (click)="prevPage()">
+        {{ 'common.prev' | translate }}
       </button>
-      <span class="page-info">Страница {{ currentPage() }} из {{ totalPages() }}</span>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        [disabled]="!hasNext()"
-        (click)="nextPage()"
+      <span class="page-info"
+        >{{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }}
+        {{ totalPages() }}</span
       >
-        Вперёд
+      <button type="button" class="btn btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">
+        {{ 'common.next' | translate }}
       </button>
     </div>
   }

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss',
 })
@@ -19,7 +20,8 @@ export class LoginPage {
     private fb: FormBuilder,
     private authApi: AuthApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     this.form = this.fb.nonNullable.group({
       username: ['', Validators.required],
@@ -43,7 +45,7 @@ export class LoginPage {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.detail ?? 'Ошибка входа. Проверьте логин и пароль.';
+        this.error = err?.error?.detail ?? this.translate.instant('login.err');
       },
     });
   }
