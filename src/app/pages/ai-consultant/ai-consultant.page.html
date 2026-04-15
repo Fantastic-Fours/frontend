@@ -61,7 +61,11 @@
       @for (msg of messages(); track $index) {
         <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'">
           <span class="message-role">{{ (msg.role === 'user' ? 'aiPage.you' : 'aiPage.assistant') | translate }}</span>
-          <p class="message-text">{{ msg.text }}</p>
+          @if (msg.role === 'user') {
+            <p class="message-text">{{ msg.text }}</p>
+          } @else {
+            <div class="message-text markdown-body" [innerHTML]="msg.text | markdown"></div>
+          }
           @if (msg.role === 'assistant' && msg.suggestedPrograms?.length) {
             <p class="suggestions-label">{{ 'aiPage.sugPrograms' | translate }}</p>
             <ul class="suggestions-list">

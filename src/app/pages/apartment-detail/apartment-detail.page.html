@@ -9,12 +9,36 @@
     <a [routerLink]="[backLink()]" class="back-link">← К списку</a>
 
     <article class="apartment-detail">
+      @if (formatMillionFrom(apt.price_per_sqm_from); as ppm) {
+        <p class="apartment-ppm">{{ ppm }}</p>
+      }
       <h1 class="apartment-title">{{ apt.title }}</h1>
+      @if (apt.subtitle) {
+        <p class="apartment-subtitle">{{ apt.subtitle }}</p>
+      }
+      @if (apt.complex_apartments_count) {
+        <p class="apartment-count">• {{ apt.complex_apartments_count }} квартир</p>
+      }
       <p class="apartment-price">{{ formatMoney(apt.price) }}</p>
       <p class="apartment-meta">
         {{ apt.city }}{{ apt['address'] ? ', ' + apt['address'] : '' }}
         · {{ housingTypeLabel(apt.housing_type ?? '') }}
       </p>
+
+      @if (roomVariants(apt).length > 0) {
+        <div class="complex-variants">
+          <h2>Планировки в этом ЖК</h2>
+          <div class="complex-variants-list">
+            @for (variant of roomVariants(apt); track variant.rooms) {
+              <div class="complex-variant-row">
+                <span class="complex-variant-left">{{ variant.rooms }}-комн. {{ variant.areaLabel }}</span>
+                <span class="complex-variant-dots"></span>
+                <span class="complex-variant-right">{{ variant.priceLabel }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
 
       @if (apt['area_sqm'] != null && apt['rooms'] != null) {
         <div class="analysis-actions">

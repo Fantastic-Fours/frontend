@@ -137,13 +137,34 @@
             }
           </div>
           <div class="estate-card-body">
+            @if (formatMillionFrom(apt.price_per_sqm_from); as ppm) {
+              <p class="estate-card-ppm">{{ ppm }}</p>
+            }
             <h2 class="estate-card-title">{{ apt.title }}</h2>
+            @if (apt.subtitle || apt.address) {
+              <p class="estate-card-address">{{ apt.subtitle || apt.address }}</p>
+            }
+            @if (apt.complex_apartments_count) {
+              <p class="estate-card-count">• {{ apt.complex_apartments_count }} квартир</p>
+            }
             <p class="estate-card-price">{{ formatMoney(apt.price) }}</p>
-            <p class="estate-card-meta">
-              {{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' ' + ('common.sqm' | translate) : '' }}{{
-                apt['rooms'] ? ' · ' + apt['rooms'] + ' ' + ('common.roomsShort' | translate) : ''
-              }}
-            </p>
+            @if (roomVariants(apt).length > 0) {
+              <div class="estate-card-variants estate-card-variants--hover">
+                @for (variant of roomVariants(apt); track variant.rooms) {
+                  <div class="estate-card-variant-row">
+                    <span class="estate-card-variant-left">{{ variant.rooms }}-комн. {{ variant.areaLabel }}</span>
+                    <span class="estate-card-variant-dots"></span>
+                    <span class="estate-card-variant-right">{{ variant.priceLabel }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="estate-card-meta">
+                {{ apt.city }}{{ apt['area_sqm'] ? ' · ' + apt['area_sqm'] + ' ' + ('common.sqm' | translate) : '' }}{{
+                  apt['rooms'] ? ' · ' + apt['rooms'] + ' ' + ('common.roomsShort' | translate) : ''
+                }}
+              </p>
+            }
           </div>
         </a>
       }

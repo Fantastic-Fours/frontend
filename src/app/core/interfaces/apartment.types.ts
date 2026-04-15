@@ -47,6 +47,7 @@ export interface ApartmentsListParams {
 export interface Apartment {
   id: number;
   title?: string;
+  subtitle?: string;
   price?: number;
   city?: string;
   address?: string;
@@ -67,6 +68,15 @@ export interface Apartment {
   author_phone?: string | null;
   /** Текущий пользователь — автор объявления (при авторизованном GET) */
   is_owner?: boolean;
+  complex_apartments_count?: number | null;
+  complex_room_variants?: Array<{
+    rooms?: number | null;
+    min_area_sqm?: string | number | null;
+    max_area_sqm?: string | number | null;
+    min_price?: string | number | null;
+    max_price?: string | number | null;
+  }>;
+  price_per_sqm_from?: string | number | null;
   [key: string]: unknown;
 }
 

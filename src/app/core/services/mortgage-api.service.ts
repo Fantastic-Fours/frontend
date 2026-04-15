@@ -12,8 +12,6 @@ import type {
   ProgramListItem,
   MortgageNNPredictRequest,
   MortgageNNPredictResponse,
-  MortgageRecommendationRequest,
-  MortgageRecommendationResponse,
   AIMortgageAdvisorRequest,
   AIMortgageAdvisorResponse,
   PricePredictionRequest,
@@ -120,17 +118,6 @@ export class MortgageApiService {
   predict(params: MortgageNNPredictRequest): Observable<MortgageNNPredictResponse> {
     return this.http.post<MortgageNNPredictResponse>(
       `${this.base}${API_PATHS.mortgage.predict}`,
-      params
-    );
-  }
-
-  /**
-   * POST /api/recommend-mortgage/
-   * Full recommendation pipeline with loan type prediction and explainability.
-   */
-  recommend(params: MortgageRecommendationRequest): Observable<MortgageRecommendationResponse> {
-    return this.http.post<MortgageRecommendationResponse>(
-      `${this.base}${API_PATHS.mortgage.recommend}`,
       params
     );
   }

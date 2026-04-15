@@ -12,7 +12,6 @@ export const API_PATHS = {
     resendResetCode: '/auth/resend-reset-code/',
   },
   mortgage: {
-    recommend: '/recommend-mortgage/',
     aiMortgageAdvisor: '/ai-mortgage-advisor',
     match: '/mortgage/match/',
     planPdf: '/mortgage/plan/pdf/',

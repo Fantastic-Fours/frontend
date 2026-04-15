@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AIConsultantApiService } from '../../core/services/ai-consultant-api.service';
+import { MarkdownPipe } from '../../core/pipes/markdown.pipe';
 import type { AIChatHistoryItem, AIChatResponse } from '../../core/interfaces/ai-consultant.types';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 
@@ -17,7 +18,7 @@ interface ChatMessage {
 @Component({
   selector: 'app-ai-consultant-page',
   standalone: true,
-  imports: [RouterLink, FormsModule, TranslatePipe],
+  imports: [RouterLink, FormsModule, TranslatePipe, MarkdownPipe],
   templateUrl: './ai-consultant.page.html',
   styleUrl: './ai-consultant.page.scss',
 })

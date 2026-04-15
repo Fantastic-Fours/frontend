@@ -193,6 +193,12 @@ details[open] .context-summary::before {
   white-space: pre-wrap;
 }
 
+.message-assistant .message-text.markdown-body {
+  white-space: normal;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
 .message-text.typing {
   color: var(--text-muted);
   font-style: italic;

@@ -138,6 +138,56 @@ export class EstatePrimaryPage implements OnInit {
     }).format(num) + ' ₸';
   }
 
+  formatMillionFrom(value: string | number | null | undefined): string | null {
+    if (value == null) return null;
+    const num = typeof value === 'number' ? value : Number.parseFloat(String(value));
+    if (!Number.isFinite(num) || num <= 0) return null;
+    const inMillions = num / 1_000_000;
+    return `от ${inMillions.toFixed(1)} млн ₸ за м²`;
+  }
+
+  roomVariants(apartment: Apartment): Array<{
+    rooms: number;
+    areaLabel: string;
+    priceLabel: string;
+  }> {
+    const raw = apartment.complex_room_variants;
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .map((v) => {
+        const rooms = Number(v.rooms);
+        if (!Number.isFinite(rooms) || rooms <= 0) return null;
+        const minArea = this.toFinite(v.min_area_sqm);
+        const minPrice = this.toFinite(v.min_price);
+        return {
+          rooms,
+          areaLabel: this.formatArea(minArea),
+          priceLabel: this.formatFromPrice(minPrice),
+        };
+      })
+      .filter((v): v is { rooms: number; areaLabel: string; priceLabel: string } => !!v)
+      .sort((a, b) => a.rooms - b.rooms);
+  }
+
+  private toFinite(v: unknown): number | null {
+    const n = Number.parseFloat(String(v ?? ''));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  private formatArea(minArea: number | null): string {
+    if (minArea == null) return '—';
+    return `${this.cleanNum(minArea)} м²`;
+  }
+
+  private formatFromPrice(min: number | null): string {
+    if (min == null) return '—';
+    return `от ${this.formatMoney(min)}`;
+  }
+
+  private cleanNum(n: number): string {
+    return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, '');
+  }
+
   firstImage(apartment: Apartment): string | null {
     const imgs = apartment['images'];
     if (Array.isArray(imgs) && imgs.length > 0 && typeof imgs[0] === 'string') return imgs[0];

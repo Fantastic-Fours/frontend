@@ -146,23 +146,6 @@
             </select>
           </div>
 
-          <div class="field-block field-block--benefits">
-            <span class="field-label">{{ 'matchPage.benefitsShort' | translate }}</span>
-            <div class="benefits-list">
-              @for (opt of benefitOptions; track opt.id) {
-                <div class="benefit-row">
-                  <input
-                    type="checkbox"
-                    [id]="'benefit-' + opt.id"
-                    [checked]="isBenefitChecked(opt.id)"
-                    (change)="toggleBenefit(opt.id, $any($event.target).checked)"
-                  />
-                  <label [for]="'benefit-' + opt.id" class="benefit-label">{{ opt.label }}</label>
-                </div>
-              }
-            </div>
-          </div>
-
           <div class="field-block calc-advanced">
             <span class="field-label">{{ 'matchPage.advancedTitle' | translate }}</span>
             <div class="calc-advanced-grid">
@@ -338,17 +321,6 @@
               {{ 'matchPage.expenseRatio' | translate: { pct: expensePercentOfIncome } }}
             </div>
           </div>
-          @if (selectedBenefitList.length > 0) {
-            <div class="summary-divider"></div>
-            <div class="summary-block">
-              <div class="summary-label">{{ 'matchPage.benefitsSummary' | translate }}</div>
-              <div class="benefit-badges">
-                @for (id of selectedBenefitList; track id) {
-                  <span class="benefit-badge">{{ benefitLabel(id) }}</span>
-                }
-              </div>
-            </div>
-          }
         </div>
       </aside>
     </div>
@@ -366,7 +338,7 @@
           @if (advisorAnswer) {
             <article class="advisor-answer">
               <h3>{{ 'matchPage.aiExplainTitle' | translate }}</h3>
-              <p>{{ advisorAnswer }}</p>
+              <div class="markdown-body advisor-answer-body" [innerHTML]="advisorAnswer | markdown"></div>
             </article>
           }
           <div class="programs">
@@ -420,6 +392,7 @@
                     </ul>
                   </div>
                 }
+                <a class="more-btn btn btn-secondary" [routerLink]="['/programs', p.program_id]">Подробнее о программе</a>
               </article>
             }
           </div>

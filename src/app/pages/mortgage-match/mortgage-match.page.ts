@@ -10,6 +10,7 @@ import {
 import { Subscription } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
+import { MarkdownPipe } from '../../core/pipes/markdown.pipe';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
 import type {
@@ -20,12 +21,10 @@ import type {
   AIMortgageAdvisorRequest,
 } from '../../core/interfaces/mortgage.types';
 
-type BenefitId = '7-20-20' | 'first-home' | 'large-family' | 'young-family';
-
 @Component({
   selector: 'app-mortgage-match-page',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, DecimalPipe, RouterLink, TranslatePipe, MarkdownPipe],
   templateUrl: './mortgage-match.page.html',
   styleUrl: './mortgage-match.page.scss',
 })
@@ -42,14 +41,6 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
   readonly EXPENSES_STEP = 10_000;
   readonly DOWN_STEP = 100_000;
 
-  benefitOptions: {
-    id: BenefitId;
-    label: string;
-    tags?: string[];
-    privileges?: string[];
-    hasHousing?: boolean | null;
-  }[] = [];
-
   housingOptions: { value: 'primary' | 'secondary'; label: string }[] = [];
 
   privilegeOptionsFull: { value: string; label: string }[] = [];
@@ -60,7 +51,6 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
   hasHousingSelectOptions: { value: string; label: string }[] = [];
 
   form: FormGroup;
-  selectedBenefits = new Set<BenefitId>();
 
   programs: MortgageProgramItem[] = [];
   advisorAnswer: string | null = null;
@@ -134,18 +124,6 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
         { emitEvent: false },
       );
     }
-
-    this.benefitOptions = [
-      { id: '7-20-20', label: t('matchPage.benefit72020'), tags: ['s-nakopleniem-15-20'] },
-      { id: 'first-home', label: t('matchPage.benefitFirstHome'), hasHousing: false },
-      {
-        id: 'large-family',
-        label: t('matchPage.benefitLargeFamily'),
-        privileges: ['large_family'],
-        tags: ['mnogodetnaya-semya'],
-      },
-      { id: 'young-family', label: t('matchPage.benefitYoungFamily'), tags: ['molodaya-semya'] },
-    ];
 
     this.housingOptions = [
       { value: 'primary', label: t('matchPage.housingPrimary') },
@@ -268,25 +246,6 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
     this.form.patchValue({ expenses: v });
   }
 
-  isBenefitChecked(id: BenefitId): boolean {
-    return this.selectedBenefits.has(id);
-  }
-
-  toggleBenefit(id: BenefitId, checked: boolean): void {
-    const next = new Set(this.selectedBenefits);
-    if (checked) next.add(id);
-    else next.delete(id);
-    this.selectedBenefits = next;
-  }
-
-  benefitLabel(id: BenefitId): string {
-    return this.benefitOptions.find((b) => b.id === id)?.label ?? id;
-  }
-
-  get selectedBenefitList(): BenefitId[] {
-    return Array.from(this.selectedBenefits);
-  }
-
   get privilegesExtra(): string[] {
     return this.form.get('privileges_extra')?.value ?? [];
   }
@@ -335,26 +294,11 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
   private collectPrivilegesAndTags(): {
     privileges: string[];
     tags: string[];
-    hasHousing: boolean | null | undefined;
   } {
-    const privileges: string[] = [];
-    const tags: string[] = [];
-    let hasHousing: boolean | null | undefined = undefined;
-
-    for (const id of this.selectedBenefits) {
-      const def = this.benefitOptions.find((b) => b.id === id);
-      if (!def) continue;
-      def.privileges?.forEach((p) => {
-        if (!privileges.includes(p)) privileges.push(p);
-      });
-      def.tags?.forEach((t) => {
-        if (!tags.includes(t)) tags.push(t);
-      });
-      if (def.hasHousing !== undefined) {
-        hasHousing = def.hasHousing;
-      }
-    }
-    return { privileges, tags, hasHousing };
+    return {
+      privileges: [...this.privilegesExtra],
+      tags: [],
+    };
   }
 
   submitRegular(event?: Event): void {
@@ -450,17 +394,12 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
     this.lastMode = mode;
 
     const raw = this.form.getRawValue();
-    const { privileges: privFromBenefits, tags, hasHousing: hasHousingFromBenefits } =
-      this.collectPrivilegesAndTags();
-    const privileges = [...new Set([...privFromBenefits, ...(raw.privileges_extra ?? [])])];
+    const { privileges, tags } = this.collectPrivilegesAndTags();
 
     let hasHousing: boolean | null | undefined;
     if (raw.has_housing === 'true') hasHousing = true;
     else if (raw.has_housing === 'false') hasHousing = false;
     else hasHousing = undefined;
-    if (hasHousing === undefined && hasHousingFromBenefits !== undefined) {
-      hasHousing = hasHousingFromBenefits ?? undefined;
-    }
 
     this.programs = [];
     this.advisorAnswer = null;

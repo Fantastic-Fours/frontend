@@ -145,9 +145,10 @@ h1 {
 }
 
 .estate-card-image {
-  aspect-ratio: 4/3;
+  height: 210px;
   background: var(--border-light);
   overflow: hidden;
+  transition: height 0.3s ease;
 
   img {
     width: 100%;
@@ -159,6 +160,10 @@ h1 {
 
 .estate-card:hover .estate-card-image img {
   transform: scale(1.03);
+}
+
+.estate-card:hover .estate-card-image {
+  height: 150px;
 }
 
 .estate-card-placeholder {
@@ -188,7 +193,7 @@ h1 {
 }
 
 .estate-card-price {
-  margin: 0 0 0.25rem;
+  margin: 0.35rem 0 0.5rem;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--primary);
@@ -198,6 +203,80 @@ h1 {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-muted);
+}
+
+.estate-card-ppm {
+  margin: 0 0 0.3rem;
+  font-size: 0.8rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.estate-card-address {
+  margin: 0 0 0.2rem;
+  font-size: 0.87rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.estate-card-count {
+  margin: 0 0 0.25rem;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.estate-card-variants {
+  border-top: 1px solid var(--border-light);
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.estate-card-variants--hover {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding-top: 0;
+  border-top-width: 0;
+  transition: max-height 0.28s ease, opacity 0.22s ease, margin 0.22s ease, padding 0.22s ease;
+}
+
+.estate-card:hover .estate-card-variants--hover {
+  max-height: 220px;
+  opacity: 1;
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top-width: 1px;
+}
+
+.estate-card-variant-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.83rem;
+}
+
+.estate-card-variant-left,
+.estate-card-variant-right {
+  white-space: nowrap;
+}
+
+.estate-card-variant-left {
+  color: var(--text);
+}
+
+.estate-card-variant-right {
+  color: #334155;
+  font-weight: 600;
+}
+
+.estate-card-variant-dots {
+  flex: 1 1 auto;
+  border-bottom: 1px dotted #cbd5e1;
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -233,5 +312,21 @@ h1 {
 @media (max-width: 900px) {
   .filters-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .estate-card-image {
+    height: 190px;
+  }
+
+  .estate-card:hover .estate-card-image {
+    height: 190px;
+  }
+
+  .estate-card-variants--hover {
+    max-height: 220px;
+    opacity: 1;
+    margin-top: 0.45rem;
+    padding-top: 0.45rem;
+    border-top-width: 1px;
   }
 }

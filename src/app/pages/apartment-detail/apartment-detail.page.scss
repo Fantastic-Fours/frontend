@@ -44,6 +44,26 @@
   line-height: 1.3;
 }
 
+.apartment-ppm {
+  margin: 0 0 0.35rem;
+  font-size: 0.86rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.apartment-subtitle {
+  margin: 0 0 0.2rem;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.95rem;
+}
+
+.apartment-count {
+  margin: 0 0 0.45rem;
+  color: #334155;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
 .apartment-price {
   margin: 0 0 0.5rem;
   font-size: 1.35rem;
@@ -55,6 +75,53 @@
   margin: 0 0 1.25rem;
   font-size: 0.95rem;
   color: var(--text-muted, #6b7280);
+}
+
+.complex-variants {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  background: #f8fafc;
+
+  h2 {
+    margin: 0 0 0.55rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text, #111827);
+  }
+}
+
+.complex-variants-list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.complex-variant-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.complex-variant-left,
+.complex-variant-right {
+  white-space: nowrap;
+}
+
+.complex-variant-left {
+  color: var(--text, #111827);
+}
+
+.complex-variant-right {
+  color: #334155;
+  font-weight: 600;
+}
+
+.complex-variant-dots {
+  flex: 1 1 auto;
+  border-bottom: 1px dotted #94a3b8;
+  transform: translateY(-1px);
 }
 
 .analysis-actions {

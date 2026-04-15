@@ -405,7 +405,11 @@
     box-shadow: 0 8px 20px rgba(214, 104, 83, 0.35);
   }
 }
-
+.more-btn {
+  text-decoration: none;
+  margin-top: 5px;
+  padding: -5px;
+}
 .btn-secondary {
   background: var(--secondary);
   color: #fff;
@@ -635,10 +639,11 @@
     font-size: 1rem;
   }
 
-  p {
+  .advisor-answer-body {
     margin: 0;
-    white-space: pre-line;
-    color: var(--text);
+    max-height: min(70vh, 36rem);
+    overflow-y: auto;
+    padding-right: 0.25rem;
   }
 }
 
