@@ -50,7 +50,15 @@ export class App {
   toggleEstateNav(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.openMenu = this.openMenu === 'estate' ? null : 'estate';
+    const isMobileLayout =
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 980px)').matches;
+    if (isMobileLayout) {
+      this.openMenu = this.openMenu === 'estate' ? null : 'estate';
+    } else {
+      // Десктоп: hover уже мог открыть меню — toggle закрывал бы его при клике.
+      // Клик только открывает; закрытие — mouseleave на .dropdown или выбор пункта.
+      this.openMenu = 'estate';
+    }
   }
 
   isActiveEstate(): boolean {

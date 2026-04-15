@@ -243,15 +243,17 @@
   position: relative;
 }
 
-/* «Мост» под кнопкой: курсор не выходит из .dropdown в зазоре до меню — hover не срывается */
-.dropdown::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 14px;
-  z-index: 99;
+/* Мост между триггером и выпадашкой: иначе при движении курсора через зазор срабатывает mouseleave и меню закрывается */
+@media (min-width: 981px) {
+  .dropdown::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 14px;
+    z-index: 99;
+  }
 }
 
 .dropdown-trigger {
