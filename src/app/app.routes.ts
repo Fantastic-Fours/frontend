@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authRequiredGuard } from './core/guards/auth-required.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage) },
@@ -9,10 +10,43 @@ export const routes: Routes = [
   { path: 'forgot-password', loadComponent: () => import('./pages/forgot-password/forgot-password.page').then((m) => m.ForgotPasswordPage) },
   { path: 'register', loadComponent: () => import('./pages/register/register.page').then((m) => m.RegisterPage) },
   { path: 'verify-email', loadComponent: () => import('./pages/verify-email/verify-email.page').then((m) => m.VerifyEmailPage) },
-  { path: 'profile', loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage) },
-  { path: 'profile/saved-apartments', loadComponent: () => import('./pages/saved-apartments/saved-apartments.page').then((m) => m.SavedApartmentsPage) },
-  { path: 'profile/calculation-history', loadComponent: () => import('./pages/calculation-history/calculation-history.page').then((m) => m.CalculationHistoryPage) },
-  { path: 'profile/my-listings', loadComponent: () => import('./pages/my-listings/my-listings.page').then((m) => m.MyListingsPage) },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile-layout.component').then((m) => m.ProfileLayoutComponent),
+    children: [
+      { path: '', loadComponent: () => import('./pages/profile/profile-overview.page').then((m) => m.ProfileOverviewPage) },
+      { path: 'data', canActivate: [authRequiredGuard], loadComponent: () => import('./pages/profile/profile-data.page').then((m) => m.ProfileDataPage) },
+      {
+        path: 'saved-apartments',
+        canActivate: [authRequiredGuard],
+        loadComponent: () => import('./pages/saved-apartments/saved-apartments.page').then((m) => m.SavedApartmentsPage),
+      },
+      {
+        path: 'calculation-history',
+        canActivate: [authRequiredGuard],
+        loadComponent: () => import('./pages/calculation-history/calculation-history.page').then((m) => m.CalculationHistoryPage),
+      },
+      { path: 'my-listings', canActivate: [authRequiredGuard], loadComponent: () => import('./pages/my-listings/my-listings.page').then((m) => m.MyListingsPage) },
+      {
+        path: 'financial',
+        canActivate: [authRequiredGuard],
+        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
+        data: { titleKey: 'profileHub.sections.financial' },
+      },
+      {
+        path: 'notifications',
+        canActivate: [authRequiredGuard],
+        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
+        data: { titleKey: 'profileHub.sections.notifications' },
+      },
+      {
+        path: 'settings',
+        canActivate: [authRequiredGuard],
+        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
+        data: { titleKey: 'profileHub.sections.settings' },
+      },
+    ],
+  },
   { path: 'ai-consultant', loadComponent: () => import('./pages/ai-consultant/ai-consultant.page').then((m) => m.AIConsultantPage) },
   { path: 'match', loadComponent: () => import('./pages/mortgage-match/mortgage-match.page').then((m) => m.MortgageMatchPage) },
   { path: 'programs', loadComponent: () => import('./pages/programs-list/programs-list.page').then((m) => m.ProgramsListPage) },

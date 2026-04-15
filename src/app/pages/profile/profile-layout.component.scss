@@ -1,0 +1,233 @@
+:host {
+  --ip-terracotta: #c5705d;
+  --ip-emerald: #2d5f5d;
+  --ip-bg: #faf9f7;
+  --ip-text: #181410;
+  --ip-muted: rgba(24, 20, 16, 0.7);
+  display: block;
+  min-height: calc(100vh - 76px);
+  background: var(--ip-bg);
+}
+
+.profile-shell {
+  display: flex;
+  max-width: var(--container, 1280px);
+  margin: 0 auto;
+  gap: 1.75rem;
+  padding: 1.5rem 1rem 2.5rem;
+  align-items: flex-start;
+}
+
+.profile-shell--guest .profile-main {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.profile-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid rgba(24, 20, 16, 0.08);
+  box-shadow: 0 4px 24px rgba(24, 20, 16, 0.06);
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.75rem;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #fff;
+  background: linear-gradient(145deg, var(--ip-emerald) 0%, #1e4544 100%);
+}
+
+.verified-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  line-height: 1;
+}
+
+.sidebar-name {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--ip-text);
+  line-height: 1.25;
+}
+
+.sidebar-email {
+  font-size: 0.875rem;
+  color: var(--ip-muted);
+  margin-top: 0.25rem;
+}
+
+.progress-block {
+  margin-top: 1rem;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  color: var(--ip-muted);
+  margin-bottom: 0.35rem;
+}
+
+.progress-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(45, 95, 93, 0.12);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2d5f5d 0%, #3d8a84 100%);
+  transition: width 0.35s ease;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: #fff;
+  border-radius: 16px;
+  padding: 0.5rem;
+  border: 1px solid rgba(24, 20, 16, 0.08);
+  box-shadow: 0 4px 24px rgba(24, 20, 16, 0.06);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--ip-muted);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background: rgba(197, 112, 93, 0.08);
+  color: var(--ip-text);
+}
+
+.nav-item.is-active {
+  background: rgba(45, 95, 93, 0.1);
+  color: var(--ip-emerald);
+  border-left-color: var(--ip-emerald);
+  font-weight: 600;
+}
+
+.nav-item--logout {
+  margin-top: 0.5rem;
+  padding-top: 14px;
+  border-top: 1px solid rgba(24, 20, 16, 0.08);
+  color: var(--ip-terracotta);
+}
+
+.nav-item--logout:hover {
+  background: rgba(197, 112, 93, 0.12);
+  color: #a05545;
+}
+
+.nav-ico {
+  display: flex;
+  color: inherit;
+  opacity: 0.9;
+}
+
+.profile-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobile-nav {
+  display: none;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-nav a {
+  flex-shrink: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ip-muted);
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid rgba(24, 20, 16, 0.1);
+}
+
+.mobile-nav a.active {
+  background: rgba(45, 95, 93, 0.12);
+  color: var(--ip-emerald);
+  border-color: rgba(45, 95, 93, 0.25);
+}
+
+.profile-outlet {
+  min-height: 200px;
+}
+
+@media (max-width: 900px) {
+  .profile-sidebar {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex;
+  }
+
+  .profile-shell {
+    flex-direction: column;
+    padding: 1rem 0.75rem 2rem;
+  }
+}

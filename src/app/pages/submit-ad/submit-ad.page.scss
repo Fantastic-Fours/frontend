@@ -191,8 +191,10 @@ h1 {
 .btn-primary {
   background: var(--primary);
   color: #fff;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: var(--primary-dark, #4338ca);
+    background: var(--primary-strong);
+    box-shadow: 0 8px 20px rgba(214, 104, 83, 0.35);
   }
 }

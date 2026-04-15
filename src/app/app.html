@@ -62,7 +62,7 @@
             </button>
           }
         </div>
-        <a routerLink="/match" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.leaveRequest' | translate }}</a>
+        <a routerLink="/estate/submit" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.leaveRequest' | translate }}</a>
         @if (!isAuthenticated()) {
           <a routerLink="/login" class="nav-link nav-link-compact" (click)="closeMobileMenu()">{{ 'nav.login' | translate }}</a>
         } @else {

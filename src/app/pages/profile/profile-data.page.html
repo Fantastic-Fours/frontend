@@ -1,0 +1,63 @@
+<div class="data-page">
+  <a routerLink="/profile" class="back-link">{{ 'common.backToProfile' | translate }}</a>
+  <h1 class="page-title">{{ 'profileHub.nav.myData' | translate }}</h1>
+  <p class="page-sub">{{ 'profileHub.dataIntro' | translate }}</p>
+
+  @if (loading()) {
+    <p class="loading">{{ 'profilePage.loading' | translate }}</p>
+  } @else if (profile(); as p) {
+    @if (error()) {
+      <div class="error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="profile-block">
+      <div class="profile-row">
+        <span class="label">{{ 'profilePage.username' | translate }}</span>
+        <span class="value">{{ p.username }}</span>
+      </div>
+      <div class="profile-row">
+        <span class="label">{{ 'common.email' | translate }}</span>
+        <span class="value">{{ p.email }}</span>
+      </div>
+      @if (!editMode()) {
+        <div class="profile-row">
+          <span class="label">{{ 'profilePage.phone' | translate }}</span>
+          <span class="value">{{ p.phone || ('mortgage.dash' | translate) }}</span>
+        </div>
+        <div class="profile-row">
+          <span class="label">{{ 'profilePage.privileges' | translate }}</span>
+          <span class="value">{{ getPrivilegeLabels(p.privileges) }}</span>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="toggleEdit()">{{ 'profilePage.edit' | translate }}</button>
+      } @else {
+        <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+          <div class="field">
+            <label for="phone">{{ 'profilePage.phone' | translate }}</label>
+            <input id="phone" type="text" formControlName="phone" placeholder="+7 ..." />
+          </div>
+          <div class="field">
+            <span class="label">{{ 'profilePage.privileges' | translate }}</span>
+            <div class="checkbox-list">
+              @for (option of privilegeOptions; track option.value) {
+                <label class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    [checked]="isPrivilegeSelected(option.value)"
+                    (change)="onPrivilegeToggle(option.value, $any($event.target).checked)"
+                  />
+                  <span>{{ ('mortgage.privilege.' + option.value) | translate }}</span>
+                </label>
+              }
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-muted" (click)="toggleEdit()">{{ 'profilePage.cancel' | translate }}</button>
+            <button type="submit" class="btn btn-emerald" [disabled]="saving()">
+              {{ saving() ? ('profilePage.saving' | translate) : ('profilePage.save' | translate) }}
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  }
+</div>

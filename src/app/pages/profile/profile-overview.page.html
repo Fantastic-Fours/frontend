@@ -1,0 +1,88 @@
+<div class="overview">
+  @if (!isAuthenticated()) {
+    <div class="guest-card">
+      <h1>{{ 'profilePage.guestTitle' | translate }}</h1>
+      <p class="guest-sub">{{ 'profilePage.guestSub' | translate }}</p>
+      <button type="button" class="btn btn-emerald" (click)="goToLogin()">{{ 'profilePage.goLogin' | translate }}</button>
+    </div>
+  } @else if (loading()) {
+    <p class="loading-note">{{ 'profilePage.loading' | translate }}</p>
+  } @else {
+    <header class="hero">
+      <h1 class="welcome">{{ 'profileHub.welcome' | translate: { name: displayName() } }}</h1>
+      <p class="today">{{ todayLabel() }}</p>
+    </header>
+
+    <section class="metrics" aria-label="{{ 'profileHub.metricsAria' | translate }}">
+      <article class="metric-card metric-card--emerald">
+        <div class="metric-ico" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="metric-num">{{ savedCount() }}</div>
+        <p class="metric-caption">{{ 'profileHub.metricFavorites' | translate }}</p>
+        <a routerLink="/profile/saved-apartments" class="metric-link">{{ 'profileHub.viewFavorites' | translate }}</a>
+      </article>
+      <article class="metric-card metric-card--terra">
+        <div class="metric-ico" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg>
+        </div>
+        <div class="metric-num">{{ calcCount() }}</div>
+        <p class="metric-caption">{{ 'profileHub.metricCalcs' | translate }}</p>
+        <a routerLink="/profile/calculation-history" class="metric-link metric-link--terra">{{ 'profileHub.openHistory' | translate }}</a>
+      </article>
+      <article class="metric-card metric-card--emerald">
+        <div class="metric-ico" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="metric-num">{{ listingsCount() }}</div>
+        <p class="metric-caption">{{ 'profileHub.metricListings' | translate }}</p>
+        <p class="metric-hint">{{ 'profileHub.metricListingsHint' | translate }}</p>
+        <a routerLink="/profile/my-listings" class="metric-link">{{ 'profileHub.manageListings' | translate }}</a>
+      </article>
+    </section>
+
+    <section class="quick-actions" aria-label="{{ 'profileHub.quickActionsAria' | translate }}">
+      <a routerLink="/match" class="qa qa--emerald">{{ 'profileHub.quickNewCalc' | translate }}</a>
+      <a routerLink="/estate/secondary" class="qa qa--outline-terra">{{ 'profileHub.quickFindApt' | translate }}</a>
+      <a routerLink="/estate/submit" class="qa qa--outline-muted">{{ 'profileHub.quickSubmitAd' | translate }}</a>
+      <a routerLink="/ai-consultant" class="qa qa--gradient">{{ 'profileHub.quickAskAi' | translate }}</a>
+    </section>
+
+    <section class="activity">
+      <h2 class="section-title">{{ 'profileHub.activityTitle' | translate }}</h2>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <span class="dot"></span>
+          <div>
+            <time>{{ 'profileHub.activitySample1' | translate }}</time>
+            <p>{{ 'profileHub.activitySample1Text' | translate }}</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="dot"></span>
+          <div>
+            <time>{{ 'profileHub.activitySample2' | translate }}</time>
+            <p>{{ 'profileHub.activitySample2Text' | translate }}</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="dot"></span>
+          <div>
+            <time>{{ 'profileHub.activitySample3' | translate }}</time>
+            <p>{{ 'profileHub.activitySample3Text' | translate }}</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="ai-card" aria-label="{{ 'profileHub.aiRecTitle' | translate }}">
+      <div class="ai-ico" aria-hidden="true">&#10024;</div>
+      <h2 class="ai-title">{{ 'profileHub.aiRecTitle' | translate }}</h2>
+      <ul class="ai-list">
+        <li>{{ 'profileHub.aiTip1' | translate }}</li>
+        <li>{{ 'profileHub.aiTip2' | translate }}</li>
+        <li>{{ 'profileHub.aiTip3' | translate }}</li>
+      </ul>
+    </section>
+  }
+</div>

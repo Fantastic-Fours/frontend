@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { AuthTokenService } from '../../core/services/auth-token.service';
@@ -7,24 +7,23 @@ import { UserApiService } from '../../core/services/user-api.service';
 import type { UserProfile } from '../../core/interfaces/user.types';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-type PrivilegeOption = {
-  value: string;
-};
+type PrivilegeOption = { value: string };
 
 @Component({
-  selector: 'app-profile-page',
+  selector: 'app-profile-data',
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
-  templateUrl: './profile.page.html',
-  styleUrl: './profile.page.scss',
+  templateUrl: './profile-data.page.html',
+  styleUrl: './profile-data.page.scss',
 })
-export class ProfilePage {
+export class ProfileDataPage implements OnInit {
   private readonly authTokens = inject(AuthTokenService);
   private readonly router = inject(Router);
   private readonly authApi = inject(AuthApiService);
   private readonly userApi = inject(UserApiService);
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
+
   readonly privilegeOptions: PrivilegeOption[] = [
     { value: 'veteran_ww2' },
     { value: 'veteran_equivalent' },
@@ -51,7 +50,7 @@ export class ProfilePage {
 
   ngOnInit(): void {
     if (!this.isAuthenticated()) {
-      this.loading.set(false);
+      void this.router.navigate(['/login']);
       return;
     }
     this.loadProfile();
@@ -72,7 +71,7 @@ export class ProfilePage {
       error: (err) => {
         if (err?.status === 401) {
           this.authApi.logout();
-          this.router.navigate(['/login']);
+          void this.router.navigate(['/login']);
         } else {
           this.error.set(err?.error?.detail ?? err?.message ?? this.translate.instant('profilePage.errLoad'));
         }
@@ -85,10 +84,10 @@ export class ProfilePage {
     const nextValue = !this.editMode();
     this.editMode.set(nextValue);
     if (nextValue) {
-      const profile = this.profile();
+      const p = this.profile();
       this.profileForm.patchValue({
-        phone: profile?.phone ?? '',
-        privileges: profile?.privileges ?? [],
+        phone: p?.phone ?? '',
+        privileges: p?.privileges ?? [],
       });
     }
   }
@@ -120,12 +119,9 @@ export class ProfilePage {
   }
 
   onPrivilegeToggle(value: string, checked: boolean): void {
-    const current = new Set(((this.profileForm.get('privileges')?.value as string[] | null) ?? []));
-    if (checked) {
-      current.add(value);
-    } else {
-      current.delete(value);
-    }
+    const current = new Set((this.profileForm.get('privileges')?.value as string[] | null) ?? []);
+    if (checked) current.add(value);
+    else current.delete(value);
     this.profileForm.patchValue({ privileges: Array.from(current) });
   }
 
@@ -137,15 +133,5 @@ export class ProfilePage {
       .map((value) => this.translate.instant('mortgage.privilege.' + value))
       .join(', ');
     return labels || this.translate.instant('mortgage.dash');
-  }
-
-  logout(): void {
-    this.authApi.logout();
-    this.profile.set(null);
-    this.router.navigate(['/login']);
-  }
-
-  goToLogin(): void {
-    this.router.navigate(['/login']);
   }
 }
