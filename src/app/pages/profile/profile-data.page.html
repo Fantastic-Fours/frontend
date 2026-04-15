@@ -16,9 +16,20 @@
         <span class="value">{{ p.username }}</span>
       </div>
       <div class="profile-row">
+        <span class="label">{{ 'profileHub.settingsFirstName' | translate }}</span>
+        <span class="value">{{ p.first_name?.trim() || ('mortgage.dash' | translate) }}</span>
+      </div>
+      <div class="profile-row">
+        <span class="label">{{ 'profileHub.settingsLastName' | translate }}</span>
+        <span class="value">{{ p.last_name?.trim() || ('mortgage.dash' | translate) }}</span>
+      </div>
+      <div class="profile-row">
         <span class="label">{{ 'common.email' | translate }}</span>
         <span class="value">{{ p.email }}</span>
       </div>
+      <p class="data-hint">
+        <a routerLink="/profile/settings" class="inline-link">{{ 'profileHub.settingsEditNameLink' | translate }}</a>
+      </p>
       @if (!editMode()) {
         <div class="profile-row">
           <span class="label">{{ 'profilePage.phone' | translate }}</span>

@@ -7,7 +7,7 @@
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid rgba(24, 20, 16, 0.08);
-  box-shadow: 0 4px 24px rgba(24, 20, 16, 0.06);
+  box-shadow: 0 4px 28px rgba(45, 95, 93, 0.07);
 }
 
 .guest-card h1 {
@@ -87,7 +87,9 @@
 }
 
 .metric-card:hover {
-  box-shadow: 0 12px 32px rgba(24, 20, 16, 0.08);
+  box-shadow:
+    0 12px 32px rgba(45, 95, 93, 0.1),
+    0 4px 12px rgba(197, 112, 93, 0.06);
   transform: translateY(-2px);
 }
 
@@ -238,9 +240,10 @@
 .ai-card {
   border-radius: 16px;
   padding: 1.5rem 1.5rem 1.35rem;
-  background: linear-gradient(135deg, rgba(45, 95, 93, 0.95) 0%, #1e4544 100%);
+  background: linear-gradient(135deg, #2d5f5d 0%, #1a4543 55%, #163836 100%);
   color: #fff;
-  box-shadow: 0 12px 36px rgba(45, 95, 93, 0.25);
+  box-shadow: 0 12px 40px rgba(45, 95, 93, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .ai-ico {

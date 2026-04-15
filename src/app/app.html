@@ -17,36 +17,38 @@
       </button>
 
       <div class="nav-center nav-links" [class.open]="mobileMenuOpen">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="closeMobileMenu()">{{
-          'nav.home' | translate
-        }}</a>
-        <a routerLink="/match" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.calculator' | translate }}</a>
+        <div class="nav-center-inner">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="closeMobileMenu()">{{
+            'nav.home' | translate
+          }}</a>
+          <a routerLink="/match" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.calculator' | translate }}</a>
 
-        <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
-          <button
-            type="button"
-            class="nav-link dropdown-trigger"
-            [class.active]="isActiveEstate()"
-            (click)="toggleEstateNav($event)"
-          >
-            {{ 'nav.estate' | translate }}<span class="caret" aria-hidden="true">&#9662;</span>
-          </button>
-          <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
-            <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
-              'nav.newBuildings' | translate
-            }}</a>
-            <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
-              'nav.secondaryHousing' | translate
-            }}</a>
-            <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
-              'nav.submitAd' | translate
-            }}</a>
+          <div class="dropdown" (mouseenter)="openDropdown('estate')" (mouseleave)="closeDropdown('estate')">
+            <button
+              type="button"
+              class="nav-link dropdown-trigger"
+              [class.active]="isActiveEstate()"
+              (click)="toggleEstateNav($event)"
+            >
+              {{ 'nav.estate' | translate }}<span class="caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="dropdown-menu" [class.open]="openMenu === 'estate'">
+              <a routerLink="/estate/primary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+                'nav.newBuildings' | translate
+              }}</a>
+              <a routerLink="/estate/secondary" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+                'nav.secondaryHousing' | translate
+              }}</a>
+              <a routerLink="/estate/submit" routerLinkActive="active" class="dropdown-item" (click)="closeDropdown('estate'); closeMobileMenu()">{{
+                'nav.submitAd' | translate
+              }}</a>
+            </div>
           </div>
-        </div>
 
-        <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.banks' | translate }}</a>
-        <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.aiConsultant' | translate }}</a>
-        <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.news' | translate }}</a>
+          <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.banks' | translate }}</a>
+          <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.aiConsultant' | translate }}</a>
+          <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.news' | translate }}</a>
+        </div>
 
         <div class="nav-more mobile-only">
           <span class="nav-more-label">{{ 'nav.moreInService' | translate }}</span>

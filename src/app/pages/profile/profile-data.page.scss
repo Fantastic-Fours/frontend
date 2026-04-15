@@ -29,6 +29,22 @@
   color: rgba(24, 20, 16, 0.7);
 }
 
+.data-hint {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.8125rem;
+  color: rgba(24, 20, 16, 0.55);
+}
+
+.inline-link {
+  font-weight: 600;
+  color: #c5705d;
+  text-decoration: none;
+}
+
+.inline-link:hover {
+  text-decoration: underline;
+}
+
 .loading {
   color: rgba(24, 20, 16, 0.6);
 }

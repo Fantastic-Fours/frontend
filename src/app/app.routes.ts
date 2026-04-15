@@ -28,22 +28,9 @@ export const routes: Routes = [
       },
       { path: 'my-listings', canActivate: [authRequiredGuard], loadComponent: () => import('./pages/my-listings/my-listings.page').then((m) => m.MyListingsPage) },
       {
-        path: 'financial',
-        canActivate: [authRequiredGuard],
-        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
-        data: { titleKey: 'profileHub.sections.financial' },
-      },
-      {
-        path: 'notifications',
-        canActivate: [authRequiredGuard],
-        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
-        data: { titleKey: 'profileHub.sections.notifications' },
-      },
-      {
         path: 'settings',
         canActivate: [authRequiredGuard],
-        loadComponent: () => import('./pages/profile/profile-placeholder.page').then((m) => m.ProfilePlaceholderPage),
-        data: { titleKey: 'profileHub.sections.settings' },
+        loadComponent: () => import('./pages/profile/profile-settings.page').then((m) => m.ProfileSettingsPage),
       },
     ],
   },

@@ -465,24 +465,26 @@
     "activitySample3": "This week",
     "activitySample3Text": "You updated your profile",
     "aiRecTitle": "Personal recommendations",
-    "aiTip1": "Complete your financial profile for better matches.",
+    "aiTip1": "Add your name in settings and keep calculations saved to track options over time.",
     "aiTip2": "Keep calculations to compare programs over time.",
     "aiTip3": "Watch bank rates in the news section.",
+    "settingsIntro": "First and last name appear in the welcome message and sidebar. Username and email are not changed here.",
+    "settingsSaved": "Changes saved.",
+    "settingsLogin": "Username",
+    "settingsLoginHint": "Your username is used to sign in and cannot be edited here.",
+    "settingsFirstName": "First name",
+    "settingsLastName": "Last name",
+    "settingsSave": "Save",
+    "settingsGoContacts": "Phone & privileges →",
+    "settingsEditNameLink": "Edit name in settings",
     "nav": {
       "overview": "Overview",
       "myData": "My data",
       "favorites": "Favorites",
       "calcHistory": "Calculation history",
       "myListings": "My listings",
-      "financial": "Financial profile",
-      "notifications": "Notifications",
       "settings": "Settings",
       "logout": "Log out"
-    },
-    "sections": {
-      "financial": "Financial profile",
-      "notifications": "Notifications",
-      "settings": "Settings"
     }
   },
   "aiPage": {

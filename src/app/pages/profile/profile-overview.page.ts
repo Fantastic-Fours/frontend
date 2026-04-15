@@ -6,6 +6,7 @@ import { AuthTokenService } from '../../core/services/auth-token.service';
 import { AuthApiService } from '../../core/services/auth-api.service';
 import { UserApiService } from '../../core/services/user-api.service';
 import type { UserProfile } from '../../core/interfaces/user.types';
+import { profileDisplayName } from '../../core/utils/profile-display';
 
 @Component({
   selector: 'app-profile-overview',
@@ -32,7 +33,7 @@ export class ProfileOverviewPage implements OnInit, OnDestroy {
 
   readonly isAuthenticated = computed(() => this.authTokens.hasTokens());
 
-  readonly displayName = computed(() => this.profile()?.username?.trim() || '');
+  readonly displayName = computed(() => profileDisplayName(this.profile()));
 
   ngOnInit(): void {
     this.refreshToday();

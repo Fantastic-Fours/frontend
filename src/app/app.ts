@@ -48,9 +48,6 @@ export class App {
   }
 
   toggleEstateNav(event: Event): void {
-    if (typeof window === 'undefined' || window.innerWidth > 980) {
-      return;
-    }
     event.preventDefault();
     event.stopPropagation();
     this.openMenu = this.openMenu === 'estate' ? null : 'estate';

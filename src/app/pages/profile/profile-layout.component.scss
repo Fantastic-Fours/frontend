@@ -1,9 +1,12 @@
 :host {
   --ip-terracotta: #c5705d;
   --ip-emerald: #2d5f5d;
+  --ip-emerald-soft: rgba(45, 95, 93, 0.12);
+  --ip-terra-soft: rgba(197, 112, 93, 0.12);
   --ip-bg: #faf9f7;
   --ip-text: #181410;
   --ip-muted: rgba(24, 20, 16, 0.7);
+  --ip-card-border: rgba(24, 20, 16, 0.08);
   display: block;
   min-height: calc(100vh - 76px);
   background: var(--ip-bg);
@@ -37,8 +40,8 @@
   background: #fff;
   border-radius: 16px;
   padding: 1.25rem;
-  border: 1px solid rgba(24, 20, 16, 0.08);
-  box-shadow: 0 4px 24px rgba(24, 20, 16, 0.06);
+  border: 1px solid var(--ip-card-border);
+  box-shadow: 0 4px 28px rgba(45, 95, 93, 0.06);
 }
 
 .avatar-wrap {
@@ -152,12 +155,12 @@
 }
 
 .nav-item:hover {
-  background: rgba(197, 112, 93, 0.08);
+  background: var(--ip-terra-soft);
   color: var(--ip-text);
 }
 
 .nav-item.is-active {
-  background: rgba(45, 95, 93, 0.1);
+  background: var(--ip-emerald-soft);
   color: var(--ip-emerald);
   border-left-color: var(--ip-emerald);
   font-weight: 600;
@@ -208,9 +211,9 @@
 }
 
 .mobile-nav a.active {
-  background: rgba(45, 95, 93, 0.12);
+  background: var(--ip-emerald-soft);
   color: var(--ip-emerald);
-  border-color: rgba(45, 95, 93, 0.25);
+  border-color: rgba(45, 95, 93, 0.28);
 }
 
 .profile-outlet {

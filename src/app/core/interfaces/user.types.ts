@@ -17,6 +17,8 @@ export interface ApartmentListItem {
 /** GET /api/users/me/ response. */
 export interface UserProfile {
   username: string;
+  first_name?: string;
+  last_name?: string;
   email: string;
   phone?: string;
   avatar?: string | null;
@@ -27,6 +29,8 @@ export interface UserProfile {
 
 /** PATCH /api/users/me/ request body. */
 export interface UserProfileUpdate {
+  first_name?: string;
+  last_name?: string;
   phone?: string;
   avatar?: string | null;
   privileges?: string[];

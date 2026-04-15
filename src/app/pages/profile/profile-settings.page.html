@@ -1,0 +1,46 @@
+<div class="settings-page">
+  <a routerLink="/profile" class="back-link">{{ 'common.backToProfile' | translate }}</a>
+  <h1 class="page-title">{{ 'profileHub.nav.settings' | translate }}</h1>
+  <p class="page-sub">{{ 'profileHub.settingsIntro' | translate }}</p>
+
+  @if (loading()) {
+    <p class="muted">{{ 'profilePage.loading' | translate }}</p>
+  } @else {
+    @if (error()) {
+      <div class="alert alert--err" role="alert">{{ error() }}</div>
+    }
+    @if (savedOk()) {
+      <div class="alert alert--ok" role="status">{{ 'profileHub.settingsSaved' | translate }}</div>
+    }
+
+    <form class="card" [formGroup]="form" (ngSubmit)="save()">
+      <div class="readonly-block">
+        <div class="field-readonly">
+          <span class="lbl">{{ 'profileHub.settingsLogin' | translate }}</span>
+          <span class="val">{{ username() }}</span>
+        </div>
+        <div class="field-readonly">
+          <span class="lbl">{{ 'common.email' | translate }}</span>
+          <span class="val">{{ email() }}</span>
+        </div>
+        <p class="hint">{{ 'profileHub.settingsLoginHint' | translate }}</p>
+      </div>
+
+      <div class="field">
+        <label for="fn">{{ 'profileHub.settingsFirstName' | translate }}</label>
+        <input id="fn" type="text" formControlName="first_name" autocomplete="given-name" />
+      </div>
+      <div class="field">
+        <label for="ln">{{ 'profileHub.settingsLastName' | translate }}</label>
+        <input id="ln" type="text" formControlName="last_name" autocomplete="family-name" />
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? ('profilePage.saving' | translate) : ('profileHub.settingsSave' | translate) }}
+        </button>
+        <a routerLink="/profile/data" class="link-secondary">{{ 'profileHub.settingsGoContacts' | translate }}</a>
+      </div>
+    </form>
+  }
+</div>
