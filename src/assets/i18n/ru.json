@@ -130,6 +130,8 @@
     "noPhoto": "Нет фото",
     "email": "Email",
     "password": "Пароль",
+    "passwordShow": "Показать пароль",
+    "passwordHide": "Скрыть пароль",
     "required": "Обязательное поле",
     "invalidEmail": "Введите корректный email",
     "home": "На главную",

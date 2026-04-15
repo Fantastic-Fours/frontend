@@ -130,6 +130,8 @@
     "noPhoto": "Фото жоқ",
     "email": "Email",
     "password": "Құпиясөз",
+    "passwordShow": "Құпиясөзді көрсету",
+    "passwordHide": "Құпиясөзді жасыру",
     "required": "Міндетті өріс",
     "invalidEmail": "Дұрыс email енгізіңіз",
     "home": "Басты бетке",

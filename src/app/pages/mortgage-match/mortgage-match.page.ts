@@ -348,18 +348,13 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
       return null;
     }
     const raw = this.form.getRawValue();
-    const { privileges: privFromBenefits, hasHousing: hasHousingFromBenefits } =
-      this.collectPrivilegesAndTags();
+    const { privileges: privFromBenefits } = this.collectPrivilegesAndTags();
     const privileges = [...new Set([...privFromBenefits, ...(raw.privileges_extra ?? [])])];
 
     let hasHousing: boolean | null | undefined;
     if (raw.has_housing === 'true') hasHousing = true;
     else if (raw.has_housing === 'false') hasHousing = false;
     else hasHousing = undefined;
-    if (hasHousing === undefined && hasHousingFromBenefits !== undefined) {
-      hasHousing = hasHousingFromBenefits ?? undefined;
-    }
-
     const termYears = Number(raw.term_years);
     const termForPdf =
       Number.isFinite(termYears) && termYears > 0 ? Math.min(35, Math.max(1, termYears)) : 20;

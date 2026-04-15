@@ -15,6 +15,8 @@ export class RegisterPage {
   form: FormGroup;
   error: string | null = null;
   loading = false;
+  showPassword = false;
+  showPasswordConfirm = false;
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +29,14 @@ export class RegisterPage {
       password: ['', [Validators.required, Validators.minLength(6)]],
       password_confirm: ['', Validators.required],
     });
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  togglePasswordConfirm(): void {
+    this.showPasswordConfirm = !this.showPasswordConfirm;
   }
 
   onSubmit(): void {

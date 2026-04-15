@@ -4,8 +4,10 @@ export interface MortgageMatchRequest {
   down_payment: number;
   income: number;
   expenses: number;
-  /** Если не указан, API использует 20 лет */
+  /** Фиксированный срок (лет), legacy; если не указан — автоподбор до max_loan_term */
   term_years?: number;
+  /** Верхняя граница срока (лет) для автоподбора, по умолчанию 25 */
+  max_loan_term?: number;
   housing_type: 'primary' | 'secondary' | string;
   tags?: string[];
   require_income_confirmation?: boolean;
@@ -22,6 +24,7 @@ export interface MortgagePlanPdfRequest {
   income: number;
   expenses?: number;
   term_years?: number;
+  max_loan_term?: number;
   housing_type: 'primary' | 'secondary' | string;
   sort_by?: 'score' | 'monthly_payment' | 'total_overpayment';
   require_income_confirmation?: boolean;
@@ -37,8 +40,9 @@ export interface MortgageNNPredictRequest {
   down_payment: number;
   income: number;
   expenses?: number;
-  /** Если не указан, API использует 20 лет */
+  /** Фиксированный срок (лет); если не указан — автоподбор до max_loan_term */
   term_years?: number;
+  max_loan_term?: number;
   housing_type: 'primary' | 'secondary' | string;
   tags?: string[];
   require_income_confirmation?: boolean;
@@ -73,6 +77,10 @@ export interface AIMortgageAdvisorUserData {
   privileges?: string[];
   has_deposit?: boolean;
   housing_type?: 'primary' | 'secondary' | string;
+  /** Фиксированный срок (лет), опционально */
+  term_years?: number;
+  /** Макс. срок (лет) для автоподбора в ИИ-консультанте */
+  max_loan_term?: number;
 }
 
 export interface AIMortgageAdvisorRequest {
@@ -105,6 +113,8 @@ export interface AIMortgageAdvisorProgram {
   monthly_payment?: string;
   total_overpayment?: string;
   selected_loan_term_years?: number | null;
+  optimal_loan_term?: number | null;
+  debt_to_income_ratio?: number | null;
   ml_reasons: string[];
 }
 
@@ -123,6 +133,9 @@ export interface MortgageProgramItem {
   loan_amount: string;
   score: number;
   gesv: string;
+  dti_ratio?: string | null;
+  optimal_loan_term?: number | null;
+  debt_to_income_ratio?: string | null;
 }
 
 export interface MortgageMatchResponse {

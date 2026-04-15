@@ -56,6 +56,9 @@ export class MortgageApiService {
 
     if (params.expenses != null) httpParams = httpParams.set('expenses', String(params.expenses));
     if (params.term_years != null) httpParams = httpParams.set('term_years', String(params.term_years));
+    if (params.max_loan_term != null) {
+      httpParams = httpParams.set('max_loan_term', String(params.max_loan_term));
+    }
     if (params.sort_by != null) httpParams = httpParams.set('sort_by', String(params.sort_by));
     if (params.require_income_confirmation != null) {
       httpParams = httpParams.set('require_income_confirmation', String(params.require_income_confirmation));

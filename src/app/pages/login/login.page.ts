@@ -15,6 +15,7 @@ export class LoginPage {
   form: FormGroup;
   error: string | null = null;
   loading = false;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +28,10 @@ export class LoginPage {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit(): void {
