@@ -396,6 +396,31 @@
               </article>
             }
           </div>
+          @if (advisorPrograms.length) {
+            <div class="ai-history-actions">
+              @if (aiHistorySaveError) {
+                <p class="calc-error" role="alert">{{ aiHistorySaveError }}</p>
+              }
+              @if (aiHistorySavedOk) {
+                <p class="ai-history-saved">
+                  {{ 'matchPage.saveAiHistoryOk' | translate }}
+                  <a routerLink="/profile/calculation-history" class="ai-history-link">{{
+                    'matchPage.saveAiHistoryOpen' | translate
+                  }}</a>
+                </p>
+              }
+              <button
+                type="button"
+                class="btn btn-primary ai-history-save-btn"
+                [disabled]="savingAiHistory"
+                (click)="saveAiTop3ToHistory($event)"
+              >
+                {{
+                  (savingAiHistory ? 'matchPage.saveAiHistoryLoading' : 'matchPage.saveAiHistory') | translate
+                }}
+              </button>
+            </div>
+          }
         }
       } @else if (programs.length === 0) {
         <p class="empty">{{ 'matchPage.noProgramsRules' | translate }}</p>

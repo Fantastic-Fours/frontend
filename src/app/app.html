@@ -8,7 +8,7 @@
         class="logo-link"
         (click)="closeMobileMenu()"
       >
-        <img src="assets/logo.jpg" alt="Ipotex" class="logo-img" />
+        <img src="assets/logo.jpeg" alt="Ipotex" class="logo-img" />
         <span class="logo-text">Ipotex</span>
       </a>
 
@@ -45,7 +45,7 @@
             </div>
           </div>
 
-          <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.banks' | translate }}</a>
+<!--          <a routerLink="/banks" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.banks' | translate }}</a>-->
           <a routerLink="/ai-consultant" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.aiConsultant' | translate }}</a>
           <a routerLink="/news" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">{{ 'nav.news' | translate }}</a>
         </div>
@@ -64,11 +64,11 @@
             </button>
           }
         </div>
-        <a routerLink="/estate/submit" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.leaveRequest' | translate }}</a>
+<!--        <a routerLink="/estate/submit" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.leaveRequest' | translate }}</a>-->
         @if (!isAuthenticated()) {
-          <a routerLink="/login" class="nav-link nav-link-compact" (click)="closeMobileMenu()">{{ 'nav.login' | translate }}</a>
+          <a routerLink="/login" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.login' | translate }}</a>
         } @else {
-          <a routerLink="/profile" class="nav-link nav-link-compact" (click)="closeMobileMenu()">{{ 'nav.profile' | translate }}</a>
+          <a routerLink="/profile" class="btn-nav-cta" (click)="closeMobileMenu()">{{ 'nav.profile' | translate }}</a>
           <button type="button" class="nav-link nav-link-compact nav-logout" (click)="logout()">{{ 'nav.logout' | translate }}</button>
         }
       </div>

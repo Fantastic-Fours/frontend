@@ -376,7 +376,18 @@
     "publishing": "Публикация…",
     "errCreate": "Ошибка при создании объявления. Проверьте данные.",
     "mapKey": "Укажите демо-ключ 2GIS: в twogis.constants.ts (TWOGIS_API_KEY_FILE) или window.__TWOGIS_API_KEY__ в index.html",
-    "mapFail": "Не удалось загрузить карту 2GIS. Проверьте ключ и сеть."
+    "mapFail": "Не удалось загрузить карту 2GIS. Проверьте ключ и сеть.",
+    "imgLabelNew": "Фотографии",
+    "imgLabelEdit": "Новые фотографии (необязательно)",
+    "imgHint": "Форматы: JPG, PNG, WebP. До 5 МБ на файл. Можно выбрать одно фото или сразу несколько.",
+    "imgPickOne": "Выбрать одно фото",
+    "imgPickMany": "Выбрать несколько фото",
+    "imgCurrent": "Текущие фото в объявлении",
+    "imgToUpload": "Будут загружены",
+    "imgRemove": "Удалить из списка",
+    "imgErrType": "Допустимы только JPG, PNG и WebP.",
+    "imgErrSize": "Файл слишком большой. Максимум {{max}} на изображение.",
+    "imgErrMaxCount": "Не больше {{n}} фотографий за раз."
   },
   "apartment": {
     "errId": "Неверный ID объявления",
@@ -565,7 +576,17 @@
     "errLoad": "Ошибка загрузки",
     "summaryIncome": "Доход: {{v}}",
     "summaryDown": "Взнос: {{v}}",
-    "summaryTerm": "Срок: {{y}} лет"
+    "summaryTerm": "Срок: {{y}} лет",
+    "summaryAi": "AI Top-3",
+    "summaryPrice": "Цена: {{v}}",
+    "resultProgramsCount": "Программ в подборе: {{n}}",
+    "resultApartmentsCount": "Квартир в рекомендациях: {{n}}",
+    "resultSaved": "Расчёт сохранён",
+    "aiExplanation": "Пояснение AI",
+    "recommendedPrograms": "Рекомендованные программы",
+    "scoreShort": "(оценка {{v}})",
+    "openProgram": "Программа №{{id}}",
+    "linkedPrograms": "Программы из подбора"
   },
   "about": {
     "quote": "IDom",
@@ -711,7 +732,12 @@
     "privOrphan": "Сирота",
     "errAiNeedLogin": "Режим AI (ML+RAG) доступен после входа в аккаунт. Лимит — несколько запросов в сутки.",
     "errMatch": "Ошибка подбора программ",
-    "errAi": "Ошибка AI рекомендаций"
+    "errAi": "Ошибка AI рекомендаций",
+    "saveAiHistory": "Сохранить в историю расчётов",
+    "saveAiHistoryLoading": "Сохранение…",
+    "saveAiHistoryOk": "Сохранено в историю.",
+    "saveAiHistoryOpen": "Открыть историю",
+    "saveAiHistoryErr": "Не удалось сохранить расчёт"
   },
   "forgotMsg": {
     "codeSent": "Если email зарегистрирован, код будет отправлен.",

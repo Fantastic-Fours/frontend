@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { load } from '@2gis/mapgl';
 import type { Map as Map2gis, Marker as Marker2gis } from '@2gis/mapgl/types';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
@@ -31,7 +32,7 @@ import type { PricePredictionResponse } from '../../core/interfaces/mortgage.typ
 @Component({
   selector: 'app-apartment-detail-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './apartment-detail.page.html',
   styleUrl: './apartment-detail.page.scss',
 })

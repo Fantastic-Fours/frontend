@@ -36,6 +36,12 @@ export interface UserProfileUpdate {
   privileges?: string[];
 }
 
+/** POST /api/users/me/calculation-history/ request body. */
+export interface CalculationHistoryCreateRequest {
+  request_snapshot: Record<string, unknown>;
+  result_snapshot: Record<string, unknown>;
+}
+
 /** Single saved apartment: GET /api/users/me/saved-apartments/ item. */
 export interface SavedApartmentItem {
   id: number;

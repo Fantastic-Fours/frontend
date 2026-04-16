@@ -36,10 +36,10 @@
         <input type="checkbox" [checked]="onlyGovernment()" (change)="toggleGovernment($any($event.target).checked)" />
         {{ 'programsList.govOnly' | translate }}
       </label>
-      <label class="filter-check">
-        <input type="checkbox" [checked]="onlyPrivileged()" (change)="togglePrivileged($any($event.target).checked)" />
-        {{ 'programsList.privOnly' | translate }}
-      </label>
+<!--      <label class="filter-check">-->
+<!--        <input type="checkbox" [checked]="onlyPrivileged()" (change)="togglePrivileged($any($event.target).checked)" />-->
+<!--        {{ 'programsList.privOnly' | translate }}-->
+<!--      </label>-->
     </section>
 
     <p class="meta">{{ 'common.total' | translate }}: {{ totalCount() }}</p>

@@ -12,7 +12,27 @@
       @if (formatMillionFrom(apt.price_per_sqm_from); as ppm) {
         <p class="apartment-ppm">{{ ppm }}</p>
       }
-      <h1 class="apartment-title">{{ apt.title }}</h1>
+      <div class="title-row">
+        <h1 class="apartment-title">{{ apt.title }}</h1>
+        @if (isAuthenticated()) {
+          <button
+            type="button"
+            class="btn-favorite-heart"
+            [class.is-saved]="!!savedId()"
+            [disabled]="saving()"
+            (click)="savedId() ? removeFromSaved() : addToSaved()"
+            [attr.aria-label]="(savedId() ? 'apartment.removeFav' : 'apartment.addFav') | translate"
+            [attr.aria-pressed]="!!savedId()"
+          >
+            <svg class="heart-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                class="heart-path"
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </button>
+        }
+      </div>
       @if (apt.subtitle) {
         <p class="apartment-subtitle">{{ apt.subtitle }}</p>
       }
@@ -199,19 +219,6 @@
         </div>
       }
 
-      @if (isAuthenticated()) {
-        <div class="favorite-actions">
-          @if (savedId()) {
-            <button type="button" class="btn btn-outline" [disabled]="saving()" (click)="removeFromSaved()">
-              {{ saving() ? '…' : 'Удалить из избранного' }}
-            </button>
-          } @else {
-            <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="addToSaved()">
-              {{ saving() ? '…' : 'Добавить в избранное' }}
-            </button>
-          }
-        </div>
-      }
     </article>
   }
 </div>

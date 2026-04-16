@@ -376,7 +376,18 @@
     "publishing": "Publishing…",
     "errCreate": "Could not create listing. Check your data.",
     "mapKey": "Set a 2GIS demo key in twogis.constants.ts (TWOGIS_API_KEY_FILE) or window.__TWOGIS_API_KEY__ in index.html",
-    "mapFail": "Could not load the 2GIS map. Check key and network."
+    "mapFail": "Could not load the 2GIS map. Check key and network.",
+    "imgLabelNew": "Photos",
+    "imgLabelEdit": "New photos (optional)",
+    "imgHint": "Formats: JPG, PNG, WebP. Up to 5 MB per file. Pick one image or several at once.",
+    "imgPickOne": "Choose one photo",
+    "imgPickMany": "Choose multiple photos",
+    "imgCurrent": "Current listing photos",
+    "imgToUpload": "Ready to upload",
+    "imgRemove": "Remove from list",
+    "imgErrType": "Only JPG, PNG, and WebP are allowed.",
+    "imgErrSize": "File is too large. Maximum {{max}} per image.",
+    "imgErrMaxCount": "No more than {{n}} photos at a time."
   },
   "apartment": {
     "errId": "Invalid listing ID",
@@ -565,7 +576,17 @@
     "errLoad": "Could not load",
     "summaryIncome": "Income: {{v}}",
     "summaryDown": "Down: {{v}}",
-    "summaryTerm": "Term: {{y}} years"
+    "summaryTerm": "Term: {{y}} years",
+    "summaryAi": "AI Top-3",
+    "summaryPrice": "Price: {{v}}",
+    "resultProgramsCount": "Programs matched: {{n}}",
+    "resultApartmentsCount": "Recommended apartments: {{n}}",
+    "resultSaved": "Calculation saved",
+    "aiExplanation": "AI explanation",
+    "recommendedPrograms": "Recommended programs",
+    "scoreShort": "(score {{v}})",
+    "openProgram": "Program #{{id}}",
+    "linkedPrograms": "Programs from match"
   },
   "about": {
     "quote": "IDom",
@@ -715,6 +736,11 @@
     "privOrphan": "Orphan",
     "errAiNeedLogin": "AI (ML+RAG) is available after sign-in. Limited requests per day.",
     "errMatch": "Could not match programs",
-    "errAi": "AI recommendation error"
+    "errAi": "AI recommendation error",
+    "saveAiHistory": "Save to calculation history",
+    "saveAiHistoryLoading": "Saving…",
+    "saveAiHistoryOk": "Saved to history.",
+    "saveAiHistoryOpen": "Open history",
+    "saveAiHistoryErr": "Could not save calculation"
   }
 }

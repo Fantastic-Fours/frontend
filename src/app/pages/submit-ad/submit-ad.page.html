@@ -172,15 +172,83 @@
         </select>
       </div>
 
-      <div class="field">
-        <label for="images_files">
+      <div class="field image-upload-field">
+        <span class="label-text">
           @if (editApartmentId != null) {
-            Новые фотографии (необязательно)
+            {{ 'submitAd.imgLabelEdit' | translate }}
           } @else {
-            Фотографии (можно несколько)
+            {{ 'submitAd.imgLabelNew' | translate }}
           }
-        </label>
-        <input id="images_files" type="file" multiple accept="image/*" (change)="onFilesSelected($event)" />
+        </span>
+        <p class="image-hint">{{ 'submitAd.imgHint' | translate }}</p>
+        <input
+          id="submit-ad-img-single"
+          type="file"
+          class="sr-only-input"
+          [accept]="imageAccept"
+          (change)="onSingleFileSelected($event)"
+          tabindex="-1"
+          aria-hidden="true"
+        />
+        <input
+          id="submit-ad-img-multi"
+          type="file"
+          class="sr-only-input"
+          multiple
+          [accept]="imageAccept"
+          (change)="onMultiFileSelected($event)"
+          tabindex="-1"
+          aria-hidden="true"
+        />
+        <div class="image-actions">
+          <button type="button" class="btn btn-secondary btn-file" (click)="triggerPick('single')">
+            {{ 'submitAd.imgPickOne' | translate }}
+          </button>
+          <button type="button" class="btn btn-secondary btn-file" (click)="triggerPick('multi')">
+            {{ 'submitAd.imgPickMany' | translate }}
+          </button>
+        </div>
+        @if (imagePickError) {
+          <p class="field-error" role="alert">{{ imagePickError }}</p>
+        }
+        @if (editApartmentId != null && existingImageUrls.length) {
+          <div class="existing-gallery">
+            <span class="gallery-caption">{{ 'submitAd.imgCurrent' | translate }}</span>
+            <div class="preview-grid">
+              @for (url of existingImageUrls; track url) {
+                <div class="preview-tile preview-tile--existing">
+                  <img [src]="url" alt="" loading="lazy" />
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (pendingImages.length) {
+          <div class="new-images-block">
+            <span class="gallery-caption">{{ 'submitAd.imgToUpload' | translate }}</span>
+            <ul class="preview-list">
+              @for (item of pendingImages; track item.id) {
+                <li class="preview-row">
+                  <div class="preview-tile">
+                    <img [src]="item.previewUrl" [alt]="item.file.name" />
+                  </div>
+                  <div class="preview-meta">
+                    <span class="preview-name">{{ item.file.name }}</span>
+                    <span class="preview-size">{{ formatFileSize(item.file.size) }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removePendingImage(item.id)"
+                    [attr.aria-label]="('submitAd.imgRemove' | translate)"
+                  >
+                    ×
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="loading || !canSubmit">

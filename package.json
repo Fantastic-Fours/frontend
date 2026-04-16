@@ -6,7 +6,7 @@
     "env:generate": "node scripts/generate-twogis-env.mjs",
     "prestart": "npm run env:generate",
     "prebuild": "npm run env:generate",
-    "postinstall": "npm run env:generate",
+    "postinstall": "npm run env:generate && node scripts/patch-angular-build.mjs",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",

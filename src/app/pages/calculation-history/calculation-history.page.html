@@ -25,8 +25,59 @@
             </div>
             @if (hasResultSnapshot(item)) {
               <div class="history-result">
-                <strong>{{ 'calcHistory.result' | translate }}:</strong>
-                <pre class="result-preview">{{ item.result_snapshot | json }}</pre>
+                <strong class="result-heading">{{ 'calcHistory.result' | translate }}</strong>
+                @let snap = snapshotRecord(item);
+                @if (isAiAdvisorSnapshot(snap)) {
+                  <div class="result-body result-body--ai">
+                    @if (getAnswerExcerpt(snap); as excerpt) {
+                      <div class="result-block">
+                        <div class="result-label">{{ 'calcHistory.aiExplanation' | translate }}</div>
+                        <div class="markdown-body result-markdown" [innerHTML]="excerpt | markdown"></div>
+                      </div>
+                    }
+                    @if (getRecommendedPrograms(snap); as programs) {
+                      @if (programs.length) {
+                        <div class="result-block">
+                          <div class="result-label">{{ 'calcHistory.recommendedPrograms' | translate }}</div>
+                          <ul class="result-program-list">
+                            @for (p of programs; track p.program_id) {
+                              <li>
+                                <a [routerLink]="['/programs', p.program_id]" class="result-program-link">{{
+                                  programLinkLabel(p)
+                                }}</a>
+                                @if (p.score != null) {
+                                  <span class="result-score">{{
+                                    'calcHistory.scoreShort' | translate: { v: formatScore(p.score) }
+                                  }}</span>
+                                }
+                              </li>
+                            }
+                          </ul>
+                        </div>
+                      }
+                    }
+                  </div>
+                } @else {
+                  <div class="result-body result-body--calc">
+                    <p class="result-summary">{{ calculatorResultSummary(snap) }}</p>
+                    @if (getProgramIds(snap); as ids) {
+                      @if (ids.length) {
+                        <div class="result-block">
+                          <div class="result-label">{{ 'calcHistory.linkedPrograms' | translate }}</div>
+                          <ul class="result-program-list">
+                            @for (id of ids; track id) {
+                              <li>
+                                <a [routerLink]="['/programs', id]" class="result-program-link">{{
+                                  'calcHistory.openProgram' | translate: { id }
+                                }}</a>
+                              </li>
+                            }
+                          </ul>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
               </div>
             }
           </article>

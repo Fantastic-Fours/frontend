@@ -376,7 +376,18 @@
     "publishing": "Жариялануда…",
     "errCreate": "Хабарландыру құру мүмкін болмады. Мәліметтерді тексеріңіз.",
     "mapKey": "twogis.constants.ts файлына 2GIS demo кілтін енгізіңіз немесе index.html ішінде window.__TWOGIS_API_KEY__ орнатыңыз",
-    "mapFail": "2GIS картасын жүктеу мүмкін болмады. Кілт пен интернетті тексеріңіз."
+    "mapFail": "2GIS картасын жүктеу мүмкін болмады. Кілт пен интернетті тексеріңіз.",
+    "imgLabelNew": "Фотосуреттер",
+    "imgLabelEdit": "Жаңа фотосуреттер (міндетті емес)",
+    "imgHint": "Форматтар: JPG, PNG, WebP. Әр файлына дейін 5 МБ. Бір немесе бірден бірнеше фото таңдауға болады.",
+    "imgPickOne": "Бір фото таңдау",
+    "imgPickMany": "Бірнеше фото таңдау",
+    "imgCurrent": "Хабарландырудағы ағымдағы фото",
+    "imgToUpload": "Жүктелетін файлдар",
+    "imgRemove": "Тізімнен жою",
+    "imgErrType": "Тек JPG, PNG және WebP рұқсат етіледі.",
+    "imgErrSize": "Файл тым үлкен. Әр суретке дейін {{max}}.",
+    "imgErrMaxCount": "Бір уақытта {{n}} фотодан аспауы керек."
   },
   "apartment": {
     "errId": "Хабарландыру ID қате",
@@ -565,7 +576,17 @@
     "errLoad": "Жүктеу мүмкін болмады",
     "summaryIncome": "Табыс: {{v}}",
     "summaryDown": "Алғашқы жарна: {{v}}",
-    "summaryTerm": "Мерзім: {{y}} жыл"
+    "summaryTerm": "Мерзім: {{y}} жыл",
+    "summaryAi": "AI Top-3",
+    "summaryPrice": "Баға: {{v}}",
+    "resultProgramsCount": "Таңдаудағы бағдарламалар: {{n}}",
+    "resultApartmentsCount": "Ұсынылған пәтерлер: {{n}}",
+    "resultSaved": "Есеп сақталды",
+    "aiExplanation": "AI түсіндіруі",
+    "recommendedPrograms": "Ұсынылған бағдарламалар",
+    "scoreShort": "(бағалау {{v}})",
+    "openProgram": "Бағдарлама №{{id}}",
+    "linkedPrograms": "Таңдаудан бағдарламалар"
   },
   "about": {
     "quote": "IDom",
@@ -715,6 +736,11 @@
     "privOrphan": "Жетім",
     "errAiNeedLogin": "AI (ML+RAG) режимі аккаунтпен кіргеннен кейін қолжетімді. Тәулігіне шектеулі сұраулар.",
     "errMatch": "Бағдарламаларды таңдау қатесі",
-    "errAi": "AI ұсынысы қатесі"
+    "errAi": "AI ұсынысы қатесі",
+    "saveAiHistory": "Есептеу тарихына сақтау",
+    "saveAiHistoryLoading": "Сақталуда…",
+    "saveAiHistoryOk": "Тарихқа сақталды.",
+    "saveAiHistoryOpen": "Тарихты ашу",
+    "saveAiHistoryErr": "Сақтау сәтсіз аяқталды"
   }
 }

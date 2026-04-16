@@ -16,6 +16,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { load } from '@2gis/mapgl';
 import type { Map as Map2gis, MapPointerEvent, Marker as Marker2gis } from '@2gis/mapgl/types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { AuthTokenService } from '../../core/services/auth-token.service';
 import { KZ_BIG_CITIES } from '../../core/constants/kz-cities.constants';
@@ -25,10 +26,18 @@ import { UserApiService } from '../../core/services/user-api.service';
 import type { UserProfile } from '../../core/interfaces/user.types';
 import type { Apartment } from '../../core/interfaces/apartment.types';
 
+const ALLOWED_IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+interface PendingListingImage {
+  id: string;
+  file: File;
+  previewUrl: string;
+}
+
 @Component({
   selector: 'app-submit-ad-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, DecimalPipe],
+  imports: [ReactiveFormsModule, RouterLink, DecimalPipe, TranslatePipe],
   templateUrl: './submit-ad.page.html',
   styleUrl: './submit-ad.page.scss',
 })
@@ -39,18 +48,31 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly userApi = inject(UserApiService);
+  private readonly translate = inject(TranslateService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
 
   @ViewChild('mapHost') mapHost?: ElementRef<HTMLElement>;
 
+  /** Макс. размер одного файла (5 МБ). */
+  readonly maxImageBytes = 5 * 1024 * 1024;
+  /** Макс. число новых фото за одну отправку формы. */
+  readonly maxImageCount = 20;
+  readonly imageAccept = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
+
   form!: FormGroup;
   error: string | null = null;
   loading = false;
   submitted = false;
   cities = KZ_BIG_CITIES;
-  selectedFiles: File[] = [];
+  /** Новые файлы к отправке (с превью). */
+  pendingImages: PendingListingImage[] = [];
+  /** Ошибка валидации при выборе файлов. */
+  imagePickError: string | null = null;
+  /** Текущие URL фото объявления (режим редактирования). */
+  existingImageUrls: string[] = [];
+  private pendingImageUid = 0;
   profile: UserProfile | null = null;
   profileLoading = true;
   canSubmit = false;
@@ -158,6 +180,14 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private applyApartmentToForm(apt: Apartment): void {
+    this.clearPendingImages();
+    this.imagePickError = null;
+    const imgs = apt['images'];
+    if (Array.isArray(imgs)) {
+      this.existingImageUrls = imgs.filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+    } else {
+      this.existingImageUrls = [];
+    }
     const rawPrograms = apt['allowed_programs'] as { id: number }[] | undefined;
     const programIds = Array.isArray(rawPrograms)
       ? rawPrograms.map((p) => p.id).filter((id) => typeof id === 'number')
@@ -216,6 +246,7 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearPendingImages();
     this.marker?.destroy();
     this.marker = null;
     this.map?.destroy();
@@ -284,10 +315,88 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  onFilesSelected(ev: Event): void {
+  /** Файлы для multipart (только прошедшие валидацию). */
+  get filesForUpload(): File[] {
+    return this.pendingImages.map((p) => p.file);
+  }
+
+  triggerPick(kind: 'single' | 'multi'): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const id = kind === 'single' ? 'submit-ad-img-single' : 'submit-ad-img-multi';
+    document.getElementById(id)?.click();
+  }
+
+  onSingleFileSelected(ev: Event): void {
     const input = ev.target as HTMLInputElement;
     const files = input.files ? Array.from(input.files) : [];
-    this.selectedFiles = files;
+    input.value = '';
+    this.consumeSelectedFiles(files);
+  }
+
+  onMultiFileSelected(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    const files = input.files ? Array.from(input.files) : [];
+    input.value = '';
+    this.consumeSelectedFiles(files);
+  }
+
+  removePendingImage(id: string): void {
+    const found = this.pendingImages.find((p) => p.id === id);
+    if (found) URL.revokeObjectURL(found.previewUrl);
+    this.pendingImages = this.pendingImages.filter((p) => p.id !== id);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  private clearPendingImages(): void {
+    for (const p of this.pendingImages) {
+      URL.revokeObjectURL(p.previewUrl);
+    }
+    this.pendingImages = [];
+  }
+
+  private nextPendingId(): string {
+    this.pendingImageUid += 1;
+    return `ad-img-${this.pendingImageUid}`;
+  }
+
+  private isAllowedImageFile(file: File): boolean {
+    const t = (file.type || '').toLowerCase();
+    if (ALLOWED_IMAGE_MIME.has(t)) return true;
+    return /\.(jpe?g|png|webp)$/i.test(file.name);
+  }
+
+  private consumeSelectedFiles(files: File[]): void {
+    if (!files.length) return;
+    this.imagePickError = null;
+    const room = this.maxImageCount - this.pendingImages.length;
+    if (room <= 0) {
+      this.imagePickError = this.translate.instant('submitAd.imgErrMaxCount', { n: this.maxImageCount });
+      return;
+    }
+    const slice = files.slice(0, room);
+    if (files.length > room) {
+      this.imagePickError = this.translate.instant('submitAd.imgErrMaxCount', { n: this.maxImageCount });
+    }
+    for (const file of slice) {
+      if (!this.isAllowedImageFile(file)) {
+        this.imagePickError = this.translate.instant('submitAd.imgErrType');
+        continue;
+      }
+      if (file.size > this.maxImageBytes) {
+        this.imagePickError = this.translate.instant('submitAd.imgErrSize', {
+          max: this.formatFileSize(this.maxImageBytes),
+        });
+        continue;
+      }
+      const id = this.nextPendingId();
+      const previewUrl = URL.createObjectURL(file);
+      this.pendingImages = [...this.pendingImages, { id, file, previewUrl }];
+    }
   }
 
   onSubmit(): void {
@@ -320,8 +429,8 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
       housing_type: raw.housing_type,
       allowed_program_ids: raw.allowed_program_ids ?? [],
     };
-    if (this.selectedFiles.length > 0) {
-      body['images_files'] = this.selectedFiles;
+    if (this.filesForUpload.length > 0) {
+      body['images_files'] = this.filesForUpload;
     }
     if (raw.housing_type === 'secondary') {
       if (raw.furnished) body['furnished'] = raw.furnished;
@@ -359,7 +468,7 @@ export class SubmitAdPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const createBody = { ...body, images_files: this.selectedFiles };
+    const createBody = { ...body, images_files: this.filesForUpload };
     this.mortgageApi
       .createApartment(
         createBody as Partial<Apartment> & { images_files: File[]; allowed_program_ids: number[] },

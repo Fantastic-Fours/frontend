@@ -44,11 +44,11 @@
 }
 
 .logo-img {
-  height: 44px;
+  height: 35px;
   width: 44px;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(214, 104, 83, 0.25);
+  //border-radius: 12px;
+  //object-fit: cover;
+  //box-shadow: 0 4px 12px rgba(214, 104, 83, 0.25);
 }
 
 .logo-text {
@@ -58,6 +58,7 @@
   color: var(--text);
   letter-spacing: -0.02em;
   white-space: nowrap;
+  margin-right: 10px;
 }
 
 .nav-center {

@@ -8,6 +8,8 @@ import type {
   SavedApartmentsResponse,
   SavedApartmentCreateRequest,
   CalculationHistoryResponse,
+  CalculationHistoryCreateRequest,
+  CalculationHistoryItem,
   ApartmentListItem,
 } from '../interfaces/user.types';
 
@@ -61,6 +63,14 @@ export class UserApiService {
     return this.http.get<CalculationHistoryResponse>(
       `${this.base}${API_PATHS.users.calculationHistory}`,
       { params }
+    );
+  }
+
+  /** POST /api/users/me/calculation-history/ — сохранить расчёт (например AI Top-3). */
+  createCalculationHistory(payload: CalculationHistoryCreateRequest): Observable<CalculationHistoryItem> {
+    return this.http.post<CalculationHistoryItem>(
+      `${this.base}${API_PATHS.users.calculationHistory}`,
+      payload
     );
   }
 

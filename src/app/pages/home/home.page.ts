@@ -64,8 +64,8 @@ export class HomePage implements AfterViewInit, OnDestroy {
   ] as const;
 
   readonly stats = [
-    { value: '25+', labelKey: 'home.stat1Label' },
-    { value: '150+', labelKey: 'home.stat2Label' },
+    { value: '10+', labelKey: 'home.stat1Label' },
+    { value: '32+', labelKey: 'home.stat2Label' },
     { value: '10K+', labelKey: 'home.stat3Label' },
     { value: '24/7', labelKey: 'home.stat4Label' },
   ] as const;

@@ -12,7 +12,9 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MortgageApiService } from '../../core/services/mortgage-api.service';
 import { MarkdownPipe } from '../../core/pipes/markdown.pipe';
 import { AuthTokenService } from '../../core/services/auth-token.service';
+import { UserApiService } from '../../core/services/user-api.service';
 import { getBankLogoPath } from '../../core/utils/bank-logo';
+import type { CalculationHistoryCreateRequest } from '../../core/interfaces/user.types';
 import type {
   MortgageProgramItem,
   MortgageMatchRequest,
@@ -61,6 +63,9 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
   error: string | null = null;
   submitted = false;
   lastMode: 'rules' | 'ai' = 'rules';
+  savingAiHistory = false;
+  aiHistorySavedOk = false;
+  aiHistorySaveError: string | null = null;
 
   private subs = new Subscription();
 
@@ -68,6 +73,7 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
     private fb: FormBuilder,
     private mortgageApi: MortgageApiService,
     private authTokens: AuthTokenService,
+    private userApi: UserApiService,
   ) {
     this.form = this.fb.nonNullable.group({
       price: [30_000_000, [Validators.required, Validators.min(this.PRICE_MIN)]],
@@ -401,6 +407,8 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
     this.advisorPrograms = [];
 
     if (mode === 'ai') {
+      this.aiHistorySavedOk = false;
+      this.aiHistorySaveError = null;
       if (!this.authTokens.hasTokens()) {
         this.loading = false;
         this.error = this.translate.instant('matchPage.errAiNeedLogin');
@@ -503,5 +511,84 @@ export class MortgageMatchPage implements OnDestroy, OnInit {
   formatLoansTypes(values: string[] | null | undefined): string {
     if (!values?.length) return this.translate.instant('matchPage.dash');
     return values.join(', ');
+  }
+
+  saveAiTop3ToHistory(event?: Event): void {
+    event?.preventDefault();
+    if (!this.authTokens.hasTokens()) {
+      this.aiHistorySaveError = this.translate.instant('matchPage.errAiNeedLogin');
+      return;
+    }
+    const payload = this.buildAiHistoryPayload();
+    if (!payload) return;
+    this.savingAiHistory = true;
+    this.aiHistorySaveError = null;
+    this.aiHistorySavedOk = false;
+    this.subs.add(
+      this.userApi.createCalculationHistory(payload).subscribe({
+        next: () => {
+          this.savingAiHistory = false;
+          this.aiHistorySavedOk = true;
+        },
+        error: (err: { error?: { detail?: unknown }; message?: string }) => {
+          this.savingAiHistory = false;
+          const d = err?.error?.detail;
+          this.aiHistorySaveError =
+            typeof d === 'string'
+              ? d
+              : err?.message ?? this.translate.instant('matchPage.saveAiHistoryErr');
+        },
+      }),
+    );
+  }
+
+  private buildAiHistoryPayload(): CalculationHistoryCreateRequest | null {
+    if (this.lastMode !== 'ai' || this.loading || this.advisorPrograms.length === 0) {
+      return null;
+    }
+    const raw = this.form.getRawValue();
+    const { privileges } = this.collectPrivilegesAndTags();
+    const downPaymentPercent =
+      raw.price > 0 ? Math.max(0, Math.min(100, (raw.down_payment / raw.price) * 100)) : 0;
+    const q =
+      typeof raw.advisor_question === 'string' && raw.advisor_question.trim()
+        ? raw.advisor_question.trim()
+        : this.translate.instant('matchPage.aiQuestionDefault');
+    const termYears = Number(raw.term_years);
+    const ageN = Number(raw.age);
+
+    return {
+      request_snapshot: {
+        source: 'ai_advisor',
+        income: String(raw.income),
+        down_payment: String(raw.down_payment),
+        expenses: String(raw.expenses),
+        property_price: raw.price,
+        term_years:
+          Number.isFinite(termYears) && termYears > 0 ? Math.min(35, Math.max(1, termYears)) : undefined,
+        housing_type: raw.housing_type,
+        privileges,
+        question: q,
+        age: Number.isFinite(ageN) ? ageN : raw.age,
+        family_status: raw.family_status,
+        has_deposit: raw.has_deposit,
+        down_payment_percent: Math.round(downPaymentPercent * 100) / 100,
+      },
+      result_snapshot: {
+        source: 'ai_advisor',
+        total_count: this.advisorPrograms.length,
+        program_ids: this.advisorPrograms.map((p) => p.program_id),
+        recommended_programs: this.advisorPrograms.map((p) => ({
+          program_id: p.program_id,
+          program_name: p.program_name,
+          bank_name: p.bank_name,
+          score: p.score,
+        })),
+        has_explanation: !!this.advisorAnswer,
+        ...(this.advisorAnswer && this.advisorAnswer.length > 0
+          ? { answer_excerpt: this.advisorAnswer.slice(0, 2000) }
+          : {}),
+      },
+    };
   }
 }
