@@ -1,10 +1,10 @@
 {
   "/api": {
-    "target": "http://localhost:8000",
+    "target": "https://backend-p3kp.onrender.com",
     "secure": false
   },
   "/media": {
-    "target": "http://localhost:8000",
+    "target": "https://backend-p3kp.onrender.com",
     "secure": false
   }
 }
