@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
-const outFile = join(root, 'proxy.conf.json');
+const proxyOutFile = join(root, 'proxy.conf.json');
+const browserEnvOutFile = join(root, 'src/app/core/constants/backend-env.generated.ts');
 const defaultBackendUrl = 'http://localhost:8000';
 
 function parseDotEnv(text) {
@@ -43,8 +44,9 @@ function resolveBackendUrl() {
 }
 
 const backendUrl = resolveBackendUrl();
+const escapedBackendUrl = backendUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
-const content = `${JSON.stringify(
+const proxyContent = `${JSON.stringify(
   {
     '/api': {
       target: backendUrl,
@@ -60,4 +62,9 @@ const content = `${JSON.stringify(
 )}
 `;
 
-writeFileSync(outFile, content, 'utf8');
+const browserEnvContent = `/* Автогенерация: npm run env:generate (читает BACKEND_URL и frontend/.env) */
+export const BACKEND_URL_FROM_DOTENV = '${escapedBackendUrl}';
+`;
+
+writeFileSync(proxyOutFile, proxyContent, 'utf8');
+writeFileSync(browserEnvOutFile, browserEnvContent, 'utf8');

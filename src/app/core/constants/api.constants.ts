@@ -1,4 +1,6 @@
-export const API_BASE_URL = '/api';
+import { BACKEND_URL_FROM_DOTENV } from './backend-env.generated';
+
+export const API_BASE_URL = `${BACKEND_URL_FROM_DOTENV}/api`;
 
 export const API_PATHS = {
   auth: {

@@ -1,10 +1,10 @@
 {
   "/api": {
     "target": "https://backend-p3kp.onrender.com",
-    "secure": true
+    "secure": false
   },
   "/media": {
     "target": "https://backend-p3kp.onrender.com",
-    "secure": true
+    "secure": false
   }
 }

@@ -6,7 +6,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -31,7 +31,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([jwtInterceptor, invalidJwtRetryInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([jwtInterceptor, invalidJwtRetryInterceptor])),
     ...provideTranslateService({
       fallbackLang: 'ru',
       lang: 'ru',
